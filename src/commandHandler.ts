@@ -1,4 +1,5 @@
 import { Message } from "discord.js";
+import { GreetCommand, TimeCommand } from "./commands";
 
 export default class CommandHandler {
 
@@ -21,7 +22,6 @@ export default class CommandHandler {
   echoMessage(message: Message): string {
     return message.content.replace(this.prefix, "").trim();
   }
-
 
   /** Determines whether or not a message is a user command. */
   private isCommand(message: Message): boolean {

@@ -23,8 +23,9 @@ const commandHandler = new CommandHandler(config.prefix);
 //////////////////////////////////////////////////////////////////
 //                    DISCORD CLIENT LISTENERS                  //
 //////////////////////////////////////////////////////////////////
+// Discord Events: https://discord.js.org/#/docs/main/stable/class/Client?scrollTo=e-channelCreate
+
 client.on("ready", () => { console.log("Hive Greeter has started"); });
-// client.on("message", (message: Message) => { message.reply(`Hive Greeter recieved '${message.content} from '${message.author}`); });
 client.on("message", (message: Message) => { commandHandler.handleMessage(message); });
 client.on("error", e => { console.error("Discord client error!", e); });
 
