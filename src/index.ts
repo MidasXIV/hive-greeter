@@ -1,6 +1,8 @@
 import express, { Request, Response } from 'express';
 import Discord, { Message } from "discord.js";
 import { DISCORD_TOKEN } from './config/secrets';
+import CommandHandler from './commandHandler';
+import config from './config/botConfig';
 
 const PORT = process.env.PORT || 5000;
 
@@ -16,11 +18,14 @@ app.use('/', (request: Request, response: Response) => {
   response.sendStatus(200);
 });
 
+const commandHandler = new CommandHandler(config.prefix);
+
 //////////////////////////////////////////////////////////////////
 //                    DISCORD CLIENT LISTENERS                  //
 //////////////////////////////////////////////////////////////////
 client.on("ready", () => { console.log("Hive Greeter has started"); });
-client.on("message", (message: Message) => { message.reply(`Hive Greeter recieved '${message.content} from '${message.author}`); });
+// client.on("message", (message: Message) => { message.reply(`Hive Greeter recieved '${message.content} from '${message.author}`); });
+client.on("message", (message: Message) => { commandHandler.handleMessage(message); });
 client.on("error", e => { console.error("Discord client error!", e); });
 
 client.login(DISCORD_TOKEN);
