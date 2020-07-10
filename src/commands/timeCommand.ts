@@ -10,6 +10,6 @@ export class TimeCommand implements Command {
 
   async run(message: Message): Promise<void> {
     const now = new Date();
-    await message.reply(`${now.getHours} : ${now.getMinutes}`);
+    await message.reply(`${now.getHours()} : ${now.getMinutes()}`);
   }
 }
