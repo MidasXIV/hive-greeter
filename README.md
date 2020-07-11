@@ -2,9 +2,11 @@
 
 ***
 
-
-| [Add Discord Bot to your Server](#step-1-add-discord-bot-to-your-server) | [Code your Bot](#step-2-code-your-discord-bot) | [Deploying Bot on Heroku](#step-3-deploying-bot-on-heroku) |
+| ![hive-greeter-step-1](https://user-images.githubusercontent.com/24829816/87225783-641c9580-c3a0-11ea-9440-b7e931357937.png)| ![hive-greeter-step-2](https://user-images.githubusercontent.com/24829816/87225787-67178600-c3a0-11ea-9013-84afad26b5b2.png) | ![hive-greeter-step-3](https://user-images.githubusercontent.com/24829816/87225790-67b01c80-c3a0-11ea-97c6-7c4f6e089fd8.png)|
 | :-: | :-: | :-: |
+| [Add Discord Bot to your Server](#step-1-add-discord-bot-to-your-server) | [Code your Bot](#step-2-code-your-discord-bot) | [Deploying Bot on Heroku](#step-3-deploying-bot-on-heroku) |
+
+***
 
 ### STEP 1: Add Discord Bot to your Server
 <details>
