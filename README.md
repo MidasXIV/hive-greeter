@@ -1,4 +1,10 @@
-<img src="https://user-images.githubusercontent.com/24829816/86973737-19bfcc80-c186-11ea-8150-27d377cb68e0.png" alt="hive-greeter-logo" width=200>
+<img src="https://user-images.githubusercontent.com/24829816/87224966-7c89b180-c39a-11ea-93c9-5be0c46b96da.png" alt="hive-greeter-logo">
+
+***
+
+
+| [Add Discord Bot to your Server](#step-1-add-discord-bot-to-your-server) | [Code your Bot](#step-2-code-your-discord-bot) | [Deploying Bot on Heroku](#step-3-deploying-bot-on-heroku) |
+| :-: | :-: | :-: |
 
 ### STEP 1: Add Discord Bot to your Server
 <details>
@@ -19,6 +25,17 @@
 
 </details>
 
+***
+
+### STEP 2: Code your Discord Bot
+<details>
+<summary>Reveal Steps</summary>
+<br>
+  
+</details>
+  
+***
+  
 ### STEP 3: Deploying Bot on Heroku
 <details>
 <summary>Reveal Steps</summary>
