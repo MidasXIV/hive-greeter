@@ -33,7 +33,48 @@
 <details>
 <summary>Reveal Steps</summary>
 <br>
-  
+
+1. Get your Bot's token, for this you must go back to the developer [portal](https://discord.com/developers/applications/), select your bot and go to the `Bot` tab, there you can find your Bot's `token`.
+   ![image](https://user-images.githubusercontent.com/24829816/87231323-49114c00-c3c7-11ea-98b3-f81bd1b961b1.png)
+
+2. The simplest way to code your bot would be to fork this repo and then work on `bot-template` branch.
+   alternatively you can clone this repository specifically the `bot-template` branch.
+
+   ```
+   $ git clone -b bot-template --single-branch https://github.com/MidasXIV/hive-greeter.git
+   ```
+
+3. Next create an `.env` file in the root of the repository and add your `token` like so:
+   ```
+   token=TOKEN_WHICH_YOU_GOT_FROM_DISCORD
+   ```
+   the `.env` file takes in key and value pair so here the key is token, if you wish to give a different token name then make sure you update the same in `src/sonfig/secrets.ts` file, as it looks for the "token" key.
+   ```
+   export const DISCORD_TOKEN = process.env["token"];
+   ```
+
+4. Now it's time to install and build the project
+   ```
+   $ npm install
+   $ npm run start
+   ```
+   you can view the `NPM SCRIPTS` in the `package.json` file, running the start command should build project and run the bot on http://localhost:5000/; you can modify the port in `src/index.ts` file.
+
+5. On Successfully building and running the porject you'll see
+   ```
+   Server started on port 5000
+   Hive Greeter has started
+   ```
+   You should now be able to see your Bot online in your discord Server.
+
+6. To get you started the template consits of two commands `greet` and `time` to test your bot, go to any text channel of your server and type in `> greet`, you'll see your bot reply as such
+   ![image](https://user-images.githubusercontent.com/24829816/87232040-018dbe80-c3cd-11ea-9a9e-1c7f05d60a08.png)
+
+7. To Add more commands you must add a new class in `src/commands` folder taking into reference `greetCommand.ts` file, then you should export the class using the `src/commands/index.ts` file so you can easily import it from your `src/CommandHandler.ts`.
+
+8. You can update the "prefix" ( `>` ) of the bot from the `src/config/botConfig.ts` file. 
+
+
 </details>
   
 ***
