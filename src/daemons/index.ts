@@ -10,7 +10,7 @@ export default class DaemonHandler {
 
   constructor(client: Discord.Client) {
     const serviceClasses = [newCoinListingService];
-    this.services = serviceClasses.map(serviceClass => new serviceClass());
+    this.services = serviceClasses.map(serviceClass => new serviceClass(client));
 
     this.client = client;
   }
@@ -30,9 +30,9 @@ export default class DaemonHandler {
         await this.log(e);
       }
 
-      try {  
-        setInterval(async () => { 
-          await service.register(); 
+      try {
+        setInterval(async () => {
+          await service.register();
         }, service.executionInterval);
       }
       catch (e) {
