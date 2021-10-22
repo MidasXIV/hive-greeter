@@ -71,6 +71,7 @@ export class newCoinListingService extends AbstractService implements Service {
       const isPairListed = Boolean(this.coinListing.findOne({ pair: pairingName }));
       if (!isPairListed) {
         this.log(`New pair listed on binance : ${pairingName}`);
+        this.coinListing.insert(coinPairing);
       }
     });
     return;
