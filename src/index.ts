@@ -3,9 +3,6 @@ import Discord, { Message } from "discord.js";
 import { DISCORD_TOKEN } from "./config/secrets";
 import CommandHandler from "./commandHandler";
 import config from "./config/botConfig";
-import { join, dirname } from "path";
-import { Low, JSONFile } from "lowdb";
-import { fileURLToPath } from "url";
 
 const PORT = process.env.PORT || 5000;
 
@@ -15,8 +12,6 @@ const client = new Discord.Client();
 //////////////////////////////////////////////////////////////////
 //             EXPRESS SERVER SETUP FOR UPTIME ROBOT            //
 //////////////////////////////////////////////////////////////////
-app.use(express.urlencoded({ extended: true }));
-
 app.use("/", (request: Request, response: Response) => {
   response.sendStatus(200);
 });
