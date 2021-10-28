@@ -1,7 +1,7 @@
 {
-  "name": "hive-greeter",
+  "name": "zaxnyd-bot",
   "version": "1.0.0",
-  "description": "Discord bot written in Typescript and discord.js hosted on Heroku",
+  "description": "My little discord bot.",
   "main": "index.js",
   "scripts": {
     "lint": "eslint . --ext .ts",
@@ -15,7 +15,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/MidasXIV/hive-greeter.git"
+    "url": "git+https://github.com/brian-gates/zaxnyd-bot.git"
   },
   "keywords": [
     "discord",
