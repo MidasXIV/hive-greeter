@@ -15,3 +15,4 @@ export * from "./greetCommand";
 export * from "./timeCommand";
 export * from "./botinvasionCommand";
 export * from "./hpCommand";
+export * from "./attackCommand";

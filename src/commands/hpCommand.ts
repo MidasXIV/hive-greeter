@@ -1,6 +1,7 @@
 // display a player's current health
 import Command from "./commandInterface";
 import { Message } from "discord.js";
+import { getHP } from "../db";
 
 export class HPCommand implements Command {
   commandNames = ["hp"];
@@ -10,9 +11,15 @@ export class HPCommand implements Command {
   }
 
   async run(message: Message): Promise<void> {
+    const mentionedIds = [...message.mentions.users.keys()];
     console.time("hp");
-    const hp = 10;
-    await message.reply(`You have ${hp} health points.`);
+    if (mentionedIds[0]) {
+      await message.reply(`They have ${getHP(mentionedIds[0])} health points.`);
+    } else {
+      await message.reply(
+        `You have ${getHP(message.author.id)} health points.`
+      );
+    }
     console.timeEnd("hp");
   }
 }

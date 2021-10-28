@@ -1,5 +1,6 @@
 import { Message } from "discord.js";
 import {
+  AttackCommand,
   BotinvasionCommand,
   GreetCommand,
   HPCommand,
@@ -19,6 +20,7 @@ export default class CommandHandler {
       TimeCommand,
       BotinvasionCommand,
       HPCommand,
+      AttackCommand,
     ];
 
     this.commands = commandClasses.map((commandClass) => new commandClass());
