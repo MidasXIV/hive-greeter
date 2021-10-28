@@ -39,10 +39,11 @@
   "dependencies": {
     "@types/express": "^4.17.7",
     "@types/node": "^14.0.20",
-    "typescript": "^3.9.6",
     "discord.js": "^12.2.0",
     "dotenv": "^8.2.0",
+    "express": "^4.17.1",
+    "lowdb": "^3.0.0",
     "rimraf": "^3.0.2",
-    "express": "^4.17.1"
+    "typescript": "^3.9.6"
   }
 }
