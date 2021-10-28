@@ -17,10 +17,20 @@ export class AttackCommand implements Command {
       return;
     }
     console.time("attack");
-    if (attack(message.author.id, defender.id)) {
-      await message.reply(`Hit! They're now at ${getHP(defender.id)}`);
+    const result = attack(message.author.id, defender.id);
+    if (result.hit) {
+      await message.reply(
+        `You hit ${defender.username} for ${result.damage}! ${
+          defender.username
+        } is now at ${getHP(defender.id)}.`
+      );
+      if (getHP(defender.id) <= 0) {
+        await message.reply(`${defender.username} is unconcious!`);
+      }
     } else {
-      await message.reply(`Miss! They're still at ${getHP(defender.id)}`);
+      await message.reply(
+        `Miss! ${defender.username} is still at ${getHP(defender.id)}.`
+      );
     }
     console.timeEnd("attack");
   }
