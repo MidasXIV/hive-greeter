@@ -48,7 +48,10 @@ client.on("ready", () => {
 });
 client.on("interactionCreate", async (interaction) => {
   if (!interaction.isCommand()) return;
+  console.log("interactionCreate");
+  console.time(interaction.commandName);
   await commands.get(interaction.commandName).execute(interaction);
+  console.timeEnd(interaction.commandName);
 });
 client.on("error", (e) => {
   console.error("Discord client error!", e);

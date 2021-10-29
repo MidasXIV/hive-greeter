@@ -1,12 +1,12 @@
 import { SlashCommandBuilder } from "@discordjs/builders";
 import { CommandInteraction } from "discord.js";
-import { attack, getHP } from "../db";
+import { heal, getHP } from "../db";
 
 export const command = new SlashCommandBuilder()
-  .setName("attack")
-  .setDescription("Make an attack")
+  .setName("heal")
+  .setDescription("Heal someone")
   .addUserOption((option) =>
-    option.setName("target").setDescription("Whom to attack").setRequired(true)
+    option.setName("target").setDescription("Whom to heal").setRequired(true)
   );
 
 export const execute = async (
@@ -19,25 +19,17 @@ export const execute = async (
     return;
   }
 
-  const result = attack(initiator.id, target.id);
+  const result = heal(initiator.id, target.id);
   switch (result.outcome) {
-    case "hit":
+    case "cooldown":
+      await interaction.reply(`You can't do that yet.`);
+      break;
+    case "healed":
       await interaction.reply(
-        `You hit ${target.username} for ${result.damage}! ${
+        `${target.username} for ${result.amount}! ${
           target.username
         } is now at ${getHP(target.id)}.`
       );
-      if (getHP(target.id) <= 0) {
-        await interaction.reply(`${target.username} is unconcious!`);
-      }
-      break;
-    case "miss":
-      await interaction.reply(
-        `Miss! ${target.username} is still at ${getHP(target.id)}.`
-      );
-      break;
-    case "cooldown":
-      await interaction.reply(`You can't do that yet.`);
       break;
   }
 };
