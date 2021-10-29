@@ -60,7 +60,7 @@ client.on("message", (message: Message) => {
 client.on("interactionCreate", async (interaction) => {
   if (!interaction.isCommand()) return;
   if (interaction.commandName == "attack") {
-    commands.attack.execute(interaction);
+    await commands.attack.execute(interaction);
   }
   // await interaction.reply("Pong!");
 });
