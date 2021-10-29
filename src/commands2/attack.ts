@@ -2,9 +2,6 @@ import { SlashCommandBuilder } from "@discordjs/builders";
 import { CommandInteraction } from "discord.js";
 import { attack, getHP } from "../db";
 
-// todo: https://discordjs.guide/interactions/registering-slash-commands.html#subcommands
-// use addUserOption to specify target
-
 export const command = new SlashCommandBuilder()
   .setName("attack")
   .setDescription("Make an attack")
