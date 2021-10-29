@@ -8,40 +8,35 @@ import { attack, getHP } from "../db";
 export const command = new SlashCommandBuilder()
   .setName("attack")
   .setDescription("Make an attack")
-  .addSubcommand((subCommand) =>
-    subCommand
-      .setName("target")
-      .setDescription("Whom do you wish to attack?")
-      .addUserOption((option) =>
-        option.setName("target").setDescription("Whom to attack")
-      )
+  .addUserOption((option) =>
+    option.setName("target").setDescription("Whom to attack").setRequired(true)
   );
 
 export const execute = async (
   interaction: CommandInteraction
 ): Promise<void> => {
-  const defender = interaction.options.data[0].options?.[0].user;
-  const attacker = interaction.member.user;
-  if (!defender) {
+  const target = interaction.options.data[0].user;
+  const initiator = interaction.member.user;
+  if (!target) {
     await interaction.reply(`You must specify a target @player`);
     return;
   }
 
-  const result = attack(attacker.id, defender.id);
+  const result = attack(initiator.id, target.id);
   switch (result.outcome) {
     case "hit":
       await interaction.reply(
-        `You hit ${defender.username} for ${result.damage}! ${
-          defender.username
-        } is now at ${getHP(defender.id)}.`
+        `You hit ${target.username} for ${result.damage}! ${
+          target.username
+        } is now at ${getHP(target.id)}.`
       );
-      if (getHP(defender.id) <= 0) {
-        await interaction.reply(`${defender.username} is unconcious!`);
+      if (getHP(target.id) <= 0) {
+        await interaction.reply(`${target.username} is unconcious!`);
       }
       break;
     case "miss":
       await interaction.reply(
-        `Miss! ${defender.username} is still at ${getHP(defender.id)}.`
+        `Miss! ${target.username} is still at ${getHP(target.id)}.`
       );
       break;
     case "cooldown":

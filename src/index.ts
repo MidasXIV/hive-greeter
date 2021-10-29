@@ -1,5 +1,4 @@
 import { REST } from "@discordjs/rest";
-import { SlashCommandBuilder } from "@discordjs/builders";
 import express, { Request, Response } from "express";
 import Discord, { Intents, Message } from "discord.js";
 import { DISCORD_TOKEN } from "./config/secrets";
@@ -23,7 +22,9 @@ const rest = new REST({ version: "9" }).setToken(process.env.token);
         process.env.GUILD_ID
       ),
       {
-        body: Object.values(commands).map(({ command }) => command.toJSON()),
+        body: Array.from(commands.values()).map(({ command }) =>
+          command.toJSON()
+        ),
       }
     );
     console.log("Updating commands complete");
@@ -59,10 +60,7 @@ client.on("message", (message: Message) => {
 });
 client.on("interactionCreate", async (interaction) => {
   if (!interaction.isCommand()) return;
-  if (interaction.commandName == "attack") {
-    await commands.attack.execute(interaction);
-  }
-  // await interaction.reply("Pong!");
+  await commands.get(interaction.commandName).execute(interaction);
 });
 client.on("error", (e) => {
   console.error("Discord client error!", e);
