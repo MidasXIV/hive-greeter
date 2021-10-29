@@ -1,18 +1,7 @@
-/** Intermediate module file for exporting all commands
- * Makes importing several commands simpler
- *
- * before:
- * import { EchoCommand } from "./commands/echoCommand";
- * import { NextCommand } from "./commands/nextCommand";
- *
- * now:
- * import { EchoCommand, NextCommand } from "./commands";
- *
- * DO NOT export command classes using default
- */
+import attack from "./attack";
+import hp from "./hp";
 
-export * from "./greetCommand";
-export * from "./timeCommand";
-export * from "./botinvasionCommand";
-export * from "./hpCommand";
-export * from "./attackCommand";
+const commands = new Map();
+commands.set("attack", attack);
+commands.set("hp", hp);
+export default commands;
