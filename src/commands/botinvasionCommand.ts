@@ -15,7 +15,7 @@ export class BotinvasionCommand implements Command {
 
   async run(message: Message): Promise<void> {
     console.time("invade");
-    await message.reply("BEEP BOOP THIS IS A TAKEOVER!", {
+    await message.reply({
       files: [gifFile],
     });
     console.timeEnd("invade");
