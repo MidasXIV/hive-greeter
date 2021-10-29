@@ -38,24 +38,13 @@ const PORT = process.env.PORT || 5000;
 const app = express();
 const client = new Discord.Client({ intents: [Intents.FLAGS.GUILDS] });
 
-//////////////////////////////////////////////////////////////////
-//             EXPRESS SERVER SETUP FOR UPTIME ROBOT            //
-//////////////////////////////////////////////////////////////////
+// express server for uptime robots
 app.use("/", (request: Request, response: Response) => {
   response.sendStatus(200);
 });
 
-//////////////////////////////////////////////////////////////////
-//                    DISCORD CLIENT LISTENERS                  //
-//////////////////////////////////////////////////////////////////
-// Discord Events: https://discord.js.org/#/docs/main/stable/class/Client?scrollTo=e-channelCreate
-
 client.on("ready", () => {
   console.log("Zaxnyd bot lives!");
-});
-client.on("interactionCreate", async (interaction) => {
-  if (!interaction.isCommand()) return;
-  await commands.get(interaction.commandName).execute(interaction);
 });
 client.on("interactionCreate", async (interaction) => {
   if (!interaction.isCommand()) return;
