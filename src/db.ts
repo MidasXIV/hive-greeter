@@ -2,6 +2,7 @@ type Player = {
   id: string;
   hp: number;
   ac: number;
+  lastAction?: Date;
 };
 type DB = {
   players: Map<string, Player>;
@@ -34,16 +35,32 @@ export const damage = (playerId: string, amount: number): Player => {
   return getPlayer(playerId);
 };
 
-type AttackResult = { hit: true; damage: number } | { hit: false };
+const isPlayerOnCooldown = (playerId: string): boolean => {
+  const cooldown = 60000;
+  const player = getPlayer(playerId);
+  return Boolean(
+    player.lastAction && cooldown > Date.now() - player.lastAction.valueOf()
+  );
+};
+
+type AttackResult =
+  | { outcome: "hit"; damage: number }
+  | { outcome: "miss" }
+  | { outcome: "cooldown" };
 
 export const attack = (
   attackerId: string,
   defenderId: string
 ): AttackResult => {
+  const attacker = getPlayer(attackerId);
+  if (isPlayerOnCooldown(attackerId)) {
+    return { outcome: "cooldown" };
+  }
+  db.players.set(attackerId, { ...attacker, lastAction: new Date() });
   if (Math.random() > 0.5) {
     const damageAmount = Math.ceil(Math.random() * 6);
     damage(defenderId, damageAmount);
-    return { hit: true, damage: damageAmount };
+    return { outcome: "hit", damage: damageAmount };
   }
-  return { hit: false };
+  return { outcome: "miss" };
 };
