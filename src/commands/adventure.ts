@@ -1,6 +1,13 @@
 import { SlashCommandBuilder } from "@discordjs/builders";
 import { CommandInteraction } from "discord.js";
-import { adjustHP, getPlayer, levelup, setCooldown, trap } from "../db";
+import {
+  adjustHP,
+  getPlayer,
+  isPlayerOnCooldown,
+  levelup,
+  setCooldown,
+  trap,
+} from "../db";
 import { sleep } from "../utils";
 
 export const command = new SlashCommandBuilder()
@@ -16,6 +23,9 @@ export const execute = async (
   if (player.hp === 0) {
     await interaction.reply(`You're too weak to press on.`);
     return;
+  }
+  if (isPlayerOnCooldown(player.id)) {
+    await interaction.reply(`You can't do that yet.`);
   }
   setCooldown(initiator.id);
   if (roll >= 0.95) {
@@ -35,8 +45,8 @@ export const execute = async (
   }
   if (roll >= 0.3) {
     const result = trap(initiator.id);
-    await interaction.reply(`It's a trap!`);
-    await sleep(1000);
+    await interaction.reply(`It's a trap! ...`);
+    await sleep(2000);
     switch (result.outcome) {
       case "hit":
         await interaction.followUp(

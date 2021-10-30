@@ -57,7 +57,7 @@ export const adjustHP = (playerId: string, amount: number): Player => {
   return getPlayer(playerId);
 };
 
-const isPlayerOnCooldown = (playerId: string): boolean => {
+export const isPlayerOnCooldown = (playerId: string): boolean => {
   const cooldown = 60000;
   const player = getPlayer(playerId);
   return Boolean(
