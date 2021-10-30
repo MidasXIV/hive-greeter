@@ -4,6 +4,7 @@ type Player = {
   maxHP: number;
   ac: number;
   lastAction?: Date;
+  level: number;
 };
 type DB = {
   players: Map<string, Player>;
@@ -11,6 +12,15 @@ type DB = {
 const db: DB = { players: new Map() };
 
 export const getHP = (playerId: string): number => getPlayer(playerId).hp;
+
+export const levelup = (playerId: string): void => {
+  const player = getPlayer(playerId);
+  db.players.set(playerId, {
+    ...player,
+    maxHP: player.maxHP + 1,
+    hp: player.hp + 1,
+  });
+};
 
 export const getPlayer = (playerId: string): Player => {
   const player = db.players.get(playerId);
@@ -20,8 +30,14 @@ export const getPlayer = (playerId: string): Player => {
   return player;
 };
 
+export const setCooldown = (playerId: string): Player => {
+  const player = getPlayer(playerId);
+  db.players.set(playerId, { ...player, lastAction: new Date() });
+  return player;
+};
+
 export const createPlayer = (playerId: string): Player => {
-  const player = { id: playerId, hp: 10, ac: 10, maxHP: 10 };
+  const player = { id: playerId, hp: 10, ac: 10, maxHP: 10, level: 1 };
   db.players.set(playerId, player);
   console.log(`created ${playerId}`);
   return player;
@@ -63,6 +79,17 @@ export const attack = (initiatorId: string, targetId: string): AttackResult => {
   if (Math.random() > 0.5) {
     const damageAmount = Math.ceil(Math.random() * 6);
     adjustHP(targetId, -damageAmount);
+    return { outcome: "hit", damage: damageAmount };
+  }
+  return { outcome: "miss" };
+};
+
+type TrapResult = { outcome: "hit"; damage: number } | { outcome: "miss" };
+
+export const trap = (playerId: string): TrapResult => {
+  if (Math.random() > 0.5) {
+    const damageAmount = Math.ceil(Math.random() * 6);
+    adjustHP(playerId, -damageAmount);
     return { outcome: "hit", damage: damageAmount };
   }
   return { outcome: "miss" };

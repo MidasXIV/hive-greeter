@@ -23,17 +23,17 @@ export const execute = async (
   switch (result.outcome) {
     case "hit":
       await interaction.reply(
-        `You hit ${target.username} for ${result.damage}! ${
-          target.username
-        } is now at ${getHP(target.id)}.`
+        `You hit ${target} for ${result.damage}! ${target} is now at ${getHP(
+          target.id
+        )}.`
       );
       if (getHP(target.id) <= 0) {
-        await interaction.reply(`${target.username} is unconcious!`);
+        await interaction.reply(`${target} is unconcious!`);
       }
       break;
     case "miss":
       await interaction.reply(
-        `Miss! ${target.username} is still at ${getHP(target.id)}.`
+        `Miss! ${target} is still at ${getHP(target.id)}.`
       );
       break;
     case "cooldown":

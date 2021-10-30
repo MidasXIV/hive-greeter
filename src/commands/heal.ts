@@ -26,9 +26,9 @@ export const execute = async (
       break;
     case "healed":
       await interaction.reply(
-        `${target.username} for ${result.amount}! ${
-          target.username
-        } is now at ${getHP(target.id)}.`
+        `Healed ${target} for ${result.amount}! ${target} is now at ${getHP(
+          target.id
+        )}.`
       );
       break;
   }
