@@ -1,6 +1,7 @@
 import { SlashCommandBuilder } from "@discordjs/builders";
-import { CommandInteraction, MessageEmbed, Options } from "discord.js";
-import { getHP, getMaxHP, setProfile } from "../db";
+import { CommandInteraction } from "discord.js";
+import { setProfile } from "../db";
+import { execute as inspect } from "./inspect";
 
 export const command = new SlashCommandBuilder()
   .setName("set")
@@ -18,21 +19,8 @@ export const execute = async (
   const url = interaction.options.data[0].value?.toString();
   if (!url) return;
   setProfile(interaction.user.id, url);
-  interaction.reply({
-    embeds: [
-      new MessageEmbed()
-        .setTitle("Orc")
-        .setThumbnail(url)
-        .addFields([
-          {
-            name: "HP",
-            value: `${getHP(interaction.user.id)}/${getMaxHP(
-              interaction.user.id
-            )}`,
-          },
-        ]),
-    ],
-  });
+
+  await inspect(interaction);
 };
 
 export default { command, execute };

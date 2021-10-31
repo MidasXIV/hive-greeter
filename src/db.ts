@@ -139,7 +139,7 @@ export const heal = (initiatorId: string, targetId: string): HealResult => {
 };
 
 export const setProfile = (id: string, url: string): Character | undefined => {
-  const character = db.characters.get(id);
+  const character = getCharacter(id);
   if (!character) return;
   db.characters.set(id, { ...character, profile: url });
   return character;
