@@ -4,7 +4,7 @@ import {
   MessageAttachment,
   MessageEmbed,
 } from "discord.js";
-import { getCharacter } from "../db";
+import { Character, getUserCharacter } from "../db";
 
 export const command = new SlashCommandBuilder()
   .setName("inspect")
@@ -19,37 +19,37 @@ export const execute = async (
   const user =
     (interaction.options.data[0] && interaction.options.data[0].user) ||
     interaction.user;
-  const character = getCharacter(user.id);
+  const character = getUserCharacter(user);
   interaction.reply({
     files: [new MessageAttachment("./profile.png")],
-    embeds: [
-      new MessageEmbed()
-        .setTitle(user.username)
-        .setImage(character.profile || "attachment://profile.png")
-        .addFields([
-          {
-            name: "HP",
-            value: `${character.hp}/${character.maxHP}`,
-          },
-          {
-            name: "AC",
-            value: `${character.ac}`,
-          },
-          {
-            name: "Attack Bonus",
-            value: `${character.attackBonus}`,
-          },
-          {
-            name: "Last Action",
-            value: `${character.lastAction}`,
-          },
-          {
-            name: "Profile",
-            value: `${character.profile}`,
-          },
-        ]),
-    ],
+    embeds: [characterEmbed(character)],
   });
 };
 
 export default { command, execute };
+export const characterEmbed = (character: Character): MessageEmbed =>
+  new MessageEmbed()
+    .setTitle(character.name)
+    .setImage(character.profile || "attachment://profile.png")
+    .addFields([
+      {
+        name: "HP",
+        value: `${character.hp}/${character.maxHP}`,
+      },
+      {
+        name: "AC",
+        value: `${character.ac}`,
+      },
+      {
+        name: "Attack Bonus",
+        value: `${character.attackBonus}`,
+      },
+      {
+        name: "Last Action",
+        value: `${character.lastAction}`,
+      },
+      {
+        name: "Profile",
+        value: `${character.profile}`,
+      },
+    ]);

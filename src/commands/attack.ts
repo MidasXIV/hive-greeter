@@ -1,6 +1,6 @@
 import { SlashCommandBuilder } from "@discordjs/builders";
-import { CommandInteraction, User } from "discord.js";
-import { attack, getHP, getCharacter } from "../db";
+import { CommandInteraction, MessageEmbed } from "discord.js";
+import { attack, getUserCharacter } from "../db";
 
 export const command = new SlashCommandBuilder()
   .setName("attack")
@@ -13,40 +13,99 @@ export const execute = async (
   interaction: CommandInteraction
 ): Promise<void> => {
   const target = interaction.options.data[0].user;
-  const initiator = interaction.member.user;
+  const initiator = interaction.user;
   if (!target) {
     await interaction.reply(`You must specify a target @player`);
     return;
   }
-
-  const result = attack(initiator.id, target.id);
-  await showAttackResult(result, interaction, target);
+  const attacker = getUserCharacter(initiator);
+  const defender = getUserCharacter(target);
+  const result = attack(attacker, defender);
+  await showAttackResult(result, interaction);
 };
 
 export default { command, execute };
 
-export const showAttackResult = async (
+const showAttackResult = async (
   result: ReturnType<typeof attack>,
-  interaction: CommandInteraction,
-  target: User
+  interaction: CommandInteraction
 ): Promise<void> => {
-  const targetPlayer = getCharacter(target.id);
+  await interaction.reply({ embeds: [attackResultEmbed(result)] });
+  // case "cooldown":
+  //   await interaction.reply(`You can't do that yet.`);
+  //   break;
+};
+
+const accuracyDescriptor = (result: ReturnType<typeof attack>) => {
+  const accuracy =
+    result.attackRoll + result.attacker.attackBonus - result.defender.ac;
+  switch (true) {
+    case accuracy >= 5:
+      return `${result.attacker.name} strikes ${result.defender.name} true`;
+    case accuracy >= 2:
+      return `${result.attacker.name} finds purchase against ${result.defender.name}`;
+    case accuracy >= 1:
+      return `${result.attacker.name} narrowly hits ${result.defender.name}`;
+    case accuracy === 0:
+      return `${result.attacker.name} barely hits ${result.defender.name}`;
+    case accuracy <= 1:
+      return `${result.attacker.name} narrowly misses ${result.defender.name}`;
+    case accuracy <= 2:
+      return `${result.attacker.name} misses ${result.defender.name}`;
+    case accuracy < 5:
+      return `${result.attacker.name} misses ${result.defender.name} utterly`;
+  }
+};
+
+const damageDescriptor = (result: ReturnType<typeof attack>) => {
+  if (result.outcome !== "hit") return "with a wide swing";
+  const damage = result.damage;
+  switch (true) {
+    case damage > 5:
+      return "with a devastating blow!";
+    case damage > 2:
+      return "with a solid strike.";
+    default:
+      return "with a weak hit.";
+  }
+};
+
+export const attackFlavorText = (result: ReturnType<typeof attack>): string => {
+  return `${accuracyDescriptor(result)} ${
+    result.outcome === "hit" ? damageDescriptor(result) : ""
+  }`;
+};
+
+export const hpText = (result: ReturnType<typeof attack>): string =>
+  `${result.defender.hp}/${result.defender.maxHP} ${
+    result.defender.hp <= 0 ? "(unconscious)" : ""
+  }`;
+
+export const attackRollText = (result: ReturnType<typeof attack>): string =>
+  `${result.attackRoll}+${result.attacker.attackBonus} (${
+    result.attackRoll + result.attacker.attackBonus
+  }) vs ${result.defender.ac} ac`;
+
+const attackResultEmbed = (result: ReturnType<typeof attack>): MessageEmbed => {
+  const embed = new MessageEmbed().setDescription(attackFlavorText(result));
   switch (result.outcome) {
     case "hit":
-      await interaction.reply(
-        `You hit ${target} for ${result.damage}! ${target} is now at ${targetPlayer.hp}/${targetPlayer.maxHP}.`
-      );
-      if (getHP(target.id) <= 0) {
-        await interaction.reply(`${target} is unconcious!`);
-      }
+      embed.setImage("https://i.imgur.com/rM6yWps.png");
       break;
     case "miss":
-      await interaction.reply(
-        `Miss! ${target} is still at ${targetPlayer.hp}/${targetPlayer.maxHP}.`
-      );
+      embed.setImage("https://i.imgur.com/xVlTNQm.png");
       break;
-    // case "cooldown":
-    //   await interaction.reply(`You can't do that yet.`);
-    //   break;
   }
+  embed.addFields([
+    {
+      name: `${result.defender.name} HP`,
+      value: hpText(result),
+    },
+    {
+      name: `Attack Roll`,
+      value: attackRollText(result),
+    },
+  ]);
+
+  return embed;
 };

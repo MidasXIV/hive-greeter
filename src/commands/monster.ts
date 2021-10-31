@@ -1,7 +1,13 @@
 import { SlashCommandBuilder } from "@discordjs/builders";
-import { randomUUID } from "crypto";
 import { CommandInteraction, Message, MessageEmbed } from "discord.js";
-import { getHP, getMaxHP, attack } from "../db";
+import {
+  attack,
+  getCharacter,
+  createCharacter,
+  Character,
+  getUserCharacter,
+} from "../db";
+import { attackFlavorText, attackRollText } from "./attack";
 
 export const command = new SlashCommandBuilder()
   .setName("monster")
@@ -10,19 +16,22 @@ export const command = new SlashCommandBuilder()
 export const execute = async (
   interaction: CommandInteraction
 ): Promise<void> => {
-  // const initiator = interaction.member.user;
-
-  const monsterId = randomUUID();
+  // TODO: explore do/while refactor
+  let monster = createCharacter({
+    name: "Orc",
+    profile: "https://i.imgur.com/2cT3cLm.jpeg",
+  });
+  let player = getUserCharacter(interaction.user);
   let round = 0;
   let fled = false;
   let timeout = false;
   const message = await interaction.reply({
-    embeds: [monsterEmbed(monsterId)],
+    embeds: [monsterEmbed(monster)],
     fetchReply: true,
   });
   if (!(message instanceof Message)) return;
 
-  while (getHP(monsterId) > 0 && !fled && !timeout) {
+  while (monster.hp > 0 && !fled && !timeout) {
     round++;
     await message.react("⚔");
     await message.react("🏃‍♀️");
@@ -47,10 +56,16 @@ export const execute = async (
       fled = true;
     }
 
-    const playerResult = attack(interaction.user.id, monsterId);
-    const enemyResult = attack(monsterId, interaction.user.id);
+    const playerResult = attack(player, monster);
+    const enemyResult = attack(monster, player);
 
-    // await reaction.remove();
+    const updatedMonster = getCharacter(monster.id);
+    const updatedPlayer = getCharacter(player.id);
+    if (!updatedMonster || !updatedPlayer || !playerResult || !enemyResult)
+      return;
+    monster = updatedMonster;
+    player = updatedPlayer;
+
     const userReactions = message.reactions.cache.filter((reaction) =>
       reaction.users.cache.has(interaction.user.id)
     );
@@ -62,41 +77,35 @@ export const execute = async (
     } catch (error) {
       console.error("Failed to remove reactions.");
     }
-
+    console.log({ monsterProfile: monster.profile });
     message.edit({
       embeds: [
-        monsterEmbed(monsterId)
+        monsterEmbed(monster)
           .addField("Round", round.toString())
-          .addField(
-            "Orc",
-            enemyResult.outcome == "hit"
-              ? `hit (${enemyResult.attackRoll}) for ${enemyResult.damage}!`
-              : `missed!  (${enemyResult.attackRoll})`
-          )
-          .addField(
-            "You",
-            playerResult.outcome == "hit"
-              ? `hit (${playerResult.attackRoll}) ${playerResult.damage}!`
-              : `missed!`
-          ),
+          .addField(monster.name, attackFlavorText(enemyResult))
+          .addField(monster.name, attackRollText(enemyResult))
+          .addField(player.name, attackFlavorText(playerResult))
+          .addField(player.name, attackRollText(playerResult)),
       ],
     });
   }
 
   if (fled) await message.reply(`You escape with your life!`);
-  if (getHP(monsterId) === 0) await message.reply(`You defeated the monster!`);
-  if (getHP(interaction.member.user.id) === 0)
+  if (monster.hp === 0) await message.reply(`You defeated the monster!`);
+  if (getUserCharacter(interaction.user).hp === 0)
     await message.reply(`You were defeated!`);
+
+  // TODO: reward, xp? loot?
 };
 
-const monsterEmbed = (monsterId: string) =>
+const monsterEmbed = (monster: Character) =>
   new MessageEmbed()
-    .setTitle("Orc")
-    .setThumbnail("https://i.imgur.com/2cT3cLm.jpeg")
+    .setTitle(monster.name)
+    .setThumbnail(monster.profile)
     .addFields([
       {
         name: "HP",
-        value: `${getHP(monsterId)}/${getMaxHP(monsterId)}`,
+        value: `${monster.hp}/${monster.maxHP}`,
       },
     ]);
 

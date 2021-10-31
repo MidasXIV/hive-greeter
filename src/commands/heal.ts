@@ -20,6 +20,7 @@ export const execute = async (
   }
 
   const result = heal(initiator.id, target.id);
+  if (!result) return;
   switch (result.outcome) {
     case "cooldown":
       await interaction.reply(`You can't do that yet.`);
