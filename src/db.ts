@@ -1,98 +1,124 @@
-type Player = {
+import { randomUUID } from "crypto";
+
+type Character = {
   id: string;
   hp: number;
   maxHP: number;
   ac: number;
   lastAction?: Date;
   level: number;
+  attackBonus: number;
 };
 type DB = {
-  players: Map<string, Player>;
+  characters: Map<string, Character>;
 };
-const db: DB = { players: new Map() };
+const db: DB = { characters: new Map() };
 
-export const getHP = (playerId: string): number => getPlayer(playerId).hp;
+export const getHP = (characterId: string): number =>
+  getCharacter(characterId).hp;
+export const getMaxHP = (characterId: string): number =>
+  getCharacter(characterId).maxHP;
 
-export const levelup = (playerId: string): void => {
-  const player = getPlayer(playerId);
-  db.players.set(playerId, {
-    ...player,
-    maxHP: player.maxHP + 1,
-    hp: player.hp + 1,
+export const levelup = (characterId: string): void => {
+  const character = getCharacter(characterId);
+  db.characters.set(characterId, {
+    ...character,
+    maxHP: character.maxHP + 1,
+    hp: character.hp + 1,
   });
 };
 
-export const getPlayer = (playerId: string): Player => {
-  const player = db.players.get(playerId);
-  if (!player) {
-    return createPlayer(playerId);
+export const getCharacter = (id: string): Character => {
+  const character = db.characters.get(id);
+  if (!character) {
+    return createCharacter({ id });
   }
-  return player;
+  return character;
 };
 
-export const setCooldown = (playerId: string): Player => {
-  const player = getPlayer(playerId);
-  db.players.set(playerId, { ...player, lastAction: new Date() });
-  return player;
+export const setCooldown = (characterId: string): Character => {
+  const character = getCharacter(characterId);
+  db.characters.set(characterId, { ...character, lastAction: new Date() });
+  return character;
 };
 
-export const createPlayer = (playerId: string): Player => {
-  const player = { id: playerId, hp: 10, ac: 10, maxHP: 10, level: 1 };
-  db.players.set(playerId, player);
-  console.log(`created ${playerId}`);
-  return player;
+export const createCharacter = (character?: Partial<Character>): Character => {
+  const newCharacter: Character = {
+    ...character,
+    id: character?.id || randomUUID(),
+    hp: 10,
+    ac: 10,
+    maxHP: 10,
+    level: 1,
+    attackBonus: 1,
+  };
+  db.characters.set(newCharacter.id, newCharacter);
+  console.log(`created ${newCharacter.id}`);
+  return newCharacter;
 };
 
-export const adjustHP = (playerId: string, amount: number): Player => {
-  const player = getPlayer(playerId);
+export const adjustHP = (characterId: string, amount: number): Character => {
+  const character = getCharacter(characterId);
 
-  let newHp = player.hp + amount;
+  let newHp = character.hp + amount;
   if (newHp < 0) newHp = 0;
-  if (newHp > player.maxHP) newHp = player.maxHP;
+  if (newHp > character.maxHP) newHp = character.maxHP;
 
-  db.players.set(playerId, {
-    ...player,
+  db.characters.set(characterId, {
+    ...character,
     hp: newHp,
   });
-  return getPlayer(playerId);
+  return getCharacter(characterId);
 };
 
-export const isPlayerOnCooldown = (playerId: string): boolean => {
-  const cooldown = 60000;
-  const player = getPlayer(playerId);
+export const isCharacterOnCooldown = (characterId: string): boolean => {
+  const cooldown = 1000;
+  const character = getCharacter(characterId);
   return Boolean(
-    player.lastAction && cooldown > Date.now() - player.lastAction.valueOf()
+    character.lastAction &&
+      cooldown > Date.now() - character.lastAction.valueOf()
   );
 };
 
 type AttackResult =
-  | { outcome: "hit"; damage: number }
-  | { outcome: "miss" }
-  | { outcome: "cooldown" };
+  | { outcome: "hit"; attackRoll: number; damage: number }
+  | { outcome: "miss"; attackRoll: number };
+// | { outcome: "cooldown" };
 
-export const attack = (initiatorId: string, targetId: string): AttackResult => {
-  const attacker = getPlayer(initiatorId);
-  if (isPlayerOnCooldown(initiatorId)) {
-    return { outcome: "cooldown" };
+const d20 = () => Math.ceil(Math.random() * 20);
+const d6 = () => Math.ceil(Math.random() * 6);
+
+export const attack = (
+  attackerId: string,
+  defenderId: string
+): AttackResult => {
+  const attacker = getCharacter(attackerId);
+  const defender = getCharacter(defenderId);
+  // if (isCharacterOnCooldown(attackerId)) {
+  //   return { outcome: "cooldown" };
+  // }
+  db.characters.set(attackerId, { ...attacker, lastAction: new Date() });
+  const attackRoll = d20();
+  if (attackRoll + attacker.attackBonus > defender.ac) {
+    const damage = d6();
+    adjustHP(defenderId, -damage);
+    return { outcome: "hit", damage, attackRoll };
   }
-  db.players.set(initiatorId, { ...attacker, lastAction: new Date() });
-  if (Math.random() > 0.5) {
-    const damageAmount = Math.ceil(Math.random() * 6);
-    adjustHP(targetId, -damageAmount);
-    return { outcome: "hit", damage: damageAmount };
-  }
-  return { outcome: "miss" };
+  return { outcome: "miss", attackRoll };
 };
 
-type TrapResult = { outcome: "hit"; damage: number } | { outcome: "miss" };
+type TrapResult =
+  | { outcome: "hit"; attack: number; damage: number }
+  | { outcome: "miss"; attack: number };
 
-export const trap = (playerId: string): TrapResult => {
-  if (Math.random() > 0.5) {
-    const damageAmount = Math.ceil(Math.random() * 6);
-    adjustHP(playerId, -damageAmount);
-    return { outcome: "hit", damage: damageAmount };
+export const trap = (characterId: string): TrapResult => {
+  const attack = d20();
+  if (attack > 10) {
+    const damage = d6();
+    adjustHP(characterId, -damage);
+    return { outcome: "hit", attack, damage };
   }
-  return { outcome: "miss" };
+  return { outcome: "miss", attack };
 };
 
 type HealResult =
@@ -100,11 +126,10 @@ type HealResult =
   | { outcome: "cooldown" };
 
 export const heal = (initiatorId: string, targetId: string): HealResult => {
-  const healer = getPlayer(initiatorId);
-  if (isPlayerOnCooldown(initiatorId)) {
-    return { outcome: "cooldown" };
-  }
-  db.players.set(initiatorId, { ...healer, lastAction: new Date() });
+  if (isCharacterOnCooldown(initiatorId)) return { outcome: "cooldown" };
+
+  const healer = getCharacter(initiatorId);
+  db.characters.set(initiatorId, { ...healer, lastAction: new Date() });
   const amount = Math.ceil(Math.random() * 6);
   adjustHP(targetId, amount);
   return { outcome: "healed", amount };

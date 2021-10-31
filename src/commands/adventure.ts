@@ -2,8 +2,8 @@ import { SlashCommandBuilder } from "@discordjs/builders";
 import { CommandInteraction } from "discord.js";
 import {
   adjustHP,
-  getPlayer,
-  isPlayerOnCooldown,
+  getCharacter,
+  isCharacterOnCooldown,
   levelup,
   setCooldown,
   trap,
@@ -19,12 +19,12 @@ export const execute = async (
 ): Promise<void> => {
   const initiator = interaction.member.user;
   const roll = Math.random();
-  const player = getPlayer(initiator.id);
+  const player = getCharacter(initiator.id);
   if (player.hp === 0) {
     await interaction.reply(`You're too weak to press on.`);
     return;
   }
-  if (isPlayerOnCooldown(player.id)) {
+  if (isCharacterOnCooldown(player.id)) {
     await interaction.reply(`You can't do that yet.`);
   }
   setCooldown(initiator.id);
