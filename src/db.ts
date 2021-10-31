@@ -47,7 +47,7 @@ export const getUserCharacter = (user: User): Character => {
     return createCharacter({
       id: user.id,
       name: user.username,
-      profile: user.avatar || defaultProfile,
+      profile: user.avatarURL() || defaultProfile,
       user,
     });
   }

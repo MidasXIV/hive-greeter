@@ -1,9 +1,5 @@
 import { SlashCommandBuilder } from "@discordjs/builders";
-import {
-  CommandInteraction,
-  MessageAttachment,
-  MessageEmbed,
-} from "discord.js";
+import { CommandInteraction, MessageEmbed } from "discord.js";
 import { Character, getUserCharacter } from "../db";
 
 export const command = new SlashCommandBuilder()
@@ -21,7 +17,6 @@ export const execute = async (
     interaction.user;
   const character = getUserCharacter(user);
   interaction.reply({
-    files: [new MessageAttachment("./profile.png")],
     embeds: [characterEmbed(character)],
   });
 };
@@ -30,7 +25,7 @@ export default { command, execute };
 export const characterEmbed = (character: Character): MessageEmbed =>
   new MessageEmbed()
     .setTitle(character.name)
-    .setImage(character.profile || "attachment://profile.png")
+    .setImage(character.profile)
     .addFields([
       {
         name: "HP",
