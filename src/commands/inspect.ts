@@ -4,7 +4,7 @@ import {
   MessageAttachment,
   MessageEmbed,
 } from "discord.js";
-import { getCharacter, getHP, getMaxHP } from "../db";
+import { getCharacter } from "../db";
 
 export const command = new SlashCommandBuilder()
   .setName("inspect")
@@ -16,8 +16,9 @@ export const command = new SlashCommandBuilder()
 export const execute = async (
   interaction: CommandInteraction
 ): Promise<void> => {
-  const user = interaction.options.data[0].user ?? interaction.user;
-  console.log(user);
+  const user =
+    (interaction.options.data[0] && interaction.options.data[0].user) ||
+    interaction.user;
   const character = getCharacter(user.id);
   interaction.reply({
     files: [new MessageAttachment("./profile.png")],
