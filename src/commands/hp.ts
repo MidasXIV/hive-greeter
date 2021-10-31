@@ -1,6 +1,6 @@
 import { SlashCommandBuilder } from "@discordjs/builders";
-import { CommandInteraction } from "discord.js";
-import { getHP } from "../db";
+import { CommandInteraction, MessageEmbed } from "discord.js";
+import { getHP, getMaxHP } from "../db";
 
 export const command = new SlashCommandBuilder()
   .setName("hp")
@@ -12,13 +12,15 @@ export const command = new SlashCommandBuilder()
 export const execute = async (
   interaction: CommandInteraction
 ): Promise<void> => {
-  const initiator = interaction.member.user;
-  const target = interaction.options.data[0]?.user;
-  if (!target) {
-    await interaction.reply(`You have ${getHP(initiator.id)} health.`);
-    return;
-  }
-  await interaction.reply(`${target.username} has ${getHP(target.id)} health.`);
+  new MessageEmbed()
+    .setTitle("Orc")
+    .setThumbnail("https://i.imgur.com/2cT3cLm.jpeg")
+    .addFields([
+      {
+        name: "HP",
+        value: `${getHP(interaction.user.id)}/${getMaxHP(interaction.user.id)}`,
+      },
+    ]);
 };
 
 export default { command, execute };

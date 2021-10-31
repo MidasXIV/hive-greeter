@@ -9,9 +9,11 @@ type Character = {
   level: number;
   attackBonus: number;
 };
+
 type DB = {
   characters: Map<string, Character>;
 };
+
 const db: DB = { characters: new Map() };
 
 export const getHP = (characterId: string): number =>
