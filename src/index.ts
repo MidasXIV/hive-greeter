@@ -36,7 +36,13 @@ const rest = new REST({ version: "9" }).setToken(process.env.token);
 const PORT = process.env.PORT || 5000;
 
 const app = express();
-const client = new Discord.Client({ intents: [Intents.FLAGS.GUILDS] });
+const client = new Discord.Client({
+  intents: [
+    Intents.FLAGS.GUILDS,
+    Intents.FLAGS.GUILD_MESSAGES,
+    Intents.FLAGS.GUILD_MESSAGE_REACTIONS,
+  ],
+});
 
 // express server for uptime robots
 app.use("/", (request: Request, response: Response) => {
