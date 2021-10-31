@@ -25,7 +25,7 @@ export const execute = async (
     embeds: [
       new MessageEmbed()
         .setTitle(user.username)
-        .setImage("attachment://profile.png")
+        .setImage(character.profile || "attachment://profile.png")
         .addFields([
           {
             name: "HP",
@@ -42,6 +42,10 @@ export const execute = async (
           {
             name: "Last Action",
             value: `${character.lastAction}`,
+          },
+          {
+            name: "Profile",
+            value: `${character.profile}`,
           },
         ]),
     ],

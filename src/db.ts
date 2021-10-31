@@ -8,6 +8,7 @@ type Character = {
   lastAction?: Date;
   level: number;
   attackBonus: number;
+  profile?: string;
 };
 
 type DB = {
@@ -135,4 +136,11 @@ export const heal = (initiatorId: string, targetId: string): HealResult => {
   const amount = Math.ceil(Math.random() * 6);
   adjustHP(targetId, amount);
   return { outcome: "healed", amount };
+};
+
+export const setProfile = (id: string, url: string): Character | undefined => {
+  const character = db.characters.get(id);
+  if (!character) return;
+  db.characters.set(id, { ...character, profile: url });
+  return character;
 };
