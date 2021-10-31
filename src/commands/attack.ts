@@ -45,8 +45,8 @@ export const showAttackResult = async (
         `Miss! ${target} is still at ${targetPlayer.hp}/${targetPlayer.maxHP}.`
       );
       break;
-    case "cooldown":
-      await interaction.reply(`You can't do that yet.`);
-      break;
+    // case "cooldown":
+    //   await interaction.reply(`You can't do that yet.`);
+    //   break;
   }
 };

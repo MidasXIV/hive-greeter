@@ -72,7 +72,7 @@ export const adjustHP = (characterId: string, amount: number): Character => {
 };
 
 export const isCharacterOnCooldown = (characterId: string): boolean => {
-  const cooldown = 60000;
+  const cooldown = 1000;
   const character = getCharacter(characterId);
   return Boolean(
     character.lastAction &&
@@ -81,11 +81,12 @@ export const isCharacterOnCooldown = (characterId: string): boolean => {
 };
 
 type AttackResult =
-  | { outcome: "hit"; damage: number }
-  | { outcome: "miss" }
-  | { outcome: "cooldown" };
+  | { outcome: "hit"; attackRoll: number; damage: number }
+  | { outcome: "miss"; attackRoll: number };
+// | { outcome: "cooldown" };
 
 const d20 = () => Math.ceil(Math.random() * 20);
+const d6 = () => Math.ceil(Math.random() * 6);
 
 export const attack = (
   attackerId: string,
@@ -93,27 +94,31 @@ export const attack = (
 ): AttackResult => {
   const attacker = getCharacter(attackerId);
   const defender = getCharacter(defenderId);
-  if (isCharacterOnCooldown(attackerId)) {
-    return { outcome: "cooldown" };
-  }
+  // if (isCharacterOnCooldown(attackerId)) {
+  //   return { outcome: "cooldown" };
+  // }
   db.characters.set(attackerId, { ...attacker, lastAction: new Date() });
-  if (d20() + attacker.attackBonus > defender.ac) {
-    const damageAmount = Math.ceil(Math.random() * 6);
-    adjustHP(defenderId, -damageAmount);
-    return { outcome: "hit", damage: damageAmount };
+  const attackRoll = d20();
+  if (attackRoll + attacker.attackBonus > defender.ac) {
+    const damage = d6();
+    adjustHP(defenderId, -damage);
+    return { outcome: "hit", damage, attackRoll };
   }
-  return { outcome: "miss" };
+  return { outcome: "miss", attackRoll };
 };
 
-type TrapResult = { outcome: "hit"; damage: number } | { outcome: "miss" };
+type TrapResult =
+  | { outcome: "hit"; attack: number; damage: number }
+  | { outcome: "miss"; attack: number };
 
 export const trap = (characterId: string): TrapResult => {
-  if (Math.random() > 0.5) {
-    const damageAmount = Math.ceil(Math.random() * 6);
-    adjustHP(characterId, -damageAmount);
-    return { outcome: "hit", damage: damageAmount };
+  const attack = d20();
+  if (attack > 10) {
+    const damage = d6();
+    adjustHP(characterId, -damage);
+    return { outcome: "hit", attack, damage };
   }
-  return { outcome: "miss" };
+  return { outcome: "miss", attack };
 };
 
 type HealResult =
@@ -121,10 +126,9 @@ type HealResult =
   | { outcome: "cooldown" };
 
 export const heal = (initiatorId: string, targetId: string): HealResult => {
+  if (isCharacterOnCooldown(initiatorId)) return { outcome: "cooldown" };
+
   const healer = getCharacter(initiatorId);
-  if (isCharacterOnCooldown(initiatorId)) {
-    return { outcome: "cooldown" };
-  }
   db.characters.set(initiatorId, { ...healer, lastAction: new Date() });
   const amount = Math.ceil(Math.random() * 6);
   adjustHP(targetId, amount);

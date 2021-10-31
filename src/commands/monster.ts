@@ -1,7 +1,7 @@
 import { SlashCommandBuilder } from "@discordjs/builders";
 import { randomUUID } from "crypto";
 import { CommandInteraction, Message, MessageEmbed } from "discord.js";
-import { adjustHP, getHP, getMaxHP, attack } from "../db";
+import { getHP, getMaxHP, attack } from "../db";
 
 export const command = new SlashCommandBuilder()
   .setName("monster")
@@ -13,15 +13,17 @@ export const execute = async (
   // const initiator = interaction.member.user;
 
   const monsterId = randomUUID();
+  let round = 0;
   let fled = false;
   let timeout = false;
-  let message = await interaction.reply({
+  const message = await interaction.reply({
     embeds: [monsterEmbed(monsterId)],
     fetchReply: true,
   });
   if (!(message instanceof Message)) return;
 
   while (getHP(monsterId) > 0 && !fled && !timeout) {
+    round++;
     await message.react("⚔");
     await message.react("🏃‍♀️");
     const collected = await message
@@ -48,21 +50,33 @@ export const execute = async (
     const playerResult = attack(interaction.user.id, monsterId);
     const enemyResult = attack(monsterId, interaction.user.id);
 
-    await message.reactions.removeAll();
+    // await reaction.remove();
+    const userReactions = message.reactions.cache.filter((reaction) =>
+      reaction.users.cache.has(interaction.user.id)
+    );
+
+    try {
+      for (const reaction of userReactions.values()) {
+        await reaction.users.remove(interaction.user.id);
+      }
+    } catch (error) {
+      console.error("Failed to remove reactions.");
+    }
 
     message.edit({
       embeds: [
         monsterEmbed(monsterId)
+          .addField("Round", round.toString())
           .addField(
             "Orc",
             enemyResult.outcome == "hit"
-              ? `hit for ${enemyResult.damage}!`
-              : `missed!`
+              ? `hit (${enemyResult.attackRoll}) for ${enemyResult.damage}!`
+              : `missed!  (${enemyResult.attackRoll})`
           )
           .addField(
             "You",
             playerResult.outcome == "hit"
-              ? `hit ${playerResult.damage}!`
+              ? `hit (${playerResult.attackRoll}) ${playerResult.damage}!`
               : `missed!`
           ),
       ],
