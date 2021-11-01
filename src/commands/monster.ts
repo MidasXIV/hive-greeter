@@ -100,7 +100,11 @@ export const execute = async (
 };
 
 const attackField = (result: ReturnType<typeof attack>): [string, string] => [
-  result ? `${result.attacker.name}'s attack` : "No result.",
+  result
+    ? result.outcome === "cooldown"
+      ? "cooldown"
+      : `${result.attacker.name}'s attack`
+    : "No result.",
   result
     ? `${attackFlavorText(result)}\n\`${attackRollText(result)}\``
     : "No result.",

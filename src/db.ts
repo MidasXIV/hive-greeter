@@ -1,6 +1,7 @@
 import { randomUUID } from "crypto";
 import { User } from "discord.js";
 import { readFile, writeFile } from "fs/promises";
+import moment from "moment";
 
 export const DB_FILE = "./db.json";
 
@@ -129,16 +130,6 @@ export const adjustHP = (
   return getCharacter(characterId);
 };
 
-export const isCharacterOnCooldown = (characterId: string): boolean => {
-  const cooldown = 1000;
-  const character = getCharacter(characterId);
-  if (!character) return false;
-  return Boolean(
-    character.lastAction &&
-      cooldown > Date.now() - character.lastAction.valueOf()
-  );
-};
-
 type AttackResult =
   | {
       outcome: "hit";
@@ -152,19 +143,30 @@ type AttackResult =
       attacker: Character;
       defender: Character;
       attackRoll: number;
-    };
-// | { outcome: "cooldown" };
+    }
+  | { outcome: "cooldown" };
 
 const d20 = () => Math.ceil(Math.random() * 20);
 const d6 = () => Math.ceil(Math.random() * 6);
+
+export const isCharacterOnCooldown = (characterId: string): boolean =>
+  (getCooldownRemaining(characterId) ?? 0) > 0;
+
+export const getCooldownRemaining = (
+  characterId: string
+): number | undefined => {
+  const character = db.characters.get(characterId);
+  if (!character || !character.lastAction) return undefined;
+  return Date.now() - character.lastAction.valueOf();
+};
 
 export const attack = (
   attackerId: string,
   defenderId: string
 ): AttackResult | void => {
-  // if (isCharacterOnCooldown(attackerId)) {
-  //   return { outcome: "cooldown" };
-  // }
+  if (isCharacterOnCooldown(attackerId)) {
+    return { outcome: "cooldown" };
+  }
   const attacker = getCharacter(attackerId);
   const defender = getCharacter(defenderId);
   if (!attacker || !defender) return;
