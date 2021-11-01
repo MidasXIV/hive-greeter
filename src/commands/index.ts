@@ -1,3 +1,4 @@
+import db from "./db";
 import adventure from "./adventure";
 import attack from "./attack";
 import heal from "./heal";
@@ -12,4 +13,5 @@ commands.set("adventure", adventure);
 commands.set("monster", monster);
 commands.set("inspect", inspect);
 commands.set("set", set);
+commands.set("db", db);
 export default commands;

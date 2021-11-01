@@ -1,5 +1,8 @@
 import { randomUUID } from "crypto";
 import { User } from "discord.js";
+import { readFile, writeFile } from "fs/promises";
+
+const DB_FILE = "./db.json";
 
 export type Character = {
   id: string;
@@ -20,7 +23,34 @@ type DB = {
 
 const db: DB = { characters: new Map() };
 
+export const getDBJSON = (space = 0): string =>
+  JSON.stringify(
+    {
+      characters: Array.from(db.characters.entries()),
+    },
+    null,
+    space
+  );
+
+export const saveDB = async (): Promise<void> => {
+  const data = getDBJSON();
+  await writeFile(DB_FILE, data, { encoding: "utf-8" });
+};
+
+export const loadDB = async (): Promise<void> => {
+  const data = await readFile(DB_FILE, { encoding: "utf-8" });
+  loadSerializedDB(data.toString());
+};
+
+export const loadSerializedDB = (serialized: string): DB => {
+  db.characters.clear();
+  db.characters = new Map(JSON.parse(serialized).characters);
+  return db;
+};
+
 const defaultProfile = "attachment://profile.png";
+
+export const getDB = (): DB => db;
 
 export const getHP = (characterId: string): number | undefined =>
   getCharacter(characterId)?.hp;
@@ -85,6 +115,7 @@ export const adjustHP = (
   characterId: string,
   amount: number
 ): Character | undefined => {
+  console.log("adjustHP", characterId, amount);
   const character = getCharacter(characterId);
   if (!character) return;
 
@@ -140,6 +171,9 @@ export const attack = (
   if (attackRoll + attacker.attackBonus > defender.ac) {
     const damage = d6();
     adjustHP(defender.id, -damage);
+    console.log(
+      `${defender.name} hp after adjust ${getCharacter(defender.id)?.hp}`
+    );
     return {
       outcome: "hit",
       damage,

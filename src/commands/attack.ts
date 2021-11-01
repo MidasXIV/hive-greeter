@@ -84,7 +84,9 @@ export const hpText = (result: ReturnType<typeof attack>): string =>
 export const attackRollText = (result: ReturnType<typeof attack>): string =>
   `${result.attackRoll}+${result.attacker.attackBonus} (${
     result.attackRoll + result.attacker.attackBonus
-  }) vs ${result.defender.ac} ac`;
+  }) vs ${result.defender.ac} ac${
+    result.outcome === "hit" ? ` for ${result.damage}` : ""
+  }.`;
 
 const attackResultEmbed = (result: ReturnType<typeof attack>): MessageEmbed => {
   const embed = new MessageEmbed().setDescription(attackFlavorText(result));

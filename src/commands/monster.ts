@@ -1,4 +1,4 @@
-import { SlashCommandBuilder } from "@discordjs/builders";
+import { Embed, SlashCommandBuilder } from "@discordjs/builders";
 import { CommandInteraction, Message, MessageEmbed } from "discord.js";
 import {
   attack,
@@ -57,12 +57,13 @@ export const execute = async (
     }
 
     const playerResult = attack(player, monster);
-    const enemyResult = attack(monster, player);
+    const monsterResult = attack(monster, player);
 
     const updatedMonster = getCharacter(monster.id);
     const updatedPlayer = getCharacter(player.id);
-    if (!updatedMonster || !updatedPlayer || !playerResult || !enemyResult)
+    if (!updatedMonster || !updatedPlayer || !playerResult || !monsterResult)
       return;
+    console.log("monster hp", monster.hp);
     monster = updatedMonster;
     player = updatedPlayer;
 
@@ -77,15 +78,12 @@ export const execute = async (
     } catch (error) {
       console.error("Failed to remove reactions.");
     }
-    console.log({ monsterProfile: monster.profile });
     message.edit({
       embeds: [
         monsterEmbed(monster)
           .addField("Round", round.toString())
-          .addField(monster.name, attackFlavorText(enemyResult))
-          .addField(monster.name, attackRollText(enemyResult))
-          .addField(player.name, attackFlavorText(playerResult))
-          .addField(player.name, attackRollText(playerResult)),
+          .addField(...attackField(monsterResult))
+          .addField(...attackField(playerResult)),
       ],
     });
   }
@@ -98,9 +96,16 @@ export const execute = async (
   // TODO: reward, xp? loot?
 };
 
-const monsterEmbed = (monster: Character) =>
-  new MessageEmbed()
+const attackField = (result: ReturnType<typeof attack>): [string, string] => [
+  `${result.attacker.name}'s attack`,
+  `${attackFlavorText(result)}\n\`${attackRollText(result)}\``,
+];
+
+const monsterEmbed = (monster: Character) => {
+  console.log(monster.name, monster.hp);
+  return new MessageEmbed()
     .setTitle(monster.name)
+    .setColor("RED")
     .setThumbnail(monster.profile)
     .addFields([
       {
@@ -108,5 +113,6 @@ const monsterEmbed = (monster: Character) =>
         value: `${monster.hp}/${monster.maxHP}`,
       },
     ]);
+};
 
 export default { command, execute };
