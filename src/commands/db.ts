@@ -1,11 +1,10 @@
 import { SlashCommandBuilder } from "@discordjs/builders";
-import { CommandInteraction, MessageEmbed } from "discord.js";
-import { getDBJSON, loadDB, saveDB } from "../db";
+import { CommandInteraction, MessageAttachment, Permissions } from "discord.js";
+import { DB_FILE, loadDB, saveDB } from "../db";
 
-// TODO: require permissions
 export const command = new SlashCommandBuilder()
   .setName("db")
-  .setDescription("Admin commands")
+  .setDescription("Database Administration")
   .addSubcommand((option) =>
     option.setName("dump").setDescription("Dump the database to screen.")
   )
@@ -21,6 +20,9 @@ type CommandHandler = (interaction: CommandInteraction) => Promise<void>;
 const subcommands = new Map<string, CommandHandler>();
 
 subcommands.set("save", async (interaction: CommandInteraction) => {
+  if (!interaction.memberPermissions?.has(Permissions.FLAGS.ADMINISTRATOR)) {
+    return await interaction.reply("Admin required.");
+  }
   try {
     await saveDB();
     await interaction.reply("Database saved successfully.");
@@ -40,14 +42,7 @@ subcommands.set("load", async (interaction: CommandInteraction) => {
 
 subcommands.set("dump", async (interaction: CommandInteraction) => {
   await interaction.reply({
-    embeds: [
-      new MessageEmbed().setDescription("Database").addFields([
-        {
-          name: "data",
-          value: `\`\`\`${getDBJSON(2)}\`\`\``,
-        },
-      ]),
-    ],
+    files: [new MessageAttachment(DB_FILE)],
   });
 });
 

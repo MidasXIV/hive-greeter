@@ -2,7 +2,7 @@ import { randomUUID } from "crypto";
 import { User } from "discord.js";
 import { readFile, writeFile } from "fs/promises";
 
-const DB_FILE = "./db.json";
+export const DB_FILE = "./db.json";
 
 export type Character = {
   id: string;
@@ -23,7 +23,7 @@ type DB = {
 
 const db: DB = { characters: new Map() };
 
-export const getDBJSON = (space = 0): string =>
+export const getDBJSON = (space = 2): string =>
   JSON.stringify(
     {
       characters: Array.from(db.characters.entries()),
@@ -115,7 +115,6 @@ export const adjustHP = (
   characterId: string,
   amount: number
 ): Character | undefined => {
-  console.log("adjustHP", characterId, amount);
   const character = getCharacter(characterId);
   if (!character) return;
 
@@ -160,20 +159,24 @@ const d20 = () => Math.ceil(Math.random() * 20);
 const d6 = () => Math.ceil(Math.random() * 6);
 
 export const attack = (
-  attacker: Character,
-  defender: Character
-): AttackResult => {
+  attackerId: string,
+  defenderId: string
+): AttackResult | void => {
   // if (isCharacterOnCooldown(attackerId)) {
   //   return { outcome: "cooldown" };
   // }
-  db.characters.set(attacker.id, { ...attacker, lastAction: new Date() });
+  const attacker = getCharacter(attackerId);
+  const defender = getCharacter(defenderId);
+  if (!attacker || !defender) return;
+
+  db.characters.set(attacker.id, {
+    ...attacker,
+    lastAction: new Date(),
+  });
   const attackRoll = d20();
-  if (attackRoll + attacker.attackBonus > defender.ac) {
+  if (attackRoll + attacker.attackBonus >= defender.ac) {
     const damage = d6();
     adjustHP(defender.id, -damage);
-    console.log(
-      `${defender.name} hp after adjust ${getCharacter(defender.id)?.hp}`
-    );
     return {
       outcome: "hit",
       damage,

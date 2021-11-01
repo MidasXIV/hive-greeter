@@ -20,7 +20,7 @@ export const execute = async (
   }
   const attacker = getUserCharacter(initiator);
   const defender = getUserCharacter(target);
-  const result = attack(attacker, defender);
+  const result = attack(attacker.id, defender.id);
   await showAttackResult(result, interaction);
 };
 
@@ -37,6 +37,7 @@ const showAttackResult = async (
 };
 
 const accuracyDescriptor = (result: ReturnType<typeof attack>) => {
+  if (!result) return `No result`;
   const accuracy =
     result.attackRoll + result.attacker.attackBonus - result.defender.ac;
   switch (true) {
@@ -58,6 +59,7 @@ const accuracyDescriptor = (result: ReturnType<typeof attack>) => {
 };
 
 const damageDescriptor = (result: ReturnType<typeof attack>) => {
+  if (!result) return `No result`;
   if (result.outcome !== "hit") return "with a wide swing";
   const damage = result.damage;
   switch (true) {
@@ -70,26 +72,33 @@ const damageDescriptor = (result: ReturnType<typeof attack>) => {
   }
 };
 
-export const attackFlavorText = (result: ReturnType<typeof attack>): string => {
-  return `${accuracyDescriptor(result)} ${
-    result.outcome === "hit" ? damageDescriptor(result) : ""
-  }`;
-};
+export const attackFlavorText = (result: ReturnType<typeof attack>): string =>
+  result
+    ? `${accuracyDescriptor(result)} ${
+        result.outcome === "hit" ? damageDescriptor(result) : ""
+      }`
+    : "No result";
 
 export const hpText = (result: ReturnType<typeof attack>): string =>
-  `${result.defender.hp}/${result.defender.maxHP} ${
-    result.defender.hp <= 0 ? "(unconscious)" : ""
-  }`;
+  result
+    ? `${result.defender.hp}/${result.defender.maxHP} ${
+        result.defender.hp <= 0 ? "(unconscious)" : ""
+      }`
+    : "No result";
 
 export const attackRollText = (result: ReturnType<typeof attack>): string =>
-  `${result.attackRoll}+${result.attacker.attackBonus} (${
-    result.attackRoll + result.attacker.attackBonus
-  }) vs ${result.defender.ac} ac${
-    result.outcome === "hit" ? ` for ${result.damage}` : ""
-  }.`;
+  result
+    ? `${result.attackRoll}+${result.attacker.attackBonus} (${
+        result.attackRoll + result.attacker.attackBonus
+      }) vs ${result.defender.ac} ac${
+        result.outcome === "hit" ? ` for ${result.damage} damage` : ""
+      }.`
+    : "No result";
 
 const attackResultEmbed = (result: ReturnType<typeof attack>): MessageEmbed => {
   const embed = new MessageEmbed().setDescription(attackFlavorText(result));
+  if (!result) return embed;
+
   switch (result.outcome) {
     case "hit":
       embed.setImage("https://i.imgur.com/rM6yWps.png");
@@ -97,7 +106,10 @@ const attackResultEmbed = (result: ReturnType<typeof attack>): MessageEmbed => {
     case "miss":
       embed.setImage("https://i.imgur.com/xVlTNQm.png");
       break;
+    default:
+      break;
   }
+
   embed.addFields([
     {
       name: `${result.defender.name} HP`,
