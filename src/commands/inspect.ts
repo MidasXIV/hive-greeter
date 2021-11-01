@@ -17,19 +17,29 @@ export const execute = async (
     (interaction.options.data[0] && interaction.options.data[0].user) ||
     interaction.user;
   const character = getUserCharacter(user);
+  // await interaction.reply({
+  //   embeds: [characterEmbed(character)],
+  // });
+  // TODO: interval updates
   const message = await interaction.reply({
     embeds: [characterEmbed(character)],
     fetchReply: true,
   });
   if (!(message instanceof Message)) return;
-  const interval = setInterval(() => {
+  if (getCooldownRemaining(character.id) ?? 0 <= 0) return;
+  const interval = setInterval(async () => {
     const cooldown = getCooldownRemaining(character.id) ?? 0;
     if (cooldown <= 0) {
       console.log("inspect timer cleared", cooldown);
       clearTimeout(interval);
     }
-    message.edit({ embeds: [characterEmbed(character)] });
-  }, 1000);
+    try {
+      await message.edit({ embeds: [characterEmbed(character)] });
+    } catch (e) {
+      console.error(e);
+      clearTimeout(interval);
+    }
+  }, 5000);
 };
 
 export default { command, execute };
@@ -37,7 +47,9 @@ export default { command, execute };
 export const cooldownRemainingText = (characterId: string): string => {
   const cooldown = getCooldownRemaining(characterId);
   if (cooldown === undefined) return "No actions taken.";
-  return moment().add(cooldown).fromNow();
+  console.log(cooldown, moment().add(cooldown, "milliseconds").fromNow());
+  if (cooldown <= 0) return "Now";
+  return moment().add(cooldown, "milliseconds").fromNow();
 };
 
 export const characterEmbed = (character: Character): MessageEmbed =>
@@ -59,10 +71,10 @@ export const characterEmbed = (character: Character): MessageEmbed =>
       },
       {
         name: "Last Action",
-        value: `${character.lastAction} ${moment().add()}`,
+        value: `${character.lastAction}`,
       },
       {
-        name: "Can Act Again",
+        name: "Action Available",
         value: cooldownRemainingText(character.id),
       },
       {

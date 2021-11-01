@@ -1,7 +1,6 @@
 import { randomUUID } from "crypto";
 import { User } from "discord.js";
 import { readFile, writeFile } from "fs/promises";
-import moment from "moment";
 
 export const DB_FILE = "./db.json";
 
@@ -155,9 +154,10 @@ export const isCharacterOnCooldown = (characterId: string): boolean =>
 export const getCooldownRemaining = (
   characterId: string
 ): number | undefined => {
+  const cooldown = 0;
   const character = db.characters.get(characterId);
   if (!character || !character.lastAction) return undefined;
-  return Date.now() - character.lastAction.valueOf();
+  return character.lastAction.valueOf() + cooldown - Date.now();
 };
 
 export const attack = (
