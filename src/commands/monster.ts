@@ -31,7 +31,7 @@ export const execute = async (
   });
   if (!(message instanceof Message)) return;
 
-  while (monster.hp > 0 && !fled && !timeout) {
+  while (monster.hp > 0 && player.hp > 0 && !fled && !timeout) {
     round++;
     await message.react("⚔");
     await message.react("🏃‍♀️");
@@ -92,15 +92,19 @@ export const execute = async (
   }
 
   if (fled) await message.reply(`You escape with your life!`);
-  if (monster.hp === 0) await message.reply(`You defeated the monster!`);
-  if (getUserCharacter(interaction.user).hp === 0)
-    await message.reply(`You were defeated!`);
+  if (monster.hp === 0)
+    await message.reply(`You defeated the ${monster.name}! 🎉`);
+  if (player.hp === 0) await message.reply(`You were defeated!`);
 
   // TODO: reward, xp? loot?
 };
 
 const attackField = (result: ReturnType<typeof attack>): [string, string] => [
-  result ? `${result.attacker.name}'s attack` : "No result.",
+  result
+    ? result.outcome === "cooldown"
+      ? "cooldown"
+      : `${result.attacker.name}'s attack`
+    : "No result.",
   result
     ? `${attackFlavorText(result)}\n\`${attackRollText(result)}\``
     : "No result.",

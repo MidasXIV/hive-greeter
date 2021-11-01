@@ -1,6 +1,6 @@
 import { SlashCommandBuilder } from "@discordjs/builders";
 import { CommandInteraction, MessageEmbed } from "discord.js";
-import { attack, getUserCharacter } from "../db";
+import { attack, getUserCharacter, isCharacterOnCooldown } from "../db";
 
 export const command = new SlashCommandBuilder()
   .setName("attack")
@@ -14,6 +14,9 @@ export const execute = async (
 ): Promise<void> => {
   const target = interaction.options.data[0].user;
   const initiator = interaction.user;
+  if (isCharacterOnCooldown(initiator.id)) {
+    return await interaction.reply("You are on cooldown");
+  }
   if (!target) {
     await interaction.reply(`You must specify a target @player`);
     return;
@@ -30,14 +33,19 @@ const showAttackResult = async (
   result: ReturnType<typeof attack>,
   interaction: CommandInteraction
 ): Promise<void> => {
+  if (!result) return await interaction.reply(`No attack result.`);
+
+  switch (result.outcome) {
+    case "cooldown":
+      await interaction.reply(`You can't do that yet.`);
+      break;
+  }
   await interaction.reply({ embeds: [attackResultEmbed(result)] });
-  // case "cooldown":
-  //   await interaction.reply(`You can't do that yet.`);
-  //   break;
 };
 
 const accuracyDescriptor = (result: ReturnType<typeof attack>) => {
   if (!result) return `No result`;
+  if (result.outcome === "cooldown") return "On cooldown";
   const accuracy =
     result.attackRoll + result.attacker.attackBonus - result.defender.ac;
   switch (true) {
@@ -81,23 +89,27 @@ export const attackFlavorText = (result: ReturnType<typeof attack>): string =>
 
 export const hpText = (result: ReturnType<typeof attack>): string =>
   result
-    ? `${result.defender.hp}/${result.defender.maxHP} ${
-        result.defender.hp <= 0 ? "(unconscious)" : ""
-      }`
+    ? result.outcome === "cooldown"
+      ? "on cooldown"
+      : `${result.defender.hp}/${result.defender.maxHP} ${
+          result.defender.hp <= 0 ? "(unconscious)" : ""
+        }`
     : "No result";
 
 export const attackRollText = (result: ReturnType<typeof attack>): string =>
   result
-    ? `${result.attackRoll}+${result.attacker.attackBonus} (${
-        result.attackRoll + result.attacker.attackBonus
-      }) vs ${result.defender.ac} ac${
-        result.outcome === "hit" ? ` for ${result.damage} damage` : ""
-      }.`
+    ? result.outcome === "cooldown"
+      ? "on cooldown"
+      : `${result.attackRoll}+${result.attacker.attackBonus} (${
+          result.attackRoll + result.attacker.attackBonus
+        }) vs ${result.defender.ac} ac${
+          result.outcome === "hit" ? ` for ${result.damage} damage` : ""
+        }.`
     : "No result";
 
 const attackResultEmbed = (result: ReturnType<typeof attack>): MessageEmbed => {
   const embed = new MessageEmbed().setDescription(attackFlavorText(result));
-  if (!result) return embed;
+  if (!result || result.outcome === "cooldown") return embed;
 
   switch (result.outcome) {
     case "hit":
