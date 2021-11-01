@@ -129,24 +129,8 @@ export const adjustHP = (
   return getCharacter(characterId);
 };
 
-type AttackResult =
-  | {
-      outcome: "hit";
-      attacker: Character;
-      defender: Character;
-      attackRoll: number;
-      damage: number;
-    }
-  | {
-      outcome: "miss";
-      attacker: Character;
-      defender: Character;
-      attackRoll: number;
-    }
-  | { outcome: "cooldown" };
-
-const d20 = () => Math.ceil(Math.random() * 20);
-const d6 = () => Math.ceil(Math.random() * 6);
+export const d20 = (): number => Math.ceil(Math.random() * 20);
+export const d6 = (): number => Math.ceil(Math.random() * 6);
 
 export const isCharacterOnCooldown = (characterId: string): boolean =>
   (getCooldownRemaining(characterId) ?? 0) > 0;
@@ -159,6 +143,23 @@ export const getCooldownRemaining = (
   if (!character || !character.lastAction) return undefined;
   return character.lastAction.valueOf() + cooldown - Date.now();
 };
+
+type AttackHit = {
+  outcome: "hit";
+  attacker: Character;
+  defender: Character;
+  attackRoll: number;
+  damage: number;
+};
+type AttackMiss = {
+  outcome: "miss";
+  attacker: Character;
+  defender: Character;
+  attackRoll: number;
+  damage: number;
+};
+type AttackCooldown = { outcome: "cooldown" };
+type AttackResult = AttackHit | AttackMiss | AttackCooldown;
 
 export const attack = (
   attackerId: string,
@@ -176,37 +177,56 @@ export const attack = (
     lastAction: new Date(),
   });
   const attackRoll = d20();
+  const damage = d6();
   if (attackRoll + attacker.attackBonus >= defender.ac) {
-    const damage = d6();
     adjustHP(defender.id, -damage);
     return {
       outcome: "hit",
-      damage,
       attackRoll,
+      damage,
       attacker: getCharacter(attacker.id) as Character,
       defender: getCharacter(defender.id) as Character,
     };
   }
+
   return {
     outcome: "miss",
     attackRoll,
+    damage,
     attacker: getCharacter(attacker.id) as Character,
     defender: getCharacter(defender.id) as Character,
   };
 };
 
 type TrapResult =
-  | { outcome: "hit"; attack: number; damage: number }
-  | { outcome: "miss"; attack: number };
+  | {
+      outcome: "hit";
+      attackRoll: number;
+      attackBonus: number;
+      damage: number;
+      defender: Character;
+    }
+  | {
+      outcome: "miss";
+      attackRoll: number;
+      attackBonus: number;
+      damage: number;
+      defender: Character;
+    };
 
-export const trap = (characterId: string): TrapResult => {
-  const attack = d20();
-  if (attack > 10) {
-    const damage = d6();
+export const trap = (
+  characterId: string,
+  attackBonus = 1
+): TrapResult | void => {
+  const defender = getCharacter(characterId);
+  if (!defender) return;
+  const attackRoll = d20();
+  const damage = d6();
+  if (attackRoll + attackBonus > defender.ac) {
     adjustHP(characterId, -damage);
-    return { outcome: "hit", attack, damage };
+    return { outcome: "hit", attackRoll, attackBonus, damage, defender };
   }
-  return { outcome: "miss", attack };
+  return { outcome: "miss", attackRoll, attackBonus, damage, defender };
 };
 
 type HealResult =
