@@ -23,6 +23,7 @@ export const trap = async (interaction: CommandInteraction): Promise<void> => {
       await interaction.followUp({
         embeds: [
           new MessageEmbed()
+            .setColor("RED")
             .setDescription(`You're hit! You take ${result.damage} damage!`)
             .addField("Roll", trapRollText(result))
             .setImage("https://imgur.com/28oehQm.png"),
