@@ -1,6 +1,7 @@
 import { SlashCommandBuilder } from "@discordjs/builders";
 import { CommandInteraction, MessageEmbed } from "discord.js";
 import {
+  getCooldownRemaining,
   getUserCharacter,
   isCharacterOnCooldown,
   setCharacterCooldown,
@@ -27,7 +28,14 @@ export const execute = async (
   }
   if (isCharacterOnCooldown(player.id, "adventure")) {
     await interaction.reply({
-      embeds: [new MessageEmbed().setDescription(`You can't do that yet.`)],
+      embeds: [
+        new MessageEmbed().setDescription(
+          `You can adventure again ${getCooldownRemaining(
+            player.id,
+            "adventure"
+          )}`
+        ),
+      ],
     });
     return;
   }

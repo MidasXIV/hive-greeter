@@ -1,12 +1,9 @@
 import { SlashCommandBuilder } from "@discordjs/builders";
 import { CommandInteraction, MessageEmbed } from "discord.js";
-import {
-  attackPlayer,
-  getUserCharacter,
-  isCharacterOnCooldown,
-  setCharacterCooldown,
-} from "../db";
+import { attackPlayer, getUserCharacter } from "../db";
 import { cooldownRemainingText } from "./inspect";
+
+// TODO: fix [object Object]
 
 export const command = new SlashCommandBuilder()
   .setName("attack")
@@ -31,7 +28,6 @@ export const execute = async (
 };
 
 export default { command, execute };
-
 const showAttackResult = async (
   result: ReturnType<typeof attackPlayer>,
   interaction: CommandInteraction
