@@ -1,6 +1,8 @@
 import { SlashCommandBuilder } from "@discordjs/builders";
-import { CommandInteraction } from "discord.js";
-import { heal, getHP } from "../db";
+import { CommandInteraction, MessageEmbed } from "discord.js";
+import { join } from "path";
+import { getUserCharacter, heal } from "../db";
+import { cooldownRemainingText } from "./inspect";
 
 export const command = new SlashCommandBuilder()
   .setName("heal")
@@ -13,24 +15,33 @@ export const execute = async (
   interaction: CommandInteraction
 ): Promise<void> => {
   const target = interaction.options.data[0].user;
-  const initiator = interaction.member.user;
+  const initiator = interaction.user;
   if (!target) {
     await interaction.reply(`You must specify a target @player`);
     return;
   }
-
+  // ensure characters exist
+  // TODO: a better way?
+  getUserCharacter(initiator);
+  getUserCharacter(target);
   const result = heal(initiator.id, target.id);
-  if (!result) return;
+  if (!result) return interaction.reply("No result. This should not happen.");
   switch (result.outcome) {
     case "cooldown":
-      await interaction.reply(`You can't do that yet.`);
+      await interaction.reply(
+        `You can heal again in ${cooldownRemainingText(initiator.id, "heal")}.`
+      );
       break;
     case "healed":
-      await interaction.reply(
-        `Healed ${target} for ${result.amount}! ${target} is now at ${getHP(
-          target.id
-        )}.`
-      );
+      await interaction.reply({
+        embeds: [
+          new MessageEmbed()
+            .setTitle(`Heal`)
+            .setDescription(`Healed ${target} for ${result.amount}!`)
+            .setImage("https://i.imgur.com/S32LDbM.png")
+            .addField("HP", `${result.target.hp}/${result.target.maxHP}`),
+        ],
+      });
       break;
   }
 };

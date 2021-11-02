@@ -25,13 +25,13 @@ export const execute = async (
     });
     return;
   }
-  if (isCharacterOnCooldown(player.id)) {
+  if (isCharacterOnCooldown(player.id, "adventure")) {
     await interaction.reply({
       embeds: [new MessageEmbed().setDescription(`You can't do that yet.`)],
     });
     return;
   }
-  setCharacterCooldown(player.id);
+  setCharacterCooldown(player.id, "adventure");
   await randomEncounter()(interaction);
 };
 

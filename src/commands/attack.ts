@@ -1,6 +1,12 @@
 import { SlashCommandBuilder } from "@discordjs/builders";
 import { CommandInteraction, MessageEmbed } from "discord.js";
-import { attack, getUserCharacter, isCharacterOnCooldown } from "../db";
+import {
+  attackPlayer,
+  getUserCharacter,
+  isCharacterOnCooldown,
+  setCharacterCooldown,
+} from "../db";
+import { cooldownRemainingText } from "./inspect";
 
 export const command = new SlashCommandBuilder()
   .setName("attack")
@@ -14,59 +20,76 @@ export const execute = async (
 ): Promise<void> => {
   const target = interaction.options.data[0].user;
   const initiator = interaction.user;
-  if (isCharacterOnCooldown(initiator.id)) {
-    return await interaction.reply("You are on cooldown");
-  }
   if (!target) {
     await interaction.reply(`You must specify a target @player`);
     return;
   }
   const attacker = getUserCharacter(initiator);
   const defender = getUserCharacter(target);
-  const result = attack(attacker.id, defender.id);
+  const result = attackPlayer(attacker.id, defender.id);
   await showAttackResult(result, interaction);
 };
 
 export default { command, execute };
 
 const showAttackResult = async (
-  result: ReturnType<typeof attack>,
+  result: ReturnType<typeof attackPlayer>,
   interaction: CommandInteraction
 ): Promise<void> => {
   if (!result) return await interaction.reply(`No attack result.`);
 
+  // TODO: move this into attackResultEmbed
   switch (result.outcome) {
     case "cooldown":
-      await interaction.reply(`You can't do that yet.`);
-      break;
+      await interaction.reply(
+        `You can attack again ${cooldownRemainingText(
+          interaction.user.id,
+          "attack"
+        )}.`
+      );
+      return;
   }
   await interaction.reply({ embeds: [attackResultEmbed(result)] });
 };
 
-const accuracyDescriptor = (result: ReturnType<typeof attack>) => {
+const accuracyDescriptor = (result: ReturnType<typeof attackPlayer>) => {
   if (!result) return `No result`;
   if (result.outcome === "cooldown") return "On cooldown";
   const accuracy =
     result.attackRoll + result.attacker.attackBonus - result.defender.ac;
   switch (true) {
     case accuracy >= 5:
-      return `${result.attacker.name} strikes ${result.defender.name} true`;
+      return `${result.attacker.user || result.attacker.name} strikes ${
+        result.defender.name
+      } true`;
     case accuracy >= 2:
-      return `${result.attacker.name} finds purchase against ${result.defender.name}`;
+      return `${
+        result.attacker.user || result.attacker.name
+      } finds purchase against ${result.defender.name}`;
     case accuracy >= 1:
-      return `${result.attacker.name} narrowly hits ${result.defender.name}`;
+      return `${result.attacker.user || result.attacker.name} narrowly hits ${
+        result.defender.user || result.defender.name
+      }`;
     case accuracy === 0:
-      return `${result.attacker.name} barely hits ${result.defender.name}`;
+      return `${result.attacker.user || result.attacker.name} barely hits ${
+        result.defender.user || result.defender.name
+      }`;
     case accuracy <= 1:
-      return `${result.attacker.name} narrowly misses ${result.defender.name}`;
+      return `${result.attacker.user || result.attacker.name} narrowly misses ${
+        result.defender.user || result.defender.name
+      }`;
     case accuracy <= 2:
-      return `${result.attacker.name} misses ${result.defender.name}`;
+      return `${result.attacker.user || result.attacker.name} misses ${
+        result.defender.user || result.defender.name
+      }`;
     case accuracy < 5:
-      return `${result.attacker.name} misses ${result.defender.name} utterly`;
+      return `${result.attacker.user || result.attacker.name} misses ${
+        result.defender.user || result.defender.name
+      } utterly`;
   }
 };
 
-const damageDescriptor = (result: ReturnType<typeof attack>) => {
+const damageDescriptor = (result: ReturnType<typeof attackPlayer>) => {
   if (!result) return `No result`;
   if (result.outcome !== "hit") return "with a wide swing";
   const damage = result.damage;
@@ -80,14 +103,16 @@ const damageDescriptor = (result: ReturnType<typeof attack>) => {
   }
 };
 
-export const attackFlavorText = (result: ReturnType<typeof attack>): string =>
+export const attackFlavorText = (
+  result: ReturnType<typeof attackPlayer>
+): string =>
   result
     ? `${accuracyDescriptor(result)} ${
         result.outcome === "hit" ? damageDescriptor(result) : ""
       }`
     : "No result";
 
-export const hpText = (result: ReturnType<typeof attack>): string =>
+export const hpText = (result: ReturnType<typeof attackPlayer>): string =>
   result
     ? result.outcome === "cooldown"
       ? "on cooldown"
@@ -96,7 +121,9 @@ export const hpText = (result: ReturnType<typeof attack>): string =>
         }`
     : "No result";
 
-export const attackRollText = (result: ReturnType<typeof attack>): string =>
+export const attackRollText = (
+  result: ReturnType<typeof attackPlayer>
+): string =>
   result
     ? result.outcome === "cooldown"
       ? "on cooldown"
@@ -107,7 +134,9 @@ export const attackRollText = (result: ReturnType<typeof attack>): string =>
         }.`
     : "No result";
 
-const attackResultEmbed = (result: ReturnType<typeof attack>): MessageEmbed => {
+const attackResultEmbed = (
+  result: ReturnType<typeof attackPlayer>
+): MessageEmbed => {
   const embed = new MessageEmbed().setDescription(attackFlavorText(result));
   if (!result || result.outcome === "cooldown") return embed;
 

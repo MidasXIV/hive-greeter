@@ -1,10 +1,11 @@
 import { CommandInteraction, Message, MessageEmbed } from "discord.js";
 import {
-  attack,
+  attackPlayer,
   getCharacter,
   createCharacter,
   Character,
   getUserCharacter,
+  attack,
 } from "../../db";
 import { attackFlavorText, attackRollText } from "../attack";
 
@@ -103,7 +104,9 @@ export const monster = async (
   // TODO: reward, xp? loot?
 };
 
-const attackField = (result: ReturnType<typeof attack>): [string, string] => [
+const attackField = (
+  result: ReturnType<typeof attackPlayer>
+): [string, string] => [
   result
     ? result.outcome === "cooldown"
       ? "cooldown"

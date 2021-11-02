@@ -10,12 +10,15 @@ export type Character = {
   hp: number;
   maxHP: number;
   ac: number;
-  lastAction?: Date;
   level: number;
   attackBonus: number;
   profile: string;
   user?: User;
-  lastEncounter?: Date;
+  cooldowns: {
+    attack?: Date;
+    adventure?: Date;
+    heal?: Date;
+  };
 };
 
 type DB = {
@@ -49,14 +52,7 @@ export const loadSerializedDB = (serialized: string): DB => {
   return db;
 };
 
-const defaultProfile = "attachment://profile.png";
-
-export const getDB = (): DB => db;
-
-export const getHP = (characterId: string): number | undefined =>
-  getCharacter(characterId)?.hp;
-export const getMaxHP = (characterId: string): number | undefined =>
-  getCharacter(characterId)?.maxHP;
+export const defaultProfile = "attachment://profile.png";
 
 export const grantDivineBlessing = (characterId: string): void => {
   const character = getCharacter(characterId);
@@ -86,29 +82,32 @@ export const getUserCharacter = (user: User): Character => {
 };
 
 export const setCharacterCooldown = (
-  characterId: string
+  characterId: string,
+  type: keyof Character["cooldowns"]
 ): Character | undefined => {
   const character = getCharacter(characterId);
   if (!character) return;
-  db.characters.set(characterId, { ...character, lastAction: new Date() });
-  return character;
+  const updatedCharacter = {
+    ...character,
+    cooldowns: { ...character.cooldowns, [type]: new Date() },
+  };
+  db.characters.set(characterId, updatedCharacter);
+  return getCharacter(characterId);
 };
 
 export const isCharacterOnCooldown = (
   characterId: string,
-  type: "action" | "encounter" = "action"
+  type: keyof Character["cooldowns"]
 ): boolean => (getCooldownRemaining(characterId, type) ?? 0) > 0;
 
 export const getCooldownRemaining = (
   characterId: string,
-  type: "action" | "encounter" = "action"
+  type: keyof Character["cooldowns"]
 ): number | undefined => {
-  const cooldown = 0;
-  const character = db.characters.get(characterId);
-  if (!character) return undefined;
-  const last = character[type === "action" ? "lastAction" : "lastEncounter"];
-  if (!last) return;
-  return last.valueOf() + cooldown - Date.now();
+  const cooldown = 5 * 60000; //5m
+  const lastUsed = db.characters.get(characterId)?.cooldowns[type];
+  if (!lastUsed) return;
+  return lastUsed.valueOf() + cooldown - Date.now();
 };
 export const createCharacter = (
   character: Partial<Character> & { name: string }
@@ -122,6 +121,7 @@ export const createCharacter = (
     maxHP: 10,
     level: 1,
     attackBonus: 1,
+    cooldowns: {},
   };
   db.characters.set(newCharacter.id, newCharacter);
   console.log(`created ${newCharacter.id}`);
@@ -170,17 +170,10 @@ export const attack = (
   attackerId: string,
   defenderId: string
 ): AttackResult | void => {
-  if (isCharacterOnCooldown(attackerId)) {
-    return { outcome: "cooldown" };
-  }
   const attacker = getCharacter(attackerId);
   const defender = getCharacter(defenderId);
   if (!attacker || !defender) return;
 
-  db.characters.set(attacker.id, {
-    ...attacker,
-    lastAction: new Date(),
-  });
   const attackRoll = d20();
   const damage = d6();
   if (attackRoll + attacker.attackBonus >= defender.ac) {
@@ -201,6 +194,19 @@ export const attack = (
     attacker: getCharacter(attacker.id) as Character,
     defender: getCharacter(defender.id) as Character,
   };
+};
+
+export const attackPlayer = (
+  attackerId: string,
+  defenderId: string
+): AttackResult | void => {
+  if (isCharacterOnCooldown(attackerId, "attack")) {
+    return { outcome: "cooldown" };
+  }
+  const result = attack(attackerId, defenderId);
+  if (result && result.outcome !== "cooldown")
+    setCharacterCooldown(attackerId, "attack");
+  return result;
 };
 
 type TrapResult =
@@ -235,21 +241,24 @@ export const trap = (
 };
 
 type HealResult =
-  | { outcome: "healed"; amount: number }
+  | { outcome: "healed"; amount: number; target: Character }
   | { outcome: "cooldown" };
 
 export const heal = (
   initiatorId: string,
   targetId: string
 ): HealResult | undefined => {
-  if (isCharacterOnCooldown(initiatorId)) return { outcome: "cooldown" };
-
+  if (isCharacterOnCooldown(initiatorId, "heal"))
+    return { outcome: "cooldown" };
   const healer = getCharacter(initiatorId);
+  getCharacter(targetId);
   if (!healer) return;
-  db.characters.set(initiatorId, { ...healer, lastAction: new Date() });
-  const amount = Math.ceil(Math.random() * 6);
+  setCharacterCooldown(healer.id, "heal");
+  const amount = d6();
   adjustHP(targetId, amount);
-  return { outcome: "healed", amount };
+  const target = getCharacter(targetId);
+  if (!target) return;
+  return { outcome: "healed", amount, target };
 };
 
 export const setProfile = (id: string, url: string): Character | undefined => {
