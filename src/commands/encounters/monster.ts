@@ -100,11 +100,6 @@ export const monster = async (
     embeds: [summary],
   });
 
-  if (fled) await message.reply(`You escape with your life!`);
-  if (monster.hp === 0)
-    await message.reply(`You defeated the ${monster.name}! 🎉`);
-  if (player.hp === 0) await message.reply(`You were defeated!`);
-
   // TODO: reward, xp? loot?
 };
 
