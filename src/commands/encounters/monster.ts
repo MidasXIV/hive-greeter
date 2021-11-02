@@ -1,4 +1,3 @@
-import { SlashCommandBuilder } from "@discordjs/builders";
 import { CommandInteraction, Message, MessageEmbed } from "discord.js";
 import {
   attack,
@@ -6,14 +5,10 @@ import {
   createCharacter,
   Character,
   getUserCharacter,
-} from "../db";
-import { attackFlavorText, attackRollText } from "./attack";
+} from "../../db";
+import { attackFlavorText, attackRollText } from "../attack";
 
-export const command = new SlashCommandBuilder()
-  .setName("monster")
-  .setDescription("Fight a monster!");
-
-export const execute = async (
+export const monster = async (
   interaction: CommandInteraction
 ): Promise<void> => {
   // TODO: explore do/while refactor
@@ -121,5 +116,3 @@ const monsterEmbed = (monster: Character) =>
         value: `${monster.hp}/${monster.maxHP}`,
       },
     ]);
-
-export default { command, execute };

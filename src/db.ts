@@ -15,6 +15,7 @@ export type Character = {
   attackBonus: number;
   profile: string;
   user?: User;
+  lastEncounter?: Date;
 };
 
 type DB = {
@@ -57,7 +58,7 @@ export const getHP = (characterId: string): number | undefined =>
 export const getMaxHP = (characterId: string): number | undefined =>
   getCharacter(characterId)?.maxHP;
 
-export const levelup = (characterId: string): void => {
+export const grantDivineBlessing = (characterId: string): void => {
   const character = getCharacter(characterId);
   if (!character) return;
   db.characters.set(characterId, {
@@ -93,6 +94,22 @@ export const setCharacterCooldown = (
   return character;
 };
 
+export const isCharacterOnCooldown = (
+  characterId: string,
+  type: "action" | "encounter" = "action"
+): boolean => (getCooldownRemaining(characterId, type) ?? 0) > 0;
+
+export const getCooldownRemaining = (
+  characterId: string,
+  type: "action" | "encounter" = "action"
+): number | undefined => {
+  const cooldown = 0;
+  const character = db.characters.get(characterId);
+  if (!character) return undefined;
+  const last = character[type === "action" ? "lastAction" : "lastEncounter"];
+  if (!last) return;
+  return last.valueOf() + cooldown - Date.now();
+};
 export const createCharacter = (
   character: Partial<Character> & { name: string }
 ): Character => {
@@ -131,18 +148,6 @@ export const adjustHP = (
 
 export const d20 = (): number => Math.ceil(Math.random() * 20);
 export const d6 = (): number => Math.ceil(Math.random() * 6);
-
-export const isCharacterOnCooldown = (characterId: string): boolean =>
-  (getCooldownRemaining(characterId) ?? 0) > 0;
-
-export const getCooldownRemaining = (
-  characterId: string
-): number | undefined => {
-  const cooldown = 0;
-  const character = db.characters.get(characterId);
-  if (!character || !character.lastAction) return undefined;
-  return character.lastAction.valueOf() + cooldown - Date.now();
-};
 
 type AttackHit = {
   outcome: "hit";
