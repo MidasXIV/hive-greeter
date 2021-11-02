@@ -47,7 +47,10 @@ export const monster = async (
       return;
     }
     const reaction = collected.first();
-    if (!reaction) return;
+    if (!reaction) {
+      console.error("no monster reaction collected");
+      return;
+    }
 
     if (reaction.emoji.name === "🏃‍♀️") {
       message.reply("You flee!");
@@ -86,6 +89,17 @@ export const monster = async (
     });
   }
 
+  const summary = new MessageEmbed().setDescription(`Fight summary`);
+
+  if (fled) summary.addField("Fled", `You escaped with your life!`);
+  if (monster.hp === 0)
+    summary.addField("Enemy Defeated", `You defeated the ${monster.name}! 🎉`);
+  if (player.hp === 0) summary.addField("Unconscious", "You were knocked out!");
+
+  message.reply({
+    embeds: [summary],
+  });
+
   if (fled) await message.reply(`You escape with your life!`);
   if (monster.hp === 0)
     await message.reply(`You defeated the ${monster.name}! 🎉`);
@@ -109,7 +123,7 @@ const monsterEmbed = (monster: Character) =>
   new MessageEmbed()
     .setTitle(monster.name)
     .setColor("RED")
-    .setThumbnail(monster.profile)
+    .setImage(monster.profile)
     .addFields([
       {
         name: `${monster.name}'s HP`,

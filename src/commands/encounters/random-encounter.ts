@@ -35,7 +35,7 @@ export const randomEncounter = (): CommandHandler => {
       return encounters["fairyWell"];
     case rand >= 0.6:
       return encounters["monster"];
-    case rand >= 0.3:
+    case rand >= 0.2:
       return encounters["trap"];
     default:
       return encounters["travel"];

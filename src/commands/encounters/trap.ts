@@ -6,6 +6,8 @@ export const trap = async (interaction: CommandInteraction): Promise<void> => {
   const message = await interaction.reply({
     embeds: [
       new MessageEmbed()
+        .setTitle("Trap!")
+        .setColor("RED")
         .setDescription(`It's a trap!`)
         .setImage("https://imgur.com/TDMLxyE.png"),
     ],

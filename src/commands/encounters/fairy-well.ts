@@ -9,6 +9,8 @@ export const fairyWell = async (
   await interaction.reply({
     embeds: [
       new MessageEmbed()
+        .setTitle("Fairy Well")
+        .setColor("DARK_VIVID_PINK")
         .setDescription(
           `You drink from a fairy's well, it heals you for ${healAmount}!`
         )
