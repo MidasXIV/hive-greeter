@@ -32,6 +32,9 @@ subcommands.set("save", async (interaction: CommandInteraction) => {
 });
 
 subcommands.set("load", async (interaction: CommandInteraction) => {
+  if (!interaction.memberPermissions?.has(Permissions.FLAGS.ADMINISTRATOR)) {
+    return await interaction.reply("Admin required.");
+  }
   try {
     await loadDB();
     await interaction.reply("Database loaded successfully.");
@@ -41,6 +44,9 @@ subcommands.set("load", async (interaction: CommandInteraction) => {
 });
 
 subcommands.set("dump", async (interaction: CommandInteraction) => {
+  if (!interaction.memberPermissions?.has(Permissions.FLAGS.ADMINISTRATOR)) {
+    return await interaction.reply("Admin required.");
+  }
   await interaction.reply({
     files: [new MessageAttachment(DB_FILE)],
   });
