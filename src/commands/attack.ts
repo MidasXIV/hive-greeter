@@ -1,9 +1,8 @@
 import { SlashCommandBuilder } from "@discordjs/builders";
 import { CommandInteraction, MessageEmbed } from "discord.js";
 import { attackPlayer, getUserCharacter } from "../db";
+import { mentionCharacter } from "../utils";
 import { cooldownRemainingText } from "./inspect";
-
-// TODO: fix [object Object]
 
 export const command = new SlashCommandBuilder()
   .setName("attack")
@@ -55,33 +54,33 @@ const accuracyDescriptor = (result: ReturnType<typeof attackPlayer>) => {
     result.attackRoll + result.attacker.attackBonus - result.defender.ac;
   switch (true) {
     case accuracy >= 5:
-      return `${result.attacker.user || result.attacker.name} strikes ${
-        result.defender.name
-      } true`;
+      return `${mentionCharacter(result.attacker)} strikes ${mentionCharacter(
+        result.defender
+      )} true`;
     case accuracy >= 2:
-      return `${
-        result.attacker.user || result.attacker.name
-      } finds purchase against ${result.defender.name}`;
+      return `${mentionCharacter(result.attacker)} finds purchase against ${
+        result.defender.name
+      }`;
     case accuracy >= 1:
-      return `${result.attacker.user || result.attacker.name} narrowly hits ${
-        result.defender.user || result.defender.name
-      }`;
+      return `${mentionCharacter(
+        result.attacker
+      )} narrowly hits ${mentionCharacter(result.defender)}`;
     case accuracy === 0:
-      return `${result.attacker.user || result.attacker.name} barely hits ${
-        result.defender.user || result.defender.name
-      }`;
+      return `${mentionCharacter(
+        result.attacker
+      )} barely hits ${mentionCharacter(result.defender)}`;
     case accuracy <= 1:
-      return `${result.attacker.user || result.attacker.name} narrowly misses ${
-        result.defender.user || result.defender.name
-      }`;
+      return `${mentionCharacter(
+        result.attacker
+      )} narrowly misses ${mentionCharacter(result.defender)}`;
     case accuracy <= 2:
-      return `${result.attacker.user || result.attacker.name} misses ${
-        result.defender.user || result.defender.name
-      }`;
+      return `${mentionCharacter(result.attacker)} misses ${mentionCharacter(
+        result.defender
+      )}`;
     case accuracy < 5:
-      return `${result.attacker.user || result.attacker.name} misses ${
-        result.defender.user || result.defender.name
-      } utterly`;
+      return `${mentionCharacter(result.attacker)} misses ${mentionCharacter(
+        result.defender
+      )} utterly`;
   }
 };
 
