@@ -15,7 +15,7 @@ export const execute = async (
 ): Promise<void> => {
   interaction.reply({
     embeds: getUserCharacters()
-      .sort((character) => character.xp)
+      .sort((a, b) => b.xp - a.xp)
       .map(characterEmbed),
   });
 };
