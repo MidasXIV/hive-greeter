@@ -115,7 +115,7 @@ export const getCooldownRemaining = (
     if (!lastUsed) return 0;
     return new Date(lastUsed).valueOf() + cooldown - Date.now();
   } catch (e) {
-    console.log(`failed to load use ${characterId}`);
+    console.error(`failed to getCooldownRemaining for user ${characterId}`);
     return 0;
   }
 };
