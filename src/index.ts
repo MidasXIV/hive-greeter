@@ -5,10 +5,14 @@ import Discord, { Intents } from "discord.js";
 import { exit } from "process";
 import { Routes } from "discord-api-types/v9";
 import commands from "./commands";
+import { loadDB } from "./db";
 
 dotenv.config({ path: ".env" });
 
 if (!process.env.token) exit(1);
+
+// TODO: save db on exit
+loadDB().then(() => console.log("database loaded"));
 
 const rest = new REST({ version: "9" }).setToken(process.env.token);
 (async () => {
