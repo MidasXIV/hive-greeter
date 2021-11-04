@@ -135,6 +135,8 @@ export const monster = async (
   message.reply({
     embeds: [summary],
   });
+
+  // TODO: clean up monster from db
 };
 
 const attackField = (
