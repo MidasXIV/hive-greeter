@@ -5,6 +5,7 @@ import heal from "./heal";
 import inspect from "./inspect";
 import set from "./set";
 import dance from "./dance";
+import list from "./list";
 
 const commands = new Map();
 commands.set("attack", attack);
@@ -14,4 +15,5 @@ commands.set("inspect", inspect);
 commands.set("set", set);
 commands.set("db", db);
 commands.set("dance", dance);
+commands.set("list", list);
 export default commands;

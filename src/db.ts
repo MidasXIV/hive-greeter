@@ -15,9 +15,9 @@ export type Character = {
   profile: string;
   user?: User;
   cooldowns: {
-    attack?: Date;
-    adventure?: Date;
-    heal?: Date;
+    attack?: string;
+    adventure?: string;
+    heal?: string;
   };
   xp: number;
   xpValue: number;
@@ -66,6 +66,9 @@ export const grantDivineBlessing = (characterId: string): void => {
   });
 };
 
+export const getUserCharacters = (): Character[] =>
+  Array.from(db.characters.values()).filter((character) => character.user);
+
 export const getCharacter = (
   id: string
 ): ReturnType<typeof db.characters.get> => db.characters.get(id);
@@ -91,7 +94,7 @@ export const setCharacterCooldown = (
   if (!character) return;
   const updatedCharacter = {
     ...character,
-    cooldowns: { ...character.cooldowns, [type]: new Date() },
+    cooldowns: { ...character.cooldowns, [type]: new Date().toString() },
   };
   db.characters.set(characterId, updatedCharacter);
   return getCharacter(characterId);
@@ -105,11 +108,16 @@ export const isCharacterOnCooldown = (
 export const getCooldownRemaining = (
   characterId: string,
   type: keyof Character["cooldowns"]
-): number | undefined => {
-  const cooldown = 5 * 60000; //5m
-  const lastUsed = db.characters.get(characterId)?.cooldowns[type];
-  if (!lastUsed) return;
-  return lastUsed.valueOf() + cooldown - Date.now();
+): number => {
+  try {
+    const cooldown = 5 * 60000; //5m
+    const lastUsed = db.characters.get(characterId)?.cooldowns[type];
+    if (!lastUsed) return 0;
+    return new Date(lastUsed).valueOf() + cooldown - Date.now();
+  } catch (e) {
+    console.log(`failed to load use ${characterId}`);
+    return 0;
+  }
 };
 export const createCharacter = (
   character: Partial<Character> & { name: string }
