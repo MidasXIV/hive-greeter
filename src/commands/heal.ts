@@ -1,8 +1,7 @@
 import { SlashCommandBuilder } from "@discordjs/builders";
 import { CommandInteraction, MessageEmbed } from "discord.js";
-import { join } from "path";
 import { getUserCharacter, heal } from "../db";
-import { cooldownRemainingText } from "./inspect";
+import { cooldownRemainingText } from "../utils";
 
 export const command = new SlashCommandBuilder()
   .setName("heal")

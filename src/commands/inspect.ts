@@ -1,7 +1,7 @@
 import { SlashCommandBuilder } from "@discordjs/builders";
-import { CommandInteraction, Message, MessageEmbed } from "discord.js";
-import moment from "moment";
-import { Character, getCooldownRemaining, getUserCharacter } from "../db";
+import { CommandInteraction, MessageEmbed } from "discord.js";
+import { Character, getUserCharacter } from "../db";
+import { cooldownRemainingText } from "../utils";
 
 export const command = new SlashCommandBuilder()
   .setName("inspect")
@@ -24,15 +24,6 @@ export const execute = async (
 };
 
 export default { command, execute };
-
-export const cooldownRemainingText = (
-  characterId: string,
-  type: keyof Character["cooldowns"]
-): string => {
-  const cooldown = getCooldownRemaining(characterId, type);
-  if (cooldown === undefined || cooldown <= 0) return "Now";
-  return moment().add(cooldown, "milliseconds").fromNow();
-};
 
 export const characterEmbed = (character: Character): MessageEmbed =>
   new MessageEmbed()

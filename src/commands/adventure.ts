@@ -1,11 +1,11 @@
 import { SlashCommandBuilder } from "@discordjs/builders";
 import { CommandInteraction, MessageEmbed } from "discord.js";
 import {
-  getCooldownRemaining,
   getUserCharacter,
   isCharacterOnCooldown,
   setCharacterCooldown,
 } from "../db";
+import { cooldownRemainingText } from "../utils";
 import { randomEncounter } from "./encounters/random-encounter";
 
 export const command = new SlashCommandBuilder()
@@ -30,7 +30,7 @@ export const execute = async (
     await interaction.reply({
       embeds: [
         new MessageEmbed().setDescription(
-          `You can adventure again ${getCooldownRemaining(
+          `You can adventure again ${cooldownRemainingText(
             player.id,
             "adventure"
           )}`
