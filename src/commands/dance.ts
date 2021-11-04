@@ -1,5 +1,3 @@
-// TODO: http://www.gamergeoff.com/images/dancing/halfling%20dance2%20male.gif
-
 import { SlashCommandBuilder } from "@discordjs/builders";
 import { CommandInteraction, MessageEmbed } from "discord.js";
 
