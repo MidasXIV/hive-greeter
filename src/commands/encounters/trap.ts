@@ -1,5 +1,5 @@
 import { CommandInteraction, Message, MessageEmbed } from "discord.js";
-import { trap as trapAttack } from "../../db";
+import { gainXP, trap as trapAttack } from "../../db";
 import { sleep } from "../../utils";
 
 export const trap = async (interaction: CommandInteraction): Promise<void> => {
@@ -18,6 +18,7 @@ export const trap = async (interaction: CommandInteraction): Promise<void> => {
   if (!result)
     return await interaction.reply("No result. This should not happen.");
   await sleep(2000);
+  gainXP(interaction.user.id, 1);
   switch (result.outcome) {
     case "hit":
       await interaction.followUp({
@@ -26,6 +27,7 @@ export const trap = async (interaction: CommandInteraction): Promise<void> => {
             .setColor("RED")
             .setDescription(`You're hit! You take ${result.damage} damage!`)
             .addField("Roll", trapRollText(result))
+            .addField("XP Gained", "1")
             .setImage("https://imgur.com/28oehQm.png"),
         ],
       });
@@ -36,6 +38,7 @@ export const trap = async (interaction: CommandInteraction): Promise<void> => {
           new MessageEmbed()
             .setDescription(`You deftly evade!`)
             .addField("Roll", trapRollText(result))
+            .addField("XP Gained", "1")
             .setImage("https://imgur.com/gSgcrnN.png"),
         ],
       });

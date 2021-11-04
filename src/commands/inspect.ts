@@ -55,6 +55,10 @@ export const characterEmbed = (character: Character): MessageEmbed =>
         value: cooldownRemainingText(character.id, "adventure"),
       },
       {
+        name: "XP",
+        value: character.xp.toString(),
+      },
+      {
         name: "Profile",
         value: `${character.profile}`,
       },

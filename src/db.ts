@@ -19,6 +19,8 @@ export type Character = {
     adventure?: Date;
     heal?: Date;
   };
+  xp: number;
+  xpValue: number;
 };
 
 type DB = {
@@ -114,7 +116,6 @@ export const createCharacter = (
 ): Character => {
   const newCharacter: Character = {
     profile: defaultProfile,
-    ...character,
     id: character?.id || randomUUID(),
     hp: 10,
     ac: 10,
@@ -122,10 +123,23 @@ export const createCharacter = (
     level: 1,
     attackBonus: 1,
     cooldowns: {},
+    xp: 0,
+    xpValue: 5,
+    ...character,
   };
   db.characters.set(newCharacter.id, newCharacter);
   console.log(`created ${newCharacter.id}`);
   return newCharacter;
+};
+
+export const gainXP = (
+  characterId: string,
+  amount: number
+): Character | undefined => {
+  const character = getCharacter(characterId);
+  if (!character) return undefined;
+  db.characters.set(characterId, { ...character, xp: character.xp + amount });
+  return getCharacter(characterId);
 };
 
 export const adjustHP = (

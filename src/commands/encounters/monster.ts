@@ -6,21 +6,49 @@ import {
   Character,
   getUserCharacter,
   attack,
+  gainXP,
 } from "../../db";
 import { attackFlavorText, attackRollText } from "../attack";
+
+const getRandomMonster = () => {
+  const rand = Math.random();
+  switch (true) {
+    case rand > 0.6:
+      return createCharacter({
+        name: "Orc",
+        profile: "https://i.imgur.com/2cT3cLm.jpeg",
+      });
+    case rand > 0.3:
+      return createCharacter({
+        hp: 8,
+        maxHP: 8,
+        name: "Bandit",
+        profile: "https://i.imgur.com/MV96z4T.png",
+        xpValue: 4,
+      });
+
+    default:
+      return createCharacter({
+        hp: 5,
+        maxHP: 5,
+        name: "Goblin",
+        profile: "https://i.imgur.com/gPH1JSl.png",
+        xpValue: 3,
+      });
+  }
+};
 
 export const monster = async (
   interaction: CommandInteraction
 ): Promise<void> => {
   // TODO: explore do/while refactor
-  let monster = createCharacter({
-    name: "Orc",
-    profile: "https://i.imgur.com/2cT3cLm.jpeg",
-  });
+  let monster = getRandomMonster();
   let player = getUserCharacter(interaction.user);
   let round = 0;
   let fled = false;
   let timeout = false;
+  const playerAttacks = [];
+  const monsterAttacks = [];
   const message = await interaction.reply({
     embeds: [monsterEmbed(monster)],
     fetchReply: true,
@@ -54,12 +82,14 @@ export const monster = async (
     }
 
     if (reaction.emoji.name === "🏃‍♀️") {
-      message.reply("You flee!");
       fled = true;
+      break;
     }
 
     const playerResult = attack(player.id, monster.id);
+    playerAttacks.push(playerResult);
     const monsterResult = attack(monster.id, player.id);
+    monsterAttacks.push(monsterResult);
 
     const updatedMonster = getCharacter(monster.id);
     const updatedPlayer = getCharacter(player.id);
@@ -93,15 +123,18 @@ export const monster = async (
   const summary = new MessageEmbed().setDescription(`Fight summary`);
 
   if (fled) summary.addField("Fled", `You escaped with your life!`);
-  if (monster.hp === 0)
+  if (monster.hp === 0) {
+    gainXP(player.id, monster.xpValue);
     summary.addField("Enemy Defeated", `You defeated the ${monster.name}! 🎉`);
+    summary.addField("XP Gained", monster.xpValue.toString());
+  }
   if (player.hp === 0) summary.addField("Unconscious", "You were knocked out!");
+
+  message.reactions.removeAll();
 
   message.reply({
     embeds: [summary],
   });
-
-  // TODO: reward, xp? loot?
 };
 
 const attackField = (
