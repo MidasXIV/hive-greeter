@@ -1,4 +1,5 @@
 import { CommandInteraction } from "discord.js";
+import { armorShrine } from "./armor-shrine";
 import { divineBlessing } from "./divine-blessing";
 import { fairyWell } from "./fairy-well";
 import { monster } from "./monster";
@@ -13,7 +14,8 @@ type EncounterId =
   | "trap"
   | "travel"
   | "monster"
-  | "tavern";
+  | "tavern"
+  | "armorShrine";
 
 type Encounters = {
   [key in EncounterId]: CommandHandler;
@@ -26,6 +28,7 @@ const encounters: Encounters = {
   travel,
   monster,
   tavern,
+  armorShrine,
 };
 
 type randomEncounter = CommandHandler;
@@ -36,6 +39,8 @@ export const randomEncounter = (): CommandHandler => {
       return encounters["divineBlessing"];
     case rand >= 0.8:
       return encounters["fairyWell"];
+    case rand >= 0.7:
+      return encounters["armorShrine"];
     case rand >= 0.6:
       return encounters["monster"];
     case rand >= 0.4:

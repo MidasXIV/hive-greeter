@@ -4,6 +4,13 @@ import { readFile, writeFile } from "fs/promises";
 
 export const DB_FILE = "./db.json";
 
+export type StatusEffect = {
+  name: string;
+  started: string;
+  duration: number;
+  acModifier: number;
+};
+
 export type Character = {
   id: string;
   name: string;
@@ -19,6 +26,7 @@ export type Character = {
     adventure?: string;
     heal?: string;
   };
+  statusEffects?: StatusEffect[];
   xp: number;
   xpValue: number;
 };
@@ -49,12 +57,38 @@ export const loadDB = async (): Promise<void> => {
 };
 
 export const loadSerializedDB = (serialized: string): DB => {
-  db.characters.clear();
-  db.characters = new Map(JSON.parse(serialized).characters);
+  const parsed = JSON.parse(serialized);
+  const characters = parsed.characters.map((character: Character) => ({
+    ...character,
+    statusEffects: character.statusEffects || [],
+  }));
+  db.characters = new Map(characters);
   return db;
 };
 
 export const defaultProfile = "attachment://profile.png";
+
+export const getAcModifier = (character: Character): number =>
+  (character.statusEffects || []).reduce(
+    (acc, effect) => acc + effect.acModifier || 0,
+    0
+  );
+export const getModifiedAc = (character: Character): number =>
+  character.ac + getAcModifier(character);
+
+export const grantStatusEffect = (
+  characterId: string,
+  effect: StatusEffect
+): Character | void => {
+  const character = getCharacter(characterId);
+  if (!character) return;
+  const updatedCharacter = {
+    ...character,
+    statusEffects: [...(character.statusEffects || []), effect],
+  };
+  db.characters.set(characterId, updatedCharacter);
+  return getCharacter(characterId);
+};
 
 export const grantDivineBlessing = (characterId: string): void => {
   const character = getCharacter(characterId);
@@ -66,14 +100,32 @@ export const grantDivineBlessing = (characterId: string): void => {
   });
 };
 
+const purgeExpiredStatuses = (characterId: string): void => {
+  const character = db.characters.get(characterId);
+  if (!character) return;
+  db.characters.set(characterId, {
+    ...character,
+    statusEffects:
+      character.statusEffects?.filter(
+        (effect) => !isStatusEffectExpired(effect)
+      ) ?? [],
+  });
+  console.log(`${characterId} status effects purged`);
+};
+
+const isStatusEffectExpired = (effect: StatusEffect): boolean =>
+  Date.now() > new Date(effect.started).valueOf() + effect.duration;
+
 export const getUserCharacters = (): Character[] =>
   Array.from(db.characters.values()).filter((character) => character.user);
 
-export const getCharacter = (
-  id: string
-): ReturnType<typeof db.characters.get> => db.characters.get(id);
+export const getCharacter = (id: string): Character | void => {
+  purgeExpiredStatuses(id);
+  return db.characters.get(id);
+};
 
 export const getUserCharacter = (user: User): Character => {
+  purgeExpiredStatuses(user.id);
   const character = db.characters.get(user.id);
   if (!character) {
     return createCharacter({
@@ -89,7 +141,7 @@ export const getUserCharacter = (user: User): Character => {
 export const setCharacterCooldown = (
   characterId: string,
   type: keyof Character["cooldowns"]
-): Character | undefined => {
+): Character | void => {
   const character = getCharacter(characterId);
   if (!character) return;
   const updatedCharacter = {
@@ -131,6 +183,7 @@ export const createCharacter = (
     level: 1,
     attackBonus: 1,
     cooldowns: {},
+    statusEffects: [],
     xp: 0,
     xpValue: 5,
     ...character,
@@ -143,7 +196,7 @@ export const createCharacter = (
 export const gainXP = (
   characterId: string,
   amount: number
-): Character | undefined => {
+): Character | void => {
   const character = getCharacter(characterId);
   if (!character) return undefined;
   db.characters.set(characterId, { ...character, xp: character.xp + amount });
@@ -153,7 +206,7 @@ export const gainXP = (
 export const adjustHP = (
   characterId: string,
   amount: number
-): Character | undefined => {
+): Character | void => {
   const character = getCharacter(characterId);
   if (!character) return;
 
@@ -198,7 +251,7 @@ export const attack = (
 
   const attackRoll = d20();
   const damage = d6();
-  if (attackRoll + attacker.attackBonus >= defender.ac) {
+  if (attackRoll + attacker.attackBonus >= getModifiedAc(defender)) {
     adjustHP(defender.id, -damage);
     return {
       outcome: "hit",
@@ -255,7 +308,7 @@ export const trap = (
   if (!defender) return;
   const attackRoll = d20();
   const damage = d6();
-  if (attackRoll + attackBonus > defender.ac) {
+  if (attackRoll + attackBonus > getModifiedAc(defender)) {
     adjustHP(characterId, -damage);
     return { outcome: "hit", attackRoll, attackBonus, damage, defender };
   }

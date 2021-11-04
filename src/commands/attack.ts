@@ -1,6 +1,11 @@
 import { SlashCommandBuilder } from "@discordjs/builders";
 import { CommandInteraction, MessageEmbed } from "discord.js";
-import { attackPlayer, getUserCharacter } from "../db";
+import {
+  attackPlayer,
+  getAcModifier,
+  getModifiedAc,
+  getUserCharacter,
+} from "../db";
 import { cooldownRemainingText, mentionCharacter } from "../utils";
 
 export const command = new SlashCommandBuilder()
@@ -50,36 +55,26 @@ const accuracyDescriptor = (result: ReturnType<typeof attackPlayer>) => {
   if (!result) return `No result`;
   if (result.outcome === "cooldown") return "On cooldown";
   const accuracy =
-    result.attackRoll + result.attacker.attackBonus - result.defender.ac;
+    result.attackRoll +
+    result.attacker.attackBonus -
+    getModifiedAc(result.defender);
+  const attacker = mentionCharacter(result.attacker);
+  const defender = mentionCharacter(result.defender);
   switch (true) {
     case accuracy >= 5:
-      return `${mentionCharacter(result.attacker)} strikes ${mentionCharacter(
-        result.defender
-      )} true`;
+      return `${attacker} strikes ${defender} true`;
     case accuracy >= 2:
-      return `${mentionCharacter(result.attacker)} finds purchase against ${
-        result.defender.name
-      }`;
+      return `${attacker} finds purchase against ${defender}`;
     case accuracy >= 1:
-      return `${mentionCharacter(
-        result.attacker
-      )} narrowly hits ${mentionCharacter(result.defender)}`;
+      return `${attacker} narrowly hits ${defender}`;
     case accuracy === 0:
-      return `${mentionCharacter(
-        result.attacker
-      )} barely hits ${mentionCharacter(result.defender)}`;
+      return `${attacker} barely hits ${defender}`;
     case accuracy <= 1:
-      return `${mentionCharacter(
-        result.attacker
-      )} narrowly misses ${mentionCharacter(result.defender)}`;
+      return `${attacker} narrowly misses ${defender}`;
     case accuracy <= 2:
-      return `${mentionCharacter(result.attacker)} misses ${mentionCharacter(
-        result.defender
-      )}`;
+      return `${attacker} misses ${defender}`;
     case accuracy < 5:
-      return `${mentionCharacter(result.attacker)} misses ${mentionCharacter(
-        result.defender
-      )} utterly`;
+      return `${attacker} misses ${defender} utterly`;
   }
 };
 
@@ -101,9 +96,7 @@ export const attackFlavorText = (
   result: ReturnType<typeof attackPlayer>
 ): string =>
   result
-    ? `${accuracyDescriptor(result)} ${
-        result.outcome === "hit" ? damageDescriptor(result) : ""
-      }`
+    ? `${accuracyDescriptor(result)} ${damageDescriptor(result)}`
     : "No result";
 
 export const hpText = (result: ReturnType<typeof attackPlayer>): string =>
@@ -117,16 +110,24 @@ export const hpText = (result: ReturnType<typeof attackPlayer>): string =>
 
 export const attackRollText = (
   result: ReturnType<typeof attackPlayer>
-): string =>
-  result
-    ? result.outcome === "cooldown"
-      ? "on cooldown"
-      : `${result.attackRoll}+${result.attacker.attackBonus} (${
-          result.attackRoll + result.attacker.attackBonus
-        }) vs ${result.defender.ac} ac${
-          result.outcome === "hit" ? ` for ${result.damage} damage` : ""
-        }.`
-    : "No result";
+): string => {
+  if (!result) return "No result. This should not happen.";
+  if (result.outcome === "cooldown") return "on cooldown";
+  const ac = result.defender.ac;
+  const acModifier = getAcModifier(result.defender);
+  const roll = result.attackRoll;
+  const attackBonus = result.attacker.attackBonus;
+  const totalAttack = roll + attackBonus;
+  const totalAc = ac + acModifier;
+
+  const acModifierText =
+    acModifier > 0 ? `+${acModifier}` : acModifier < 0 ? `-${acModifier}` : ``;
+
+  const comparison = result.outcome === "hit" ? "≥" : "<";
+  const outcome = result.outcome === "hit" ? "Hit!" : "Miss.";
+
+  return `${outcome}\n⚔${totalAttack} ${comparison} 🛡${totalAc} (\`${roll}\`+${attackBonus} vs ${ac}${acModifierText})`;
+};
 
 const attackResultEmbed = (
   result: ReturnType<typeof attackPlayer>
@@ -139,22 +140,24 @@ const attackResultEmbed = (
       embed.setImage("https://i.imgur.com/rM6yWps.png");
       break;
     case "miss":
+    default:
       embed.setImage("https://i.imgur.com/xVlTNQm.png");
       break;
-    default:
       break;
   }
 
   embed.addFields([
     {
-      name: `${result.defender.name} HP`,
+      name: `${result.defender.name}'s HP`,
       value: hpText(result),
     },
     {
-      name: `Attack Roll`,
+      name: `Attack`,
       value: attackRollText(result),
     },
   ]);
+
+  if (result.damage) embed.addField("Damage", "🩸 " + result.damage.toString());
 
   return embed;
 };

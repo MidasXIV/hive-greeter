@@ -1,6 +1,12 @@
 import { SlashCommandBuilder } from "@discordjs/builders";
 import { CommandInteraction, MessageEmbed } from "discord.js";
-import { Character, getUserCharacter } from "../db";
+import moment from "moment";
+import {
+  Character,
+  getAcModifier,
+  getModifiedAc,
+  getUserCharacter,
+} from "../db";
 import { cooldownRemainingText } from "../utils";
 
 export const command = new SlashCommandBuilder()
@@ -25,41 +31,59 @@ export const execute = async (
 
 export default { command, execute };
 
-export const characterEmbed = (character: Character): MessageEmbed =>
-  new MessageEmbed()
+export const characterEmbed = (character: Character): MessageEmbed => {
+  const embed = new MessageEmbed()
     .setTitle(character.name)
     .setImage(character.profile)
     .addFields([
       {
         name: "HP",
-        value: `${character.hp}/${character.maxHP}`,
+        value: `🩸 ${character.hp}/${character.maxHP}`,
+        inline: true,
       },
       {
         name: "AC",
-        value: `${character.ac}`,
+        value: `🛡 ${getModifiedAc(character)}${
+          getAcModifier(character)
+            ? ` (${character.ac}+${getAcModifier(character)})`
+            : ``
+        }`,
+        inline: true,
       },
       {
         name: "Attack Bonus",
-        value: `${character.attackBonus}`,
+        value: `⚔ ${character.attackBonus}`,
+        inline: true,
       },
       {
         name: "Attack Available",
         value: cooldownRemainingText(character.id, "attack"),
+        inline: true,
       },
       {
         name: "Adventure Available",
         value: cooldownRemainingText(character.id, "adventure"),
+        inline: true,
       },
       {
         name: "Heal Available",
         value: cooldownRemainingText(character.id, "adventure"),
+        inline: true,
       },
       {
         name: "XP",
         value: character.xp.toString(),
-      },
-      {
-        name: "Profile",
-        value: `${character.profile}`,
+        inline: true,
       },
     ]);
+  character.statusEffects?.forEach((effect) =>
+    embed.addField(
+      effect.name,
+      `Expires ${moment(new Date(effect.started))
+        .add(effect.duration)
+        .fromNow()}`,
+      true
+    )
+  );
+  return embed;
+};
