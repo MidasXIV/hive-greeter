@@ -1,6 +1,7 @@
 import { SlashCommandBuilder } from "@discordjs/builders";
 import { CommandInteraction, MessageAttachment, Permissions } from "discord.js";
 import { DB_FILE, loadDB, saveDB } from "../db";
+import { CommandHandler } from "../utils";
 
 export const command = new SlashCommandBuilder()
   .setName("db")
@@ -14,8 +15,6 @@ export const command = new SlashCommandBuilder()
   .addSubcommand((option) =>
     option.setName("load").setDescription("Load the database from disk.")
   );
-
-type CommandHandler = (interaction: CommandInteraction) => Promise<void>;
 
 const subcommands = new Map<string, CommandHandler>();
 

@@ -1,3 +1,4 @@
+import { CommandInteraction } from "discord.js";
 import moment from "moment";
 import { Character, getCooldownRemaining } from "./db";
 
@@ -15,3 +16,5 @@ export const cooldownRemainingText = (
   if (cooldown === undefined || cooldown <= 0) return "Now";
   return moment().add(cooldown, "milliseconds").fromNow();
 };
+
+export type CommandHandler = (interaction: CommandInteraction) => Promise<void>;
