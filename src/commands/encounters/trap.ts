@@ -18,9 +18,9 @@ export const trap = async (interaction: CommandInteraction): Promise<void> => {
   if (!result)
     return await interaction.reply("No result. This should not happen.");
   await sleep(2000);
-  gainXP(interaction.user.id, 1);
   switch (result.outcome) {
     case "hit":
+      gainXP(interaction.user.id, 1);
       await interaction.followUp({
         embeds: [
           new MessageEmbed()
@@ -33,12 +33,13 @@ export const trap = async (interaction: CommandInteraction): Promise<void> => {
       });
       break;
     case "miss":
+      gainXP(interaction.user.id, 2);
       await interaction.followUp({
         embeds: [
           new MessageEmbed()
             .setDescription(`You deftly evade!`)
             .addField("Roll", trapRollText(result))
-            .addField("XP Gained", "1")
+            .addField("XP Gained", "2")
             .setImage("https://imgur.com/gSgcrnN.png"),
         ],
       });
