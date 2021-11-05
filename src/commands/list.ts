@@ -2,6 +2,7 @@ import { SlashCommandBuilder } from "@discordjs/builders";
 import { CommandInteraction, MessageEmbed } from "discord.js";
 import { Character, getUserCharacters } from "../db";
 import { cooldownRemainingText } from "../utils";
+import { statText } from "./inspect";
 
 export const command = new SlashCommandBuilder()
   .setName("list")
@@ -34,12 +35,12 @@ export const characterEmbed = (character: Character): MessageEmbed =>
       },
       {
         name: "AC",
-        value: `${character.ac}`,
+        value: `🛡 ${statText(character, "ac")}`,
         inline: true,
       },
       {
         name: "Attack Bonus",
-        value: `${character.attackBonus}`,
+        value: `⚔ ${statText(character, "attackBonus")}`,
         inline: true,
       },
       {

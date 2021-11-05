@@ -4,31 +4,33 @@ import { readFile, writeFile } from "fs/promises";
 
 export const DB_FILE = "./db.json";
 
-export type StatusEffect = {
-  name: string;
-  started: string;
-  duration: number;
-  acModifier: number;
-};
-
 export type Character = {
   id: string;
   name: string;
+  profile: string;
+  user?: User;
   hp: number;
   maxHP: number;
   ac: number;
-  level: number;
   attackBonus: number;
-  profile: string;
-  user?: User;
   cooldowns: {
     attack?: string;
     adventure?: string;
     heal?: string;
   };
-  statusEffects?: StatusEffect[];
+  statModifiers?: StatModifier[];
   xp: number;
   xpValue: number;
+};
+
+export type StatModifier = {
+  name: string;
+  started: string;
+  duration: number;
+  modifiers: Partial<{
+    ac: number;
+    attackBonus: number;
+  }>;
 };
 
 type DB = {
@@ -60,7 +62,7 @@ export const loadSerializedDB = (serialized: string): DB => {
   const parsed = JSON.parse(serialized);
   const characters = parsed.characters.map((character: Character) => ({
     ...character,
-    statusEffects: character.statusEffects || [],
+    statusEffects: character.statModifiers || [],
   }));
   db.characters = new Map(characters);
   return db;
@@ -68,23 +70,32 @@ export const loadSerializedDB = (serialized: string): DB => {
 
 export const defaultProfile = "attachment://profile.png";
 
-export const getAcModifier = (character: Character): number =>
-  (character.statusEffects || []).reduce(
-    (acc, effect) => acc + effect.acModifier || 0,
+export type Stat = "ac" | "attackBonus";
+export const getCharacterStat = (character: Character, stat: Stat): number =>
+  character[stat];
+export const getCharacterStatModified = (
+  character: Character,
+  stat: Stat
+): number => character[stat] + getCharacterStatModifier(character, stat);
+
+export const getCharacterStatModifier = (
+  character: Character,
+  stat: Stat
+): number =>
+  (character.statModifiers || []).reduce(
+    (acc, effect) => acc + (effect.modifiers[stat] || 0),
     0
   );
-export const getModifiedAc = (character: Character): number =>
-  character.ac + getAcModifier(character);
 
 export const grantStatusEffect = (
   characterId: string,
-  effect: StatusEffect
+  effect: StatModifier
 ): Character | void => {
   const character = getCharacter(characterId);
   if (!character) return;
   const updatedCharacter = {
     ...character,
-    statusEffects: [...(character.statusEffects || []), effect],
+    statModifiers: [...(character.statModifiers || []), effect],
   };
   db.characters.set(characterId, updatedCharacter);
   return getCharacter(characterId);
@@ -105,15 +116,15 @@ const purgeExpiredStatuses = (characterId: string): void => {
   if (!character) return;
   db.characters.set(characterId, {
     ...character,
-    statusEffects:
-      character.statusEffects?.filter(
+    statModifiers:
+      character.statModifiers?.filter(
         (effect) => !isStatusEffectExpired(effect)
       ) ?? [],
   });
   console.log(`${characterId} status effects purged`);
 };
 
-const isStatusEffectExpired = (effect: StatusEffect): boolean =>
+const isStatusEffectExpired = (effect: StatModifier): boolean =>
   Date.now() > new Date(effect.started).valueOf() + effect.duration;
 
 export const getUserCharacters = (): Character[] =>
@@ -180,10 +191,9 @@ export const createCharacter = (
     hp: 10,
     ac: 10,
     maxHP: 10,
-    level: 1,
     attackBonus: 1,
     cooldowns: {},
-    statusEffects: [],
+    statModifiers: [],
     xp: 0,
     xpValue: 5,
     ...character,
@@ -251,7 +261,10 @@ export const attack = (
 
   const attackRoll = d20();
   const damage = d6();
-  if (attackRoll + attacker.attackBonus >= getModifiedAc(defender)) {
+  if (
+    attackRoll + attacker.attackBonus >=
+    getCharacterStatModifier(defender, "ac")
+  ) {
     adjustHP(defender.id, -damage);
     return {
       outcome: "hit",
@@ -308,7 +321,7 @@ export const trap = (
   if (!defender) return;
   const attackRoll = d20();
   const damage = d6();
-  if (attackRoll + attackBonus > getModifiedAc(defender)) {
+  if (attackRoll + attackBonus > getCharacterStatModified(defender, "ac")) {
     adjustHP(characterId, -damage);
     return { outcome: "hit", attackRoll, attackBonus, damage, defender };
   }

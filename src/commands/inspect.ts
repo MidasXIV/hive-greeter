@@ -3,9 +3,10 @@ import { CommandInteraction, MessageEmbed } from "discord.js";
 import moment from "moment";
 import {
   Character,
-  getAcModifier,
-  getModifiedAc,
+  getCharacterStatModified,
+  getCharacterStatModifier,
   getUserCharacter,
+  Stat,
 } from "../db";
 import { cooldownRemainingText } from "../utils";
 
@@ -31,6 +32,13 @@ export const execute = async (
 
 export default { command, execute };
 
+export const statText = (character: Character, stat: Stat): string =>
+  `${getCharacterStatModified(character, stat)}${
+    getCharacterStatModifier(character, stat)
+      ? ` (+${getCharacterStatModifier(character, stat)})`
+      : ``
+  }`;
+
 export const characterEmbed = (character: Character): MessageEmbed => {
   const embed = new MessageEmbed()
     .setTitle(character.name)
@@ -43,16 +51,12 @@ export const characterEmbed = (character: Character): MessageEmbed => {
       },
       {
         name: "AC",
-        value: `🛡 ${getModifiedAc(character)}${
-          getAcModifier(character)
-            ? ` (${character.ac}+${getAcModifier(character)})`
-            : ``
-        }`,
+        value: `🛡 ${statText(character, "ac")}`,
         inline: true,
       },
       {
         name: "Attack Bonus",
-        value: `⚔ ${character.attackBonus}`,
+        value: `⚔ ${statText(character, "attackBonus")}`,
         inline: true,
       },
       {
@@ -76,7 +80,7 @@ export const characterEmbed = (character: Character): MessageEmbed => {
         inline: true,
       },
     ]);
-  character.statusEffects?.forEach((effect) =>
+  character.statModifiers?.forEach((effect) =>
     embed.addField(
       effect.name,
       `Expires ${moment(new Date(effect.started))

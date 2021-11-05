@@ -2,8 +2,8 @@ import { SlashCommandBuilder } from "@discordjs/builders";
 import { CommandInteraction, MessageEmbed } from "discord.js";
 import {
   attackPlayer,
-  getAcModifier,
-  getModifiedAc,
+  getCharacterStatModified,
+  getCharacterStatModifier,
   getUserCharacter,
 } from "../db";
 import { cooldownRemainingText, mentionCharacter } from "../utils";
@@ -56,8 +56,8 @@ const accuracyDescriptor = (result: ReturnType<typeof attackPlayer>) => {
   if (result.outcome === "cooldown") return "On cooldown";
   const accuracy =
     result.attackRoll +
-    result.attacker.attackBonus -
-    getModifiedAc(result.defender);
+    getCharacterStatModified(result.attacker, "attackBonus") -
+    getCharacterStatModified(result.defender, "ac");
   const attacker = mentionCharacter(result.attacker);
   const defender = mentionCharacter(result.defender);
   switch (true) {
@@ -114,9 +114,9 @@ export const attackRollText = (
   if (!result) return "No result. This should not happen.";
   if (result.outcome === "cooldown") return "on cooldown";
   const ac = result.defender.ac;
-  const acModifier = getAcModifier(result.defender);
+  const acModifier = getCharacterStatModifier(result.defender, "ac");
   const roll = result.attackRoll;
-  const attackBonus = result.attacker.attackBonus;
+  const attackBonus = getCharacterStatModified(result.attacker, "attackBonus");
   const totalAttack = roll + attackBonus;
   const totalAc = ac + acModifier;
 
@@ -142,7 +142,6 @@ const attackResultEmbed = (
     case "miss":
     default:
       embed.setImage("https://i.imgur.com/xVlTNQm.png");
-      break;
       break;
   }
 
