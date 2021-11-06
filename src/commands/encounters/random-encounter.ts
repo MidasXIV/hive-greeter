@@ -49,6 +49,8 @@ export const randomEncounter = (): CommandHandler => {
       return encounters["armorShrine"];
     case rand >= 0.6:
       return encounters["attackShrine"];
+    case rand >= 0.5:
+      return encounters["chest"];
     case rand >= 0.4:
       return encounters["monster"];
     case rand >= 0.3:

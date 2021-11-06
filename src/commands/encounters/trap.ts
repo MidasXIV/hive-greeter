@@ -1,5 +1,5 @@
 import { CommandInteraction, Message, MessageEmbed } from "discord.js";
-import { gainXP, trap as trapAttack } from "../../db";
+import { awardXP, trap as trapAttack } from "../../db";
 import { sleep } from "../../utils";
 
 export const trap = async (interaction: CommandInteraction): Promise<void> => {
@@ -20,7 +20,7 @@ export const trap = async (interaction: CommandInteraction): Promise<void> => {
   await sleep(2000);
   switch (result.outcome) {
     case "hit":
-      gainXP(interaction.user.id, 1);
+      awardXP(interaction.user.id, 1);
       await interaction.followUp({
         embeds: [
           new MessageEmbed()
@@ -33,7 +33,7 @@ export const trap = async (interaction: CommandInteraction): Promise<void> => {
       });
       break;
     case "miss":
-      gainXP(interaction.user.id, 2);
+      awardXP(interaction.user.id, 2);
       await interaction.followUp({
         embeds: [
           new MessageEmbed()

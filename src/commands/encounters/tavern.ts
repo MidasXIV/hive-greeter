@@ -1,5 +1,5 @@
 import { CommandInteraction, Message, MessageEmbed } from "discord.js";
-import { adjustHP, d6, gainXP } from "../../db";
+import { adjustHP, d6, awardXP } from "../../db";
 import { sleep } from "../../utils";
 
 export const tavern = async (
@@ -23,7 +23,7 @@ export const tavern = async (
 
   if (Math.random() > 0.5) {
     const roll = d6();
-    gainXP(interaction.user.id, 1);
+    awardXP(interaction.user.id, 1);
     adjustHP(interaction.user.id, roll);
     await interaction.followUp({
       embeds: [
@@ -38,7 +38,7 @@ export const tavern = async (
     });
   } else {
     const roll = d6();
-    gainXP(interaction.user.id, 1);
+    awardXP(interaction.user.id, 1);
     adjustHP(interaction.user.id, -roll);
     await interaction.followUp({
       embeds: [

@@ -1,5 +1,5 @@
 import { randomUUID } from "crypto";
-import { User } from "discord.js";
+import { MessageAttachment, User } from "discord.js";
 import { readFile, writeFile } from "fs/promises";
 
 export const DB_FILE = "./db.json";
@@ -20,7 +20,18 @@ export type Character = {
   };
   statModifiers?: StatModifier[];
   xp: number;
+  gold: number;
   xpValue: number;
+};
+
+const defaultCharacter: Partial<Character> = {
+  gold: 0,
+  hp: 10,
+  ac: 10,
+  cooldowns: {},
+  statModifiers: [],
+  xp: 0,
+  xpValue: 10,
 };
 
 export type StatModifier = {
@@ -60,15 +71,24 @@ export const loadDB = async (): Promise<void> => {
 
 export const loadSerializedDB = (serialized: string): DB => {
   const parsed = JSON.parse(serialized);
-  const characters = parsed.characters.map((character: Character) => ({
-    ...character,
-    statusEffects: character.statModifiers || [],
-  }));
+  const characters = parsed.characters.map((character: Character) => [
+    character.id,
+    {
+      ...defaultCharacter,
+      ...character,
+    },
+  ]);
+
   db.characters = new Map(characters);
+  console.log("Database loaded", db);
   return db;
 };
 
 export const defaultProfile = "attachment://profile.png";
+export const defaultProfileAttachment = new MessageAttachment(
+  "./images/default-profile.png",
+  "profile.png"
+);
 
 export type Stat = "ac" | "attackBonus";
 export const getCharacterStat = (character: Character, stat: Stat): number =>
@@ -196,6 +216,7 @@ export const createCharacter = (
     statModifiers: [],
     xp: 0,
     xpValue: 5,
+    gold: 0,
     ...character,
   };
   db.characters.set(newCharacter.id, newCharacter);
@@ -203,13 +224,42 @@ export const createCharacter = (
   return newCharacter;
 };
 
-export const gainXP = (
+export const awardXP = (
   characterId: string,
   amount: number
 ): Character | void => {
   const character = getCharacter(characterId);
   if (!character) return undefined;
-  db.characters.set(characterId, { ...character, xp: character.xp + amount });
+  db.characters.set(characterId, {
+    ...character,
+    xp: character.xp + amount,
+  });
+  return getCharacter(characterId);
+};
+
+export const awardGold = (
+  characterId: string,
+  amount: number
+): Character | void => {
+  const character = getCharacter(characterId);
+  if (!character) return;
+  db.characters.set(characterId, {
+    ...character,
+    gold: character.gold + amount,
+  });
+  return getCharacter(characterId);
+};
+
+export const setGold = (
+  characterId: string,
+  amount: number
+): Character | void => {
+  const character = getCharacter(characterId);
+  if (!character) return;
+  db.characters.set(characterId, {
+    ...character,
+    gold: amount,
+  });
   return getCharacter(characterId);
 };
 

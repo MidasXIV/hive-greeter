@@ -1,12 +1,12 @@
 import { CommandInteraction, MessageEmbed } from "discord.js";
-import { adjustHP, gainXP } from "../../db";
+import { adjustHP, awardXP } from "../../db";
 
 export const fairyWell = async (
   interaction: CommandInteraction
 ): Promise<void> => {
   const healAmount = Math.floor(Math.random() * 6);
   adjustHP(interaction.user.id, healAmount);
-  gainXP(interaction.user.id, 1);
+  awardXP(interaction.user.id, 1);
   await interaction.reply({
     embeds: [
       new MessageEmbed()

@@ -1,7 +1,7 @@
 import { SlashCommandBuilder } from "@discordjs/builders";
 import { CommandInteraction, MessageEmbed } from "discord.js";
-import { Character, getUserCharacters } from "../db";
-import { cooldownRemainingText } from "../utils";
+import { Character, getUserCharacter, getUserCharacters } from "../db";
+import { cooldownRemainingText, hpBar } from "../utils";
 import { statText } from "./inspect";
 
 export const command = new SlashCommandBuilder()
@@ -14,6 +14,8 @@ export const command = new SlashCommandBuilder()
 export const execute = async (
   interaction: CommandInteraction
 ): Promise<void> => {
+  // ensure character exists to prevent empty response error
+  getUserCharacter(interaction.user);
   interaction.reply({
     embeds: getUserCharacters()
       .sort((a, b) => b.xp - a.xp)
@@ -30,8 +32,7 @@ export const characterEmbed = (character: Character): MessageEmbed =>
     .addFields([
       {
         name: "HP",
-        value: `${character.hp}/${character.maxHP}`,
-        inline: true,
+        value: `${character.hp}/${character.maxHP}\n${hpBar(character)}`,
       },
       {
         name: "AC",
@@ -39,28 +40,30 @@ export const characterEmbed = (character: Character): MessageEmbed =>
         inline: true,
       },
       {
-        name: "Attack Bonus",
+        name: "Attack",
         value: `⚔ ${statText(character, "attackBonus")}`,
-        inline: true,
-      },
-      {
-        name: "Attack Available",
-        value: cooldownRemainingText(character.id, "attack"),
-        inline: true,
-      },
-      {
-        name: "Adventure Available",
-        value: cooldownRemainingText(character.id, "adventure"),
-        inline: true,
-      },
-      {
-        name: "Heal Available",
-        value: cooldownRemainingText(character.id, "adventure"),
         inline: true,
       },
       {
         name: "XP",
         value: character.xp.toString(),
         inline: true,
+      },
+      {
+        name: "GP",
+        value: character.gold.toString(),
+        inline: true,
+      },
+      {
+        name: "Attack Available",
+        value: cooldownRemainingText(character.id, "attack"),
+      },
+      {
+        name: "Adventure Available",
+        value: cooldownRemainingText(character.id, "adventure"),
+      },
+      {
+        name: "Heal Available",
+        value: cooldownRemainingText(character.id, "adventure"),
       },
     ]);

@@ -3,6 +3,8 @@ import { CommandInteraction, MessageEmbed } from "discord.js";
 import moment from "moment";
 import {
   Character,
+  defaultProfile,
+  defaultProfileAttachment,
   getCharacterStatModified,
   getCharacterStatModifier,
   getUserCharacter,
@@ -25,6 +27,8 @@ export const execute = async (
     interaction.user;
   const character = getUserCharacter(user);
   await interaction.reply({
+    attachments:
+      character.profile === defaultProfile ? [defaultProfileAttachment] : [],
     embeds: [characterEmbed(character)],
     fetchReply: true,
   });
@@ -32,12 +36,12 @@ export const execute = async (
 
 export default { command, execute };
 
-export const statText = (character: Character, stat: Stat): string =>
-  `${getCharacterStatModified(character, stat)}${
-    getCharacterStatModifier(character, stat)
-      ? ` (+${getCharacterStatModifier(character, stat)})`
-      : ``
-  }`;
+export const statText = (character: Character, stat: Stat): string => {
+  const modified = getCharacterStatModified(character, stat);
+  const modifier = getCharacterStatModifier(character, stat);
+  const sign = modifier > 0 ? "+" : "";
+  return `${modified}${modifier ? ` (${sign}${modifier})` : ""}`;
+};
 
 export const characterEmbed = (character: Character): MessageEmbed => {
   const embed = new MessageEmbed()
@@ -79,7 +83,13 @@ export const characterEmbed = (character: Character): MessageEmbed => {
         value: character.xp.toString(),
         inline: true,
       },
+      {
+        name: "GP",
+        value: character.gold.toString(),
+        inline: true,
+      },
     ]);
+  console.log("statModifiers", character.statModifiers);
   character.statModifiers?.forEach((effect) =>
     embed.addField(
       effect.name,

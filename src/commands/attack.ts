@@ -24,8 +24,19 @@ export const execute = async (
     await interaction.reply(`You must specify a target @player`);
     return;
   }
+
   const attacker = getUserCharacter(initiator);
   const defender = getUserCharacter(target);
+  if (attacker.hp === 0) {
+    await interaction.reply({
+      embeds: [
+        new MessageEmbed()
+          .setDescription(`You're too weak to press on.`)
+          .setImage("https://imgur.com/uD06Okr.png"),
+      ],
+    });
+    return;
+  }
   const result = attackPlayer(attacker.id, defender.id);
   await showAttackResult(result, interaction);
 };

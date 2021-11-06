@@ -6,9 +6,13 @@ import {
   Character,
   getUserCharacter,
   attack,
-  gainXP,
+  awardXP,
+  awardGold,
+  setGold,
 } from "../../db";
+import { hpBar } from "../../utils";
 import { attackFlavorText, attackRollText } from "../attack";
+import { chest } from "./chest";
 
 const getRandomMonster = () => {
   const rand = Math.random();
@@ -17,6 +21,7 @@ const getRandomMonster = () => {
       return createCharacter({
         name: "Orc",
         profile: "https://i.imgur.com/2cT3cLm.jpeg",
+        gold: Math.floor(Math.random() * 6) + 2,
       });
     case rand > 0.3:
       return createCharacter({
@@ -25,6 +30,7 @@ const getRandomMonster = () => {
         name: "Bandit",
         profile: "https://i.imgur.com/MV96z4T.png",
         xpValue: 4,
+        gold: Math.floor(Math.random() * 5) + 1,
       });
 
     default:
@@ -34,6 +40,7 @@ const getRandomMonster = () => {
         name: "Goblin",
         profile: "https://i.imgur.com/gPH1JSl.png",
         xpValue: 3,
+        gold: Math.floor(Math.random() * 3) + 1,
       });
   }
 };
@@ -112,8 +119,21 @@ export const monster = async (
     message.edit({
       embeds: [
         monsterEmbed(monster)
-          .addField("Round", round.toString())
-          .addField(`${player.name}'s HP`, `${player.hp}/${player.maxHP}`)
+          .addField("Round", round.toString(), true)
+          .addField(
+            `${monster.name}'s HP`,
+            `${hpBar(
+              monster,
+              playerResult.outcome === "hit" ? playerResult.damage : 0
+            )}`
+          )
+          .addField(
+            `${player.name}'s HP`,
+            `${hpBar(
+              player,
+              monsterResult.outcome === "hit" ? monsterResult.damage : 0
+            )}`
+          )
           .addField(...attackField(monsterResult))
           .addField(...attackField(playerResult)),
       ],
@@ -123,20 +143,30 @@ export const monster = async (
   const summary = new MessageEmbed().setDescription(`Fight summary`);
 
   if (fled) summary.addField("Fled", `You escaped with your life!`);
-  if (monster.hp === 0) {
-    gainXP(player.id, monster.xpValue);
-    summary.addField("Enemy Defeated", `You defeated the ${monster.name}! 🎉`);
+  if (monster.hp === 0 && player.hp > 0) {
+    summary.addField("Triumphant!", `You defeated the ${monster.name}! 🎉`);
+    awardXP(player.id, monster.xpValue);
     summary.addField("XP Gained", monster.xpValue.toString());
+    awardGold(player.id, monster.gold);
+    summary.addField("GP Gained", monster.gold.toString());
   }
-  if (player.hp === 0) summary.addField("Unconscious", "You were knocked out!");
+  if (player.hp === 0) {
+    summary.addField("Unconscious", "You were knocked out!");
+    if (monster.hp > 0 && player.gold > 0) {
+      setGold(player.id, 0);
+      summary.addField("Looted", `You lost 💰${player.gold} gold!`);
+    }
+  }
 
   message.reactions.removeAll();
 
-  message.reply({
+  await message.reply({
     embeds: [summary],
   });
 
-  // TODO: clean up monster from db
+  if (player.hp > 0 && Math.random() <= 0.3) {
+    await chest(interaction, true);
+  }
 };
 
 const attackField = (
@@ -148,7 +178,9 @@ const attackField = (
       : `${result.attacker.name}'s attack`
     : "No result.",
   result
-    ? `${attackFlavorText(result)}\n\`${attackRollText(result)}\``
+    ? `${attackFlavorText(result)}\n${attackRollText(result)}${
+        result.outcome === "hit" ? "\n🩸 " + result.damage.toString() : ""
+      }`
     : "No result.",
 ];
 
@@ -156,10 +188,4 @@ const monsterEmbed = (monster: Character) =>
   new MessageEmbed()
     .setTitle(monster.name)
     .setColor("RED")
-    .setImage(monster.profile)
-    .addFields([
-      {
-        name: `${monster.name}'s HP`,
-        value: `${monster.hp}/${monster.maxHP}`,
-      },
-    ]);
+    .setImage(monster.profile);

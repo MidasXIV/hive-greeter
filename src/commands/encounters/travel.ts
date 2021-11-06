@@ -1,10 +1,10 @@
 import { CommandInteraction, MessageEmbed } from "discord.js";
-import { gainXP } from "../../db";
+import { awardXP } from "../../db";
 
 export const travel = async (
   interaction: CommandInteraction
 ): Promise<void> => {
-  gainXP(interaction.user.id, 1);
+  awardXP(interaction.user.id, 1);
   await interaction.reply({
     embeds: [
       new MessageEmbed()
