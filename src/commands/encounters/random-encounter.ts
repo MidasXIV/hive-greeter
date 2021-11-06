@@ -7,6 +7,7 @@ import { monster } from "./monster";
 import { tavern } from "./tavern";
 import { trap } from "./trap";
 import { travel } from "./travel";
+import { chest } from "./chest";
 
 type CommandHandler = (interaction: CommandInteraction) => Promise<void>;
 type EncounterId =
@@ -17,7 +18,8 @@ type EncounterId =
   | "monster"
   | "tavern"
   | "attackShrine"
-  | "armorShrine";
+  | "armorShrine"
+  | "chest";
 
 type Encounters = {
   [key in EncounterId]: CommandHandler;
@@ -32,6 +34,7 @@ const encounters: Encounters = {
   tavern,
   armorShrine,
   attackShrine,
+  chest,
 };
 
 type randomEncounter = CommandHandler;

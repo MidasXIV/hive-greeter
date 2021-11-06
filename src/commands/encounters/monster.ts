@@ -77,7 +77,7 @@ export const monster = async (
     }
     const reaction = collected.first();
     if (!reaction) {
-      console.error("no monster reaction collected");
+      await interaction.followUp(`No reaction received.`);
       return;
     }
 
