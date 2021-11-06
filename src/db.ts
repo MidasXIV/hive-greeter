@@ -71,13 +71,10 @@ export const loadDB = async (): Promise<void> => {
 
 export const loadSerializedDB = (serialized: string): DB => {
   const parsed = JSON.parse(serialized);
-  const characters = parsed.characters.map((character: Character) => [
-    character.id,
-    {
-      ...defaultCharacter,
-      ...character,
-    },
-  ]);
+  const characters = parsed.characters.map((character: Character) => ({
+    ...defaultCharacter,
+    ...character,
+  }));
 
   db.characters = new Map(characters);
   console.log("Database loaded", db);
