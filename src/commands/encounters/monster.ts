@@ -124,14 +124,14 @@ export const monster = async (
             `${monster.name}'s HP`,
             `${hpBar(
               monster,
-              playerResult.outcome === "hit" ? playerResult.damage : 0
+              playerResult.outcome === "hit" ? -playerResult.damage : 0
             )}`
           )
           .addField(
             `${player.name}'s HP`,
             `${hpBar(
               player,
-              monsterResult.outcome === "hit" ? monsterResult.damage : 0
+              monsterResult.outcome === "hit" ? -monsterResult.damage : 0
             )}`
           )
           .addField(...attackField(monsterResult))
