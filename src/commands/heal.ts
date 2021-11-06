@@ -2,6 +2,7 @@ import { SlashCommandBuilder } from "@discordjs/builders";
 import { CommandInteraction, MessageEmbed } from "discord.js";
 import { getUserCharacter, heal } from "../db";
 import { cooldownRemainingText } from "../utils";
+import { hpBar } from "../utils/hp-bar";
 
 export const command = new SlashCommandBuilder()
   .setName("heal")
@@ -38,7 +39,13 @@ export const execute = async (
             .setTitle(`Heal`)
             .setDescription(`Healed ${target} for ${result.amount}!`)
             .setImage("https://i.imgur.com/S32LDbM.png")
-            .addField("HP", `${result.target.hp}/${result.target.maxHP}`),
+            .addField(
+              "HP",
+              `${result.target.hp}/${result.target.maxHP}\n${hpBar(
+                result.target,
+                result.amount
+              )}`
+            ),
         ],
       });
       break;

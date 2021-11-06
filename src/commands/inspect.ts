@@ -11,6 +11,7 @@ import {
   Stat,
 } from "../db";
 import { cooldownRemainingText } from "../utils";
+import { hpBar } from "../utils/hp-bar";
 
 export const command = new SlashCommandBuilder()
   .setName("inspect")
@@ -50,8 +51,7 @@ export const characterEmbed = (character: Character): MessageEmbed => {
     .addFields([
       {
         name: "HP",
-        value: `🩸 ${character.hp}/${character.maxHP}`,
-        inline: true,
+        value: `${character.hp}/${character.maxHP}\n${hpBar(character)}`,
       },
       {
         name: "AC",

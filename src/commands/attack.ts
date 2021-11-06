@@ -7,6 +7,7 @@ import {
   getUserCharacter,
 } from "../db";
 import { cooldownRemainingText, mentionCharacter } from "../utils";
+import { hpBar } from "../utils/hp-bar";
 
 export const command = new SlashCommandBuilder()
   .setName("attack")
@@ -159,7 +160,7 @@ const attackResultEmbed = (
   embed.addFields([
     {
       name: `${result.defender.name}'s HP`,
-      value: hpText(result),
+      value: hpText(result) + `\n${hpBar(result.defender, -result.damage)}`,
     },
     {
       name: `Attack`,

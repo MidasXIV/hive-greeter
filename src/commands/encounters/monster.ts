@@ -10,7 +10,7 @@ import {
   awardGold,
   setGold,
 } from "../../db";
-import { hpBar } from "../../utils";
+import { hpBar } from "../../utils/hp-bar";
 import { attackFlavorText, attackRollText } from "../attack";
 import { chest } from "./chest";
 

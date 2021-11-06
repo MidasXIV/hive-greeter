@@ -18,24 +18,3 @@ export const cooldownRemainingText = (
 };
 
 export type CommandHandler = (interaction: CommandInteraction) => Promise<void>;
-
-export const hpBar = (character: Character, damage = 0): string => {
-  const hp = Math.ceil((character.hp / character.maxHP) * 10);
-  const dmg = Math.floor((damage / character.maxHP) * 10);
-  try {
-    return (
-      Array.from(Array(hp))
-        .map(() => "🟢")
-        .join("") +
-      Array.from(Array(dmg))
-        .map(() => "🔴")
-        .join("") +
-      Array.from(Array(10 - hp - dmg))
-        .map(() => "⚫")
-        .join("")
-    );
-  } catch (e) {
-    console.error(e);
-    return "hpBar Error";
-  }
-};
