@@ -1,5 +1,5 @@
 import { CommandInteraction, MessageEmbed } from "discord.js";
-import { adjustHP, awardXP } from "../../db";
+import { adjustHP, awardXP } from "../../gameState";
 
 export const fairyWell = async (
   interaction: CommandInteraction

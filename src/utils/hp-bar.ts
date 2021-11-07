@@ -1,4 +1,4 @@
-import { Character } from "../db";
+import { Character } from "../character/Character";
 
 export const hpBar = (character: Character, adjustment = 0): string => {
   const hp = Math.ceil((character.hp / character.maxHP) * 10);

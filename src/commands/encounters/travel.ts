@@ -1,5 +1,5 @@
 import { CommandInteraction, MessageEmbed } from "discord.js";
-import { awardXP } from "../../db";
+import { awardXP } from "../../gameState";
 
 export const travel = async (
   interaction: CommandInteraction

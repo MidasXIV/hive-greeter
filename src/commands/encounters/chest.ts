@@ -6,12 +6,12 @@ import {
 } from "discord.js";
 import {
   adjustHP,
-  awardGold,
+  adjustGold,
   awardXP,
   d6,
   getUserCharacter,
-  grantStatusEffect,
-} from "../../db";
+} from "../../gameState";
+import { grantStatusEffect } from "../../status-effets/grantStatusEffect";
 
 const chestImage = new MessageAttachment("./images/chest.jpg", "chest.jpg");
 
@@ -163,7 +163,7 @@ export const chest = async (
     const xp = 1 + (chest.hasTrap ? 2 : 0) + (chest.hasLock ? 1 : 0);
     const gp = Math.floor(Math.random() * 20) + 5;
     awardXP(interaction.user.id, xp);
-    awardGold(interaction.user.id, gp);
+    adjustGold(interaction.user.id, gp);
     embed.addField(
       "Result",
       `You loot 💰${gp} gold from the chest! You gain ${xp} xp.`

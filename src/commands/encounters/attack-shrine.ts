@@ -1,11 +1,12 @@
 import { CommandInteraction, MessageEmbed } from "discord.js";
 import moment from "moment";
-import { grantStatusEffect, StatModifier } from "../../db";
+import { grantStatusEffect } from "../../status-effets/grantStatusEffect";
+import { StatusEffect } from "../../status-effets/StatusEffect";
 
 export const attackShrine = async (
   interaction: CommandInteraction
 ): Promise<void> => {
-  const effect: StatModifier = {
+  const effect: StatusEffect = {
     name: "Shrine of Agression",
     modifiers: {
       attackBonus: 2,

@@ -5,7 +5,7 @@ import Discord, { Intents } from "discord.js";
 import { exit } from "process";
 import { Routes } from "discord-api-types/v9";
 import commands from "./commands";
-import { loadDB } from "./db";
+import { loadDB } from "./gameState";
 
 dotenv.config({ path: ".env" });
 

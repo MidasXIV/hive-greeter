@@ -1,5 +1,5 @@
 import { CommandInteraction, Message, MessageEmbed } from "discord.js";
-import { adjustHP, d6, awardXP } from "../../db";
+import { adjustHP, d6, awardXP } from "../../gameState";
 import { sleep } from "../../utils";
 
 export const tavern = async (

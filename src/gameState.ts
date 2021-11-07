@@ -1,59 +1,33 @@
 import { randomUUID } from "crypto";
 import { MessageAttachment, User } from "discord.js";
 import { readFile, writeFile } from "fs/promises";
+import { Character } from "./character/Character";
+import { defaultCharacter } from "./character/defaultCharacter";
+import { getCharacterStatModified } from "./character/getCharacterStatModified";
+import { isCharacterOnCooldown } from "./character/isCharacterOnCooldown";
+import { StatusEffect } from "./status-effets/StatusEffect";
+import { Item } from "./utils/equipment";
 
 export const DB_FILE = "./db.json";
 
-export type Character = {
-  id: string;
-  name: string;
-  profile: string;
-  user?: User;
-  hp: number;
-  maxHP: number;
-  ac: number;
-  attackBonus: number;
-  cooldowns: {
-    attack?: string;
-    adventure?: string;
-    heal?: string;
-  };
-  statModifiers?: StatModifier[];
-  xp: number;
-  gold: number;
-  xpValue: number;
-};
-
-const defaultCharacter: Partial<Character> = {
-  gold: 0,
-  hp: 10,
-  ac: 10,
-  cooldowns: {},
-  statModifiers: [],
-  xp: 0,
-  xpValue: 10,
-};
-
-export type StatModifier = {
-  name: string;
-  started: string;
-  duration: number;
-  modifiers: Partial<{
-    ac: number;
-    attackBonus: number;
-  }>;
-};
-
-type DB = {
+type GameState = {
   characters: Map<string, Character>;
 };
 
-const db: DB = { characters: new Map() };
+export const gameState: GameState = { characters: new Map() };
+
+export type Stat = "ac" | "attackBonus" | "damageBonus" | "damageMax";
+
+export const defaultProfile = "attachment://profile.png";
+export const defaultProfileAttachment = new MessageAttachment(
+  "./images/default-profile.png",
+  "profile.png"
+);
 
 export const getDBJSON = (space = 2): string =>
   JSON.stringify(
     {
-      characters: Array.from(db.characters.entries()),
+      characters: Array.from(gameState.characters.entries()),
     },
     null,
     space
@@ -69,7 +43,7 @@ export const loadDB = async (): Promise<void> => {
   loadSerializedDB(data.toString());
 };
 
-export const loadSerializedDB = (serialized: string): DB => {
+export const loadSerializedDB = (serialized: string): GameState => {
   const parsed = JSON.parse(serialized);
   const characters = parsed.characters.map(
     ([id, character]: [string, Character]) => [
@@ -81,52 +55,15 @@ export const loadSerializedDB = (serialized: string): DB => {
     ]
   );
   const characterMap = new Map<string, Character>(characters);
-  db.characters = characterMap;
-  console.log("Database loaded", db);
-  return db;
-};
-
-export const defaultProfile = "attachment://profile.png";
-export const defaultProfileAttachment = new MessageAttachment(
-  "./images/default-profile.png",
-  "profile.png"
-);
-
-export type Stat = "ac" | "attackBonus";
-export const getCharacterStat = (character: Character, stat: Stat): number =>
-  character[stat];
-export const getCharacterStatModified = (
-  character: Character,
-  stat: Stat
-): number => character[stat] + getCharacterStatModifier(character, stat);
-
-export const getCharacterStatModifier = (
-  character: Character,
-  stat: Stat
-): number =>
-  (character.statModifiers || []).reduce(
-    (acc, effect) => acc + (effect.modifiers[stat] || 0),
-    0
-  );
-
-export const grantStatusEffect = (
-  characterId: string,
-  effect: StatModifier
-): Character | void => {
-  const character = getCharacter(characterId);
-  if (!character) return;
-  const updatedCharacter = {
-    ...character,
-    statModifiers: [...(character.statModifiers || []), effect],
-  };
-  db.characters.set(characterId, updatedCharacter);
-  return getCharacter(characterId);
+  gameState.characters = characterMap;
+  console.log("Database loaded", gameState);
+  return gameState;
 };
 
 export const grantDivineBlessing = (characterId: string): void => {
   const character = getCharacter(characterId);
   if (!character) return;
-  db.characters.set(characterId, {
+  gameState.characters.set(characterId, {
     ...character,
     maxHP: character.maxHP + 1,
     hp: character.hp + 1,
@@ -134,32 +71,39 @@ export const grantDivineBlessing = (characterId: string): void => {
 };
 
 const purgeExpiredStatuses = (characterId: string): void => {
-  const character = db.characters.get(characterId);
+  const character = gameState.characters.get(characterId);
   if (!character) return;
-  db.characters.set(characterId, {
+  gameState.characters.set(characterId, {
     ...character,
-    statModifiers:
-      character.statModifiers?.filter(
+    statusEffects:
+      character.statusEffects?.filter(
         (effect) => !isStatusEffectExpired(effect)
       ) ?? [],
   });
   console.log(`${characterId} status effects purged`);
 };
 
-const isStatusEffectExpired = (effect: StatModifier): boolean =>
+const isStatusEffectExpired = (effect: StatusEffect): boolean =>
   Date.now() > new Date(effect.started).valueOf() + effect.duration;
 
 export const getUserCharacters = (): Character[] =>
-  Array.from(db.characters.values()).filter((character) => character.user);
+  Array.from(gameState.characters.values()).filter(
+    (character) => character.user
+  );
 
 export const getCharacter = (id: string): Character | void => {
   purgeExpiredStatuses(id);
-  return db.characters.get(id);
+  return gameState.characters.get(id);
 };
+
+export const updateCharacter = (
+  character: Character
+): ReturnType<typeof gameState.characters.set> =>
+  gameState.characters.set(character.id, character);
 
 export const getUserCharacter = (user: User): Character => {
   purgeExpiredStatuses(user.id);
-  const character = db.characters.get(user.id);
+  const character = gameState.characters.get(user.id);
   if (!character) {
     return createCharacter({
       id: user.id,
@@ -181,14 +125,9 @@ export const setCharacterCooldown = (
     ...character,
     cooldowns: { ...character.cooldowns, [type]: new Date().toString() },
   };
-  db.characters.set(characterId, updatedCharacter);
+  gameState.characters.set(characterId, updatedCharacter);
   return getCharacter(characterId);
 };
-
-export const isCharacterOnCooldown = (
-  characterId: string,
-  type: keyof Character["cooldowns"]
-): boolean => (getCooldownRemaining(characterId, type) ?? 0) > 0;
 
 export const getCooldownRemaining = (
   characterId: string,
@@ -196,7 +135,7 @@ export const getCooldownRemaining = (
 ): number => {
   try {
     const cooldown = 5 * 60000; //5m
-    const lastUsed = db.characters.get(characterId)?.cooldowns[type];
+    const lastUsed = gameState.characters.get(characterId)?.cooldowns[type];
     if (!lastUsed) return 0;
     return new Date(lastUsed).valueOf() + cooldown - Date.now();
   } catch (e) {
@@ -208,20 +147,11 @@ export const createCharacter = (
   character: Partial<Character> & { name: string }
 ): Character => {
   const newCharacter: Character = {
-    profile: defaultProfile,
-    id: character?.id || randomUUID(),
-    hp: 10,
-    ac: 10,
-    maxHP: 10,
-    attackBonus: 1,
-    cooldowns: {},
-    statModifiers: [],
-    xp: 0,
-    xpValue: 5,
-    gold: 0,
+    ...defaultCharacter,
+    id: character?.id ?? randomUUID(),
     ...character,
   };
-  db.characters.set(newCharacter.id, newCharacter);
+  gameState.characters.set(newCharacter.id, newCharacter);
   console.log(`created ${newCharacter.id}`);
   return newCharacter;
 };
@@ -232,22 +162,35 @@ export const awardXP = (
 ): Character | void => {
   const character = getCharacter(characterId);
   if (!character) return undefined;
-  db.characters.set(characterId, {
+  gameState.characters.set(characterId, {
     ...character,
     xp: character.xp + amount,
   });
   return getCharacter(characterId);
 };
 
-export const awardGold = (
+export const adjustGold = (
   characterId: string,
   amount: number
 ): Character | void => {
   const character = getCharacter(characterId);
   if (!character) return;
-  db.characters.set(characterId, {
+  gameState.characters.set(characterId, {
     ...character,
     gold: character.gold + amount,
+  });
+  return getCharacter(characterId);
+};
+
+export const grantItem = (
+  characterId: string,
+  item: Item
+): Character | void => {
+  const character = getCharacter(characterId);
+  if (!character) return;
+  gameState.characters.set(characterId, {
+    ...character,
+    inventory: [...character.inventory, item],
   });
   return getCharacter(characterId);
 };
@@ -258,7 +201,7 @@ export const setGold = (
 ): Character | void => {
   const character = getCharacter(characterId);
   if (!character) return;
-  db.characters.set(characterId, {
+  gameState.characters.set(characterId, {
     ...character,
     gold: amount,
   });
@@ -276,7 +219,7 @@ export const adjustHP = (
   if (newHp < 0) newHp = 0;
   if (newHp > character.maxHP) newHp = character.maxHP;
 
-  db.characters.set(characterId, {
+  gameState.characters.set(characterId, {
     ...character,
     hp: newHp,
   });
@@ -285,69 +228,6 @@ export const adjustHP = (
 
 export const d20 = (): number => Math.ceil(Math.random() * 20);
 export const d6 = (): number => Math.ceil(Math.random() * 6);
-
-type AttackHit = {
-  outcome: "hit";
-  attacker: Character;
-  defender: Character;
-  attackRoll: number;
-  damage: number;
-};
-type AttackMiss = {
-  outcome: "miss";
-  attacker: Character;
-  defender: Character;
-  attackRoll: number;
-  damage: number;
-};
-type AttackCooldown = { outcome: "cooldown" };
-type AttackResult = AttackHit | AttackMiss | AttackCooldown;
-
-export const attack = (
-  attackerId: string,
-  defenderId: string
-): AttackResult | void => {
-  const attacker = getCharacter(attackerId);
-  const defender = getCharacter(defenderId);
-  if (!attacker || !defender) return;
-
-  const attackRoll = d20();
-  const damage = d6();
-  if (
-    attackRoll + attacker.attackBonus >=
-    getCharacterStatModified(defender, "ac")
-  ) {
-    adjustHP(defender.id, -damage);
-    return {
-      outcome: "hit",
-      attackRoll,
-      damage,
-      attacker: getCharacter(attacker.id) as Character,
-      defender: getCharacter(defender.id) as Character,
-    };
-  }
-
-  return {
-    outcome: "miss",
-    attackRoll,
-    damage,
-    attacker: getCharacter(attacker.id) as Character,
-    defender: getCharacter(defender.id) as Character,
-  };
-};
-
-export const attackPlayer = (
-  attackerId: string,
-  defenderId: string
-): AttackResult | void => {
-  if (isCharacterOnCooldown(attackerId, "attack")) {
-    return { outcome: "cooldown" };
-  }
-  const result = attack(attackerId, defenderId);
-  if (result && result.outcome !== "cooldown")
-    setCharacterCooldown(attackerId, "attack");
-  return result;
-};
 
 type TrapResult =
   | {
@@ -401,9 +281,9 @@ export const heal = (
   return { outcome: "healed", amount, target };
 };
 
-export const setProfile = (id: string, url: string): Character | undefined => {
+export const setProfile = (id: string, url: string): Character | void => {
   const character = getCharacter(id);
   if (!character) return;
-  db.characters.set(id, { ...character, profile: url });
+  gameState.characters.set(id, { ...character, profile: url });
   return character;
 };
