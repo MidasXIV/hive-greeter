@@ -2,9 +2,11 @@ import { SlashCommandBuilder } from "@discordjs/builders";
 import { CommandInteraction, MessageEmbed } from "discord.js";
 import {
   attackPlayer,
+  awardGold,
   getCharacterStatModified,
   getCharacterStatModifier,
   getUserCharacter,
+  setGold,
 } from "../db";
 import { cooldownRemainingText, mentionCharacter } from "../utils";
 import { hpBar } from "../utils/hp-bar";
@@ -39,29 +41,31 @@ export const execute = async (
     return;
   }
   const result = attackPlayer(attacker.id, defender.id);
-  await showAttackResult(result, interaction);
+  if (!result)
+    return await interaction.reply(`No attack result. This should not happen.`);
+
+  if (result.outcome === "cooldown")
+    return await interaction.reply(
+      `You can attack again ${cooldownRemainingText(
+        interaction.user.id,
+        "attack"
+      )}.`
+    );
+  const embed = attackResultEmbed(result);
+  if (result.defender.hp === 0 && defender.gold) {
+    awardGold(attacker.id, defender.gold);
+    setGold(defender.id, 0);
+    embed.addField(
+      "Loot!",
+      `${mentionCharacter(attacker)} takes 💰${
+        defender.gold
+      } from  ${mentionCharacter(result.defender)}`
+    );
+  }
+  await interaction.reply({ embeds: [embed] });
 };
 
 export default { command, execute };
-const showAttackResult = async (
-  result: ReturnType<typeof attackPlayer>,
-  interaction: CommandInteraction
-): Promise<void> => {
-  if (!result) return await interaction.reply(`No attack result.`);
-
-  // TODO: move this into attackResultEmbed
-  switch (result.outcome) {
-    case "cooldown":
-      await interaction.reply(
-        `You can attack again ${cooldownRemainingText(
-          interaction.user.id,
-          "attack"
-        )}.`
-      );
-      return;
-  }
-  await interaction.reply({ embeds: [attackResultEmbed(result)] });
-};
 
 const accuracyDescriptor = (result: ReturnType<typeof attackPlayer>) => {
   if (!result) return `No result`;
@@ -160,7 +164,7 @@ const attackResultEmbed = (
   embed.addFields([
     {
       name: `${result.defender.name}'s HP`,
-      value: hpText(result) + `\n${hpBar(result.defender, -result.damage)}`,
+      value: hpText(result) + `\n${hpBar(result.defender)}`,
     },
     {
       name: `Attack`,
