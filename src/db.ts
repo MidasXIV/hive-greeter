@@ -315,7 +315,7 @@ export const attack = (
   const damage = d6();
   if (
     attackRoll + attacker.attackBonus >=
-    getCharacterStatModifier(defender, "ac")
+    getCharacterStatModified(defender, "ac")
   ) {
     adjustHP(defender.id, -damage);
     return {
