@@ -9,7 +9,6 @@ import { mentionCharacter } from "../character/mentionCharacter";
 import { hpBar } from "../utils/hp-bar";
 import { attack } from "../attack/attack";
 
-// TODO: defender retaliates
 export const command = new SlashCommandBuilder()
   .setName("attack")
   .setDescription("Make an attack")
