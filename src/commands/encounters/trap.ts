@@ -1,5 +1,5 @@
 import { CommandInteraction, Message, MessageEmbed } from "discord.js";
-import { awardXP, trap as trapAttack } from "../../db";
+import { awardXP, trap as trapAttack } from "../../gameState";
 import { sleep } from "../../utils";
 
 export const trap = async (interaction: CommandInteraction): Promise<void> => {

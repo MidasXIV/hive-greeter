@@ -1,15 +1,15 @@
 import { SlashCommandBuilder } from "@discordjs/builders";
-import { CommandInteraction, MessageEmbed } from "discord.js";
+import { CommandInteraction, Emoji, MessageEmbed } from "discord.js";
 import moment from "moment";
+import { Character } from "../character/Character";
 import {
-  Character,
   defaultProfile,
   defaultProfileAttachment,
-  getCharacterStatModified,
-  getCharacterStatModifier,
   getUserCharacter,
   Stat,
-} from "../db";
+} from "../gameState";
+import { getCharacterStatModifier } from "../character/getCharacterStatModifier";
+import { getCharacterStatModified } from "../character/getCharacterStatModified";
 import { cooldownRemainingText } from "../utils";
 import { hpBar } from "../utils/hp-bar";
 
@@ -27,10 +27,13 @@ export const execute = async (
     (interaction.options.data[0] && interaction.options.data[0].user) ||
     interaction.user;
   const character = getUserCharacter(user);
+  const xpEmoji = interaction.guild?.emojis.cache.find(
+    (emoji) => emoji.name === "xp"
+  );
   await interaction.reply({
     attachments:
       character.profile === defaultProfile ? [defaultProfileAttachment] : [],
-    embeds: [characterEmbed(character)],
+    embeds: [characterEmbed(character, xpEmoji)],
     fetchReply: true,
   });
 };
@@ -44,7 +47,10 @@ export const statText = (character: Character, stat: Stat): string => {
   return `${modified}${modifier ? ` (${sign}${modifier})` : ""}`;
 };
 
-export const characterEmbed = (character: Character): MessageEmbed => {
+export const characterEmbed = (
+  character: Character,
+  xpEmoji?: Emoji
+): MessageEmbed => {
   const embed = new MessageEmbed()
     .setTitle(character.name)
     .setImage(character.profile)
@@ -64,33 +70,39 @@ export const characterEmbed = (character: Character): MessageEmbed => {
         inline: true,
       },
       {
-        name: "Attack Available",
-        value: cooldownRemainingText(character.id, "attack"),
+        name: "**Actions Available**",
+        value: `───────────`,
+      },
+      {
+        name: "Attack",
+        value: "⚔ " + cooldownRemainingText(character.id, "attack"),
         inline: true,
       },
       {
-        name: "Adventure Available",
-        value: cooldownRemainingText(character.id, "adventure"),
+        name: "Adventure",
+        value: "🚶‍♀️ " + cooldownRemainingText(character.id, "adventure"),
         inline: true,
       },
       {
-        name: "Heal Available",
-        value: cooldownRemainingText(character.id, "adventure"),
+        name: "Heal",
+        value: "🤍 " + cooldownRemainingText(character.id, "adventure"),
         inline: true,
       },
       {
         name: "XP",
-        value: character.xp.toString(),
+        value: (xpEmoji?.toString() ?? "🧠") + " " + character.xp.toString(),
         inline: true,
       },
       {
         name: "GP",
-        value: character.gold.toString(),
+        value: "💰 " + character.gold.toString(),
         inline: true,
       },
     ]);
-  console.log("statModifiers", character.statModifiers);
-  character.statModifiers?.forEach((effect) =>
+  Object.entries(character.equipment).forEach(([type, item]) => {
+    embed.addField(type, item.name);
+  });
+  character.statusEffects?.forEach((effect) =>
     embed.addField(
       effect.name,
       `Expires ${moment(new Date(effect.started))

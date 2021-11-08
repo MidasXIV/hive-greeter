@@ -1,15 +1,15 @@
 import { CommandInteraction, Message, MessageEmbed } from "discord.js";
+import { Character } from "../../character/Character";
 import {
-  attackPlayer,
   getCharacter,
   createCharacter,
-  Character,
   getUserCharacter,
-  attack,
   awardXP,
-  awardGold,
+  adjustGold,
   setGold,
-} from "../../db";
+} from "../../gameState";
+import { playerAttack } from "../../attack/playerAttack";
+import { attack } from "../../attack/attack";
 import { hpBar } from "../../utils/hp-bar";
 import { attackFlavorText, attackRollText } from "../attack";
 import { chest } from "./chest";
@@ -147,7 +147,7 @@ export const monster = async (
     summary.addField("Triumphant!", `You defeated the ${monster.name}! 🎉`);
     awardXP(player.id, monster.xpValue);
     summary.addField("XP Gained", monster.xpValue.toString());
-    awardGold(player.id, monster.gold);
+    adjustGold(player.id, monster.gold);
     summary.addField("GP Gained", monster.gold.toString());
   }
   if (player.hp === 0) {
@@ -170,7 +170,7 @@ export const monster = async (
 };
 
 const attackField = (
-  result: ReturnType<typeof attackPlayer>
+  result: ReturnType<typeof playerAttack>
 ): [string, string] => [
   result
     ? result.outcome === "cooldown"

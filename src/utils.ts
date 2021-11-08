@@ -1,12 +1,10 @@
 import { CommandInteraction } from "discord.js";
 import moment from "moment";
-import { Character, getCooldownRemaining } from "./db";
+import { Character } from "./character/Character";
+import { getCooldownRemaining } from "./gameState";
 
 export const sleep = (milliseconds: number): Promise<void> =>
   new Promise((resolve) => setTimeout(resolve, milliseconds));
-
-export const mentionCharacter = (character: Character): string =>
-  character.user?.id ? `<@${character.user.id}>` : character.name;
 
 export const cooldownRemainingText = (
   characterId: string,

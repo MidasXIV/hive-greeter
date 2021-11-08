@@ -1,6 +1,6 @@
 import { SlashCommandBuilder } from "@discordjs/builders";
 import { CommandInteraction, MessageEmbed } from "discord.js";
-import { getUserCharacter, heal } from "../db";
+import { getUserCharacter, heal } from "../gameState";
 import { cooldownRemainingText } from "../utils";
 import { hpBar } from "../utils/hp-bar";
 

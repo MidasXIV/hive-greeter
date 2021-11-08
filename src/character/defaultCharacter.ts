@@ -1,0 +1,19 @@
+import { Character } from "./Character";
+import { defaultProfile } from "../gameState";
+
+export const defaultCharacter: Omit<Character, "id" | "name"> = {
+  profile: defaultProfile,
+  inventory: [],
+  gold: 0,
+  hp: 10,
+  maxHP: 10,
+  ac: 10,
+  attackBonus: 1,
+  damageBonus: 0,
+  equipment: {},
+  cooldowns: {},
+  statusEffects: [],
+  xp: 0,
+  xpValue: 10,
+  damageMax: 6,
+};
