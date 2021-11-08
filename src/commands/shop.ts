@@ -16,7 +16,19 @@ import {
   grantItem,
   updateCharacter,
 } from "../gameState";
-import { dagger, Item, itemEmbed, longsword, mace } from "../utils/equipment";
+import {
+  buckler,
+  chainArmor,
+  dagger,
+  Item,
+  itemEmbed,
+  kiteShield,
+  leatherArmor,
+  longsword,
+  mace,
+  plateArmor,
+  towerShield,
+} from "../utils/equipment";
 
 export const command = new SlashCommandBuilder()
   .setName("shop")
@@ -29,7 +41,17 @@ export const execute = async (
   interaction: CommandInteraction
 ): Promise<void> => {
   const player = getUserCharacter(interaction.user);
-  const inventory = [dagger, mace, longsword];
+  const inventory = [
+    dagger,
+    mace,
+    longsword,
+    leatherArmor,
+    chainArmor,
+    plateArmor,
+    buckler,
+    kiteShield,
+    towerShield,
+  ];
 
   const message = await interaction.reply({
     files: [shopImage],

@@ -29,6 +29,16 @@ export type Weapon = Equippable & {
   //   maximum: string[];
   // }
 };
+
+export type Armor = Equippable & {
+  type: "armor";
+};
+export type Shield = Equippable & {
+  type: "shield";
+};
+
+export const itemIsArmor = (item: Item): item is Armor => item.type === "armor";
+
 export const itemIsWeapon = (item: Item): item is Weapon =>
   item.type === "weapon";
 
@@ -87,25 +97,90 @@ export const longsword: Weapon = {
   equippable: true,
 };
 
+export const leatherArmor: Armor = {
+  type: "armor",
+  description: "Tanned hides serve to protect yours.",
+  goldValue: 20,
+  equippable: true,
+  name: "leather armor",
+  modifiers: {
+    ac: 2,
+  },
+};
+export const chainArmor: Armor = {
+  type: "armor",
+  description: "Linked metal chains worn to protect.",
+  goldValue: 40,
+  equippable: true,
+  name: "chain armor",
+  modifiers: {
+    ac: 3,
+  },
+};
+
+export const plateArmor: Armor = {
+  type: "armor",
+  description: "Strong plates to protect you.",
+  goldValue: 80,
+  equippable: true,
+  name: "plate armor",
+  modifiers: {
+    ac: 4,
+  },
+};
+
+export const buckler: Shield = {
+  type: "shield",
+  description: "A small and nimble shield that doesn't get in the way.",
+  goldValue: 20,
+  equippable: true,
+  name: "buckler",
+  modifiers: {
+    ac: 1,
+  },
+};
+
+export const kiteShield: Shield = {
+  type: "shield",
+  description:
+    "A medium sized shield named for its resemblance to the children's windy day toy.",
+  goldValue: 40,
+  equippable: true,
+  name: "kite shield",
+  modifiers: {
+    ac: 2,
+  },
+};
+export const towerShield: Shield = {
+  type: "shield",
+  description:
+    "An enormous shield that offers great protction but can be unweildy.",
+  goldValue: 80,
+  equippable: true,
+  name: "tower shield",
+  modifiers: {
+    ac: 4,
+    attackBonus: -2,
+  },
+};
+
 export const itemEmbed = (item: Item): MessageEmbed => {
   const embed = new MessageEmbed()
     .setTitle(item.name)
     .setDescription(item.description)
     .setFooter("💰" + item.goldValue.toString());
-  if (itemIsWeapon(item)) {
+
+  if (itemIsWeapon(item) && item.damageMax)
     embed.addField("Damage Max", item.damageMax.toString(), true);
-    if (item.modifiers?.attackBonus)
-      embed.addField(
-        "Attack Bonus",
-        item.modifiers.attackBonus.toString(),
-        true
-      );
-    if (item.modifiers?.damageBonus)
-      embed.addField(
-        "Damage Bonus",
-        item.modifiers.damageBonus.toString(),
-        true
-      );
-  }
+
+  if (item.modifiers?.attackBonus)
+    embed.addField("Attack Bonus", item.modifiers.attackBonus.toString(), true);
+
+  if (item.modifiers?.damageBonus)
+    embed.addField("Damage Bonus", item.modifiers.damageBonus.toString(), true);
+
+  if (item.modifiers?.ac)
+    embed.addField("AC Bonus", item.modifiers?.ac.toString());
+
   return embed;
 };
