@@ -55,7 +55,10 @@ export const execute = async (
 
   const message = await interaction.reply({
     files: [shopImage],
-    embeds: [shopEmbed, ...inventory.map(itemEmbed)],
+    embeds: [
+      shopEmbed.addField("Your Gold", "💰 " + player.gold.toString()),
+      ...inventory.map(itemEmbed),
+    ],
     components: [
       new MessageActionRow({ components: [inventorySelector(inventory)] }),
     ],
