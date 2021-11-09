@@ -60,6 +60,20 @@ export const characterEmbed = (
         value: `${character.hp}/${character.maxHP}\n${hpBar(character)}`,
       },
       {
+        name: "XP",
+        value: (xpEmoji?.toString() ?? "🧠") + " " + character.xp.toString(),
+        inline: true,
+      },
+      {
+        name: "GP",
+        value: "💰 " + character.gold.toString(),
+        inline: true,
+      },
+      {
+        name: "**Stats**",
+        value: `───────────`,
+      },
+      {
         name: "AC",
         value: `🛡 ${statText(character, "ac")}`,
         inline: true,
@@ -71,7 +85,12 @@ export const characterEmbed = (
       },
       {
         name: "Damage Max",
-        value: `🩸 ${getCharacterStatModified(character, "damageMax")}`,
+        value: `🩸 ${statText(character, "damageMax")}`,
+        inline: true,
+      },
+      {
+        name: "Damage Bonus",
+        value: `🩸 ${statText(character, "damageBonus")}`,
         inline: true,
       },
       {
@@ -93,20 +112,14 @@ export const characterEmbed = (
         value: "🤍 " + cooldownRemainingText(character.id, "adventure"),
         inline: true,
       },
-      {
-        name: "XP",
-        value: (xpEmoji?.toString() ?? "🧠") + " " + character.xp.toString(),
-        inline: true,
-      },
-      {
-        name: "GP",
-        value: "💰 " + character.gold.toString(),
-        inline: true,
-      },
     ]);
+  if (Object.keys(character.equipment).length)
+    embed.addField("**Equipment**", "───────────", true);
   Object.entries(character.equipment).forEach(([type, item]) => {
     embed.addField(type, item.name);
   });
+  if (character.statusEffects?.length)
+    embed.addField("**Status Effects**", "───────────", true);
   character.statusEffects?.forEach((effect) =>
     embed.addField(
       effect.name,
