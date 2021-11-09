@@ -69,7 +69,6 @@ export const mace: Weapon = {
   name: "mace",
   description: "A sturdy and reliable means of crushing your foes.",
   modifiers: {
-    attackBonus: 1,
     damageBonus: 1,
   },
   damageMax: 4,
