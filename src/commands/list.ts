@@ -56,16 +56,4 @@ export const characterEmbed = (character: Character): MessageEmbed =>
         value: character.gold.toString(),
         inline: true,
       },
-      {
-        name: "Attack Available",
-        value: cooldownRemainingText(character.id, "attack"),
-      },
-      {
-        name: "Adventure Available",
-        value: cooldownRemainingText(character.id, "adventure"),
-      },
-      {
-        name: "Heal Available",
-        value: cooldownRemainingText(character.id, "adventure"),
-      },
     ]);
