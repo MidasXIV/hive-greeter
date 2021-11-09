@@ -62,8 +62,15 @@ export const execute = async (
     fetchReply: true,
   });
   if (!(message instanceof Message)) return;
-  const response = await awaitUserResponse(message, "SELECT_MENU");
-  if (!response.isSelectMenu()) return;
+  const response = await awaitUserResponse(message, "SELECT_MENU").catch(() => {
+    message.edit({
+      files: [shopImage],
+      embeds: [shopEmbed, ...inventory.map(itemEmbed)],
+      components: [],
+    });
+  });
+
+  if (!response || !response.isSelectMenu()) return;
   const item = inventory[parseInt(response.values[0])];
   if (!item) return;
   await buyItem(interaction, player, item);
