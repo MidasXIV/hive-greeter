@@ -3,7 +3,6 @@ import { MessageAttachment, User } from "discord.js";
 import { readFile, writeFile } from "fs/promises";
 import { Character } from "./character/Character";
 import { defaultCharacter } from "./character/defaultCharacter";
-import { getCharacterStatModified } from "./character/getCharacterStatModified";
 import { isCharacterOnCooldown } from "./character/isCharacterOnCooldown";
 import { StatusEffect } from "./status-effets/StatusEffect";
 import { Item } from "./utils/equipment";
@@ -27,6 +26,7 @@ export const defaultProfileAttachment = new MessageAttachment(
 export const getDBJSON = (space = 2): string =>
   JSON.stringify(
     {
+      lastSave: new Date().toString(),
       characters: Array.from(gameState.characters.entries()),
     },
     null,
@@ -229,7 +229,7 @@ export const adjustHP = (
 export const d20 = (): number => Math.ceil(Math.random() * 20);
 export const d6 = (): number => Math.ceil(Math.random() * 6);
 
-type TrapResult =
+export type TrapResult =
   | {
       outcome: "hit";
       attackRoll: number;
@@ -244,21 +244,6 @@ type TrapResult =
       damage: number;
       defender: Character;
     };
-
-export const trap = (
-  characterId: string,
-  attackBonus = 1
-): TrapResult | void => {
-  const defender = getCharacter(characterId);
-  if (!defender) return;
-  const attackRoll = d20();
-  const damage = d6();
-  if (attackRoll + attackBonus > getCharacterStatModified(defender, "ac")) {
-    adjustHP(characterId, -damage);
-    return { outcome: "hit", attackRoll, attackBonus, damage, defender };
-  }
-  return { outcome: "miss", attackRoll, attackBonus, damage, defender };
-};
 
 type HealResult =
   | { outcome: "healed"; amount: number; target: Character }
