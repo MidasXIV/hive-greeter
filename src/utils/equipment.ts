@@ -154,7 +154,7 @@ export const kiteShield: Shield = {
 export const towerShield: Shield = {
   type: "shield",
   description:
-    "An enormous shield that offers great protction but can be unweildy.",
+    "An enormous shield that offers great protection but can be unweildy.",
   goldValue: 80,
   equippable: true,
   name: "tower shield",
