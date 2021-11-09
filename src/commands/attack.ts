@@ -220,7 +220,12 @@ const attackResultEmbed = (
   embed.addFields([
     {
       name: `${result.defender.name}'s HP`,
-      value: hpText(result) + `\n${hpBar(result.defender, -result.damage)}`,
+      value:
+        hpText(result) +
+        `\n${hpBar(
+          result.defender,
+          result.outcome === "hit" ? -result.damage : 0
+        )}`,
     },
     {
       name: `Attack`,
