@@ -7,6 +7,7 @@ import heal from "./heal";
 import inspect from "./inspect";
 import inventory from "./inventory";
 import list from "./list";
+import quest from "./quest";
 import set from "./set";
 import shop from "./shop";
 
@@ -22,4 +23,5 @@ commands.set("inventory", inventory);
 commands.set("list", list);
 commands.set("set", set);
 commands.set("shop", shop);
+commands.set("quest", quest);
 export default commands;
