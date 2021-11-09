@@ -7,7 +7,7 @@ import Discord, { Intents } from "discord.js";
 import { exit } from "process";
 import { Routes } from "discord-api-types/v9";
 import commands from "./commands";
-import { loadDB } from "./gameState";
+import { loadDB, saveDB } from "./gameState";
 
 if (!process.env.token) exit(1);
 
@@ -73,3 +73,6 @@ client.on("error", (e) => {
 
 client.login(process.env.token);
 app.listen(PORT, () => console.log(`Server started on port ${PORT}!`));
+
+process.on("exit", saveDB);
+process.on("SIGINT", saveDB);
