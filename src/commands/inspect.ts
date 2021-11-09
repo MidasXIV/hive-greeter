@@ -114,12 +114,12 @@ export const characterEmbed = (
       },
     ]);
   if (Object.keys(character.equipment).length)
-    embed.addField("**Equipment**", "───────────", true);
+    embed.addField("**Equipment**", "───────────");
   Object.entries(character.equipment).forEach(([type, item]) => {
     embed.addField(type, item.name);
   });
   if (character.statusEffects?.length)
-    embed.addField("**Status Effects**", "───────────", true);
+    embed.addField("**Status Effects**", "───────────");
   character.statusEffects?.forEach((effect) =>
     embed.addField(
       effect.name,
