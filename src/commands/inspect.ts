@@ -70,6 +70,11 @@ export const characterEmbed = (
         inline: true,
       },
       {
+        name: "Damage Max",
+        value: `🩸 ${getCharacterStatModified(character, "damageMax")}`,
+        inline: true,
+      },
+      {
         name: "**Actions Available**",
         value: `───────────`,
       },

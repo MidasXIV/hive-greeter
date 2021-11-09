@@ -12,9 +12,8 @@ export const attack = (
   if (!attacker || !defender) return;
 
   const attackRoll = d20();
-  const damage = Math.ceil(
-    Math.random() * getCharacterStatModified(attacker, "damageMax")
-  );
+  const damageMax = getCharacterStatModified(attacker, "damageMax");
+  const damage = Math.ceil(Math.random() * damageMax);
   if (
     attackRoll + getCharacterStatModified(attacker, "attackBonus") >=
     getCharacterStatModified(defender, "ac")
