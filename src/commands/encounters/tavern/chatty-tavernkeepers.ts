@@ -37,18 +37,11 @@ export const chattyTavernkeepers = async (
                 value: "slayer",
                 description: "Gain a powerful weapon",
               },
-            ])
-            .addOptions([
-              {
-                label: "Defeat 10 monsters",
-                value: "slayer",
-                description: "Gain a powerful weapon",
-              },
             ]),
         ],
       }),
     ],
   });
 
-  if (!(message instanceof Message)) return;
+  // if (!(message instanceof Message)) return;
 };
