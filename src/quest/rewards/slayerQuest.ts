@@ -5,14 +5,14 @@ import {
   MessageEmbed,
   MessageSelectMenu,
 } from "discord.js";
-import { getUserCharacter, updateCharacter } from "../gameState";
+import { getUserCharacter, updateCharacter } from "../../gameState";
 import {
   dagger,
   equipItemPrompt,
   longsword,
   mace,
   Weapon,
-} from "../utils/equipment";
+} from "../../utils/equipment";
 
 export const slayerQuestReward = async (
   interaction: CommandInteraction

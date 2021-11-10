@@ -7,6 +7,8 @@ export const attackShrine = async (
 ): Promise<void> => {
   const effect: StatusEffect = {
     name: "Shrine of Agression",
+    buff: true,
+    debuff: false,
     modifiers: {
       attackBonus: 2,
     },

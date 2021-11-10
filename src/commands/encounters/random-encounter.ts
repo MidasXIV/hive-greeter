@@ -42,7 +42,6 @@ const encounters: Encounters = {
 
 type randomEncounter = CommandHandler;
 export const randomEncounter = (): CommandHandler => {
-  return encounters["vigorShrine"];
   const rand = Math.random();
   switch (true) {
     case rand >= 0.99:

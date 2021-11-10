@@ -1,9 +1,9 @@
 import { CommandInteraction, MessageEmbed } from "discord.js";
 import moment from "moment";
-import { getUserCharacter, updateCharacter } from "../../../gameState";
-import { addQuestProgress } from "../../../quest/addQuestProgress";
+import { getUserCharacter } from "../../../gameState";
 import { questProgressField } from "../../../quest/questProgressField";
-import { grantStatusEffect } from "../../../status-effets/grantStatusEffect";
+import { updateUserQuestProgess } from "../../../quest/updateQuestProgess";
+import { updateStatusEffect } from "../../../status-effets/grantStatusEffect";
 import { StatusEffect } from "../../../status-effets/StatusEffect";
 
 export const shrine = async (
@@ -11,10 +11,8 @@ export const shrine = async (
   effect: StatusEffect,
   embed: MessageEmbed
 ): Promise<void> => {
-  updateCharacter(
-    addQuestProgress(getUserCharacter(interaction.user), "blessed", 1)
-  );
-  grantStatusEffect(interaction.user.id, effect);
+  updateStatusEffect(interaction.user.id, effect);
+  updateUserQuestProgess(interaction.user, "blessed", 1);
   embed.addField(
     "Expires",
     moment(new Date(effect.started)).add(effect.duration).fromNow()

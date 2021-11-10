@@ -23,20 +23,20 @@ export const execute = async (
     });
     return;
   }
-  if (isCharacterOnCooldown(player.id, "adventure")) {
-    await interaction.reply({
-      embeds: [
-        new MessageEmbed().setDescription(
-          `You can adventure again ${cooldownRemainingText(
-            player.id,
-            "adventure"
-          )}`
-        ),
-      ],
-    });
-    return;
-  }
-  setCharacterCooldown(player.id, "adventure");
+  // if (isCharacterOnCooldown(player.id, "adventure")) {
+  //   await interaction.reply({
+  //     embeds: [
+  //       new MessageEmbed().setDescription(
+  //         `You can adventure again ${cooldownRemainingText(
+  //           player.id,
+  //           "adventure"
+  //         )}`
+  //       ),
+  //     ],
+  //   });
+  //   return;
+  // }
+  // setCharacterCooldown(player.id, "adventure");
   await randomEncounter()(interaction);
 };
 

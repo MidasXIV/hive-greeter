@@ -7,6 +7,8 @@ export const vigorShrine = async (
 ): Promise<void> => {
   const effect: StatusEffect = {
     name: "Shrine of Vigor",
+    buff: true,
+    debuff: false,
     modifiers: {
       maxHP: 3,
     },

@@ -11,7 +11,7 @@ import {
   d6,
   getUserCharacter,
 } from "../../gameState";
-import { grantStatusEffect } from "../../status-effets/grantStatusEffect";
+import { updateStatusEffect } from "../../status-effets/grantStatusEffect";
 
 const chestImage = new MessageAttachment("./images/chest.jpg", "chest.jpg");
 
@@ -227,8 +227,10 @@ function triggerTrap(interaction: CommandInteraction, chest: Chest) {
   switch (true) {
     case roll <= 0.5:
       adjustHP(interaction.user.id, -damage);
-      grantStatusEffect(interaction.user.id, {
+      updateStatusEffect(interaction.user.id, {
         name: "Poison Trap",
+        debuff: true,
+        buff: false,
         modifiers: {
           attackBonus: -2,
         },
@@ -239,8 +241,10 @@ function triggerTrap(interaction: CommandInteraction, chest: Chest) {
       break;
     case roll <= 1:
       adjustHP(interaction.user.id, -damage);
-      grantStatusEffect(interaction.user.id, {
+      updateStatusEffect(interaction.user.id, {
         name: "Slow Trap",
+        debuff: true,
+        buff: false,
         modifiers: {
           ac: -2,
         },

@@ -1,22 +1,21 @@
 import { Character } from "../character/Character";
 import { StatusEffect } from "./StatusEffect";
-import { getCharacter, gameState } from "../gameState";
+import { getCharacter, updateCharacter } from "../gameState";
 
-export const grantStatusEffect = (
+export const updateStatusEffect = (
   characterId: string,
   effect: StatusEffect
 ): Character | void => {
   const character = getCharacter(characterId);
   if (!character) return;
-  const updatedCharacter = {
+  updateCharacter({
     ...character,
     statusEffects: [...(character.statusEffects || []), effect],
-  };
-  gameState.characters.set(characterId, updatedCharacter);
+  });
   return getCharacter(characterId);
 };
 
-export const grantStatusEffect2 = (
+export const grantStatusEffect = (
   character: Character,
   effect: StatusEffect
 ): Character => ({

@@ -8,7 +8,7 @@ import {
 } from "discord.js";
 import { getUserCharacter } from "../gameState";
 import { progressBar } from "../utils/progress-bar";
-import { slayerQuestReward } from "../quest/slayerQuestReward";
+import { slayerQuestReward } from "../quest/rewards/slayerQuest";
 import { getCompletedQuests } from "../quest/getCompletedQuests";
 import { Quest } from "../quest/Quest";
 import { isQuestId, QuestId } from "../quest/quests";

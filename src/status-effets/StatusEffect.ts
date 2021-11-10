@@ -5,4 +5,6 @@ export type StatusEffect = {
   started: string;
   duration: number;
   modifiers: Partial<Stats>;
+  buff: boolean;
+  debuff: boolean;
 };

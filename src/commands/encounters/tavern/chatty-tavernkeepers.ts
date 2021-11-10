@@ -6,22 +6,15 @@ import {
   MessageEmbed,
   MessageSelectMenu,
 } from "discord.js";
-import {
-  adjustHP,
-  awardXP,
-  d6,
-  getUserCharacter,
-  updateCharacter,
-} from "../../../gameState";
+import { awardXP, getUserCharacter, updateCharacter } from "../../../gameState";
 import { grantQuest } from "../../../quest/grantQuest";
-import { isQuestId, quests } from "../../../quest/quests";
+import { getRandomQuests, isQuestId, quests } from "../../../quest/quests";
 
+// TODO: omit quests the user already has
 export const chattyTavernkeepers = async (
   interaction: CommandInteraction
 ): Promise<void> => {
-  const roll = d6();
   awardXP(interaction.user.id, 1);
-  adjustHP(interaction.user.id, roll);
   const message = await interaction.reply({
     fetchReply: true,
     files: [new MessageAttachment("./images/Tavernkeepers.jpg")],
@@ -31,7 +24,8 @@ export const chattyTavernkeepers = async (
         .setImage("attachment://Tavernkeepers.jpg")
         .setDescription(
           "Turns out they know someone's got a thing needs doing.\n\nCompensation? Of course!"
-        ),
+        )
+        .addField("XP Gained", "1"),
     ],
     components: [
       new MessageActionRow({
@@ -40,9 +34,9 @@ export const chattyTavernkeepers = async (
             .setCustomId("quest")
             .setPlaceholder("So... you in or what?")
             .addOptions(
-              Object.entries(quests).map(([id, quest]) => ({
+              getRandomQuests(Object.values(quests)).map((quest) => ({
                 label: quest.title,
-                value: id,
+                value: quest.id,
                 description: `${quest.objective}: ${quest.reward}`,
               }))
             ),

@@ -11,6 +11,8 @@ export const armorShrine = async (
       ac: 2,
     },
     duration: 30 * 60000,
+    buff: true,
+    debuff: false,
     started: new Date().toString(),
   };
   shrine(

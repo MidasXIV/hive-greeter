@@ -4,9 +4,16 @@ import { getUserCharacter, updateCharacter } from "../gameState";
 import { addQuestProgress } from "./addQuestProgress";
 import { QuestId } from "./quests";
 
-export const updateQuestProgess = (
+export const updateUserQuestProgess = (
   user: User,
   questId: QuestId,
   change: number
 ): Character | void =>
-  updateCharacter(addQuestProgress(getUserCharacter(user), questId, change));
+  updateCharacterQuestProgess(getUserCharacter(user), questId, change);
+
+export const updateCharacterQuestProgess = (
+  character: Character,
+  questId: QuestId,
+  change: number
+): Character | void =>
+  updateCharacter(addQuestProgress(character, questId, change));
