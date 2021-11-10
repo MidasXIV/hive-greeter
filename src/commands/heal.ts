@@ -1,7 +1,6 @@
 import { SlashCommandBuilder } from "@discordjs/builders";
 import { CommandInteraction, MessageEmbed } from "discord.js";
-import { getUserCharacter, heal, updateCharacter } from "../gameState";
-import { addQuestProgress } from "../quest/addQuestProgress";
+import { getUserCharacter, heal } from "../gameState";
 import { cooldownRemainingText } from "../utils";
 import { hpBarField } from "./inspect";
 
@@ -35,13 +34,6 @@ export const execute = async (
       );
       break;
     case "healed":
-      updateCharacter(
-        addQuestProgress(
-          getUserCharacter(interaction.user),
-          "healer",
-          result.amount
-        )
-      );
       await interaction.reply({
         embeds: [
           new MessageEmbed()

@@ -8,7 +8,8 @@ import {
 } from "discord.js";
 import { awardXP, getUserCharacter, updateCharacter } from "../../../gameState";
 import { grantQuest } from "../../../quest/grantQuest";
-import { getRandomQuests, isQuestId, quests } from "../../../quest/quests";
+import { isQuestId, quests } from "../../../quest/quests";
+import questsCommand from "../../quests";
 
 // TODO: omit quests the user already has
 export const chattyTavernkeepers = async (
@@ -34,7 +35,7 @@ export const chattyTavernkeepers = async (
             .setCustomId("quest")
             .setPlaceholder("So... you in or what?")
             .addOptions(
-              getRandomQuests(Object.values(quests)).map((quest) => ({
+              Object.values(quests).map((quest) => ({
                 label: quest.title,
                 value: quest.id,
                 description: `${quest.objective}: ${quest.reward}`,
@@ -64,4 +65,5 @@ export const chattyTavernkeepers = async (
   await interaction.followUp(
     `You have been charged with the ${quests[questId].title} quest.`
   );
+  await questsCommand.execute(interaction);
 };

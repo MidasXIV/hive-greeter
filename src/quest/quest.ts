@@ -7,4 +7,5 @@ export type Quest = {
   totalRequired: number;
   objective: string;
   reward: string;
+  repeatable: boolean;
 };

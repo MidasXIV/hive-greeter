@@ -40,8 +40,10 @@ const encounters: Encounters = {
   vigorShrine,
 };
 
+// TODO: increase monster encounter rate
 type randomEncounter = CommandHandler;
 export const randomEncounter = (): CommandHandler => {
+  return encounters["monster"];
   const rand = Math.random();
   switch (true) {
     case rand >= 0.99:

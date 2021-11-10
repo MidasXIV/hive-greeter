@@ -8,10 +8,11 @@ import {
 } from "discord.js";
 import { getUserCharacter } from "../gameState";
 import { progressBar } from "../utils/progress-bar";
-import { slayerQuestReward } from "../quest/rewards/slayerQuest";
 import { getCompletedQuests } from "../quest/getCompletedQuests";
 import { Quest } from "../quest/Quest";
 import { isQuestId, QuestId } from "../quest/quests";
+import { slayerBuffQuestReward } from "../quest/rewards/slayerBuffQuest";
+import { survivorBuffQuestReward } from "../quest/rewards/survivorBuffQuest";
 
 export const command = new SlashCommandBuilder()
   .setName("quests")
@@ -81,8 +82,8 @@ const completeQuest = async (
 ): Promise<void> => {
   switch (questId) {
     case "slayer":
-      await slayerQuestReward(interaction);
-      break;
-    // case 'blessed':
+      return await slayerBuffQuestReward(interaction);
+    case "survivor":
+      return await survivorBuffQuestReward(interaction);
   }
 };

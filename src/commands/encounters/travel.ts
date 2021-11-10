@@ -1,14 +1,10 @@
 import { CommandInteraction, MessageEmbed } from "discord.js";
-import { awardXP, getUserCharacter, updateCharacter } from "../../gameState";
-import { addQuestProgress } from "../../quest/addQuestProgress";
+import { awardXP } from "../../gameState";
 
 export const travel = async (
   interaction: CommandInteraction
 ): Promise<void> => {
   awardXP(interaction.user.id, 1);
-  updateCharacter(
-    addQuestProgress(getUserCharacter(interaction.user), "traveler", 1)
-  );
   await interaction.reply({
     embeds: [
       new MessageEmbed()
