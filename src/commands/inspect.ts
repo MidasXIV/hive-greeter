@@ -21,7 +21,8 @@ export const command = new SlashCommandBuilder()
   );
 
 export const execute = async (
-  interaction: CommandInteraction
+  interaction: CommandInteraction,
+  responseType: "followUp" | "reply" = "reply"
 ): Promise<void> => {
   const user =
     (interaction.options.data[0] && interaction.options.data[0].user) ||
@@ -30,7 +31,7 @@ export const execute = async (
   const xpEmoji = interaction.guild?.emojis.cache.find(
     (emoji) => emoji.name === "xp"
   );
-  await interaction.reply({
+  await interaction[responseType]({
     attachments:
       character.profile === defaultProfile ? [defaultProfileAttachment] : [],
     embeds: [characterEmbed(character, xpEmoji)],
@@ -69,54 +70,13 @@ export const characterEmbed = (
         value: "💰 " + character.gold.toString(),
         inline: true,
       },
-      {
-        name: "**Stats**",
-        value: `───────────`,
-      },
-      {
-        name: "AC",
-        value: `🛡 ${statText(character, "ac")}`,
-        inline: true,
-      },
-      {
-        name: "Attack Bonus",
-        value: `⚔ ${statText(character, "attackBonus")}`,
-        inline: true,
-      },
-      {
-        name: "Damage Max",
-        value: `🩸 ${statText(character, "damageMax")}`,
-        inline: true,
-      },
-      {
-        name: "Damage Bonus",
-        value: `🩸 ${statText(character, "damageBonus")}`,
-        inline: true,
-      },
-      {
-        name: "**Actions Available**",
-        value: `───────────`,
-      },
-      {
-        name: "Attack",
-        value: "⚔ " + cooldownRemainingText(character.id, "attack"),
-        inline: true,
-      },
-      {
-        name: "Adventure",
-        value: "🚶‍♀️ " + cooldownRemainingText(character.id, "adventure"),
-        inline: true,
-      },
-      {
-        name: "Heal",
-        value: "🤍 " + cooldownRemainingText(character.id, "adventure"),
-        inline: true,
-      },
+      ...statFields(character),
+      ...actionFields(character),
     ]);
   if (Object.keys(character.equipment).length)
     embed.addField("**Equipment**", "───────────");
   Object.entries(character.equipment).forEach(([type, item]) => {
-    embed.addField(type, item.name);
+    embed.addField(type, item.name, true);
   });
   if (character.statusEffects?.length)
     embed.addField("**Status Effects**", "───────────");
@@ -131,3 +91,52 @@ export const characterEmbed = (
   );
   return embed;
 };
+
+const actionFields = (character: Character) => [
+  {
+    name: "**Actions Available**",
+    value: `───────────`,
+  },
+  {
+    name: "Attack",
+    value: "⚔ " + cooldownRemainingText(character.id, "attack"),
+    inline: true,
+  },
+  {
+    name: "Adventure",
+    value: "🚶‍♀️ " + cooldownRemainingText(character.id, "adventure"),
+    inline: true,
+  },
+  {
+    name: "Heal",
+    value: "🤍 " + cooldownRemainingText(character.id, "adventure"),
+    inline: true,
+  },
+];
+
+const statFields = (character: Character) => [
+  {
+    name: "**Stats**",
+    value: `───────────`,
+  },
+  {
+    name: "AC",
+    value: `🛡 ${statText(character, "ac")}`,
+    inline: true,
+  },
+  {
+    name: "Attack Bonus",
+    value: `⚔ ${statText(character, "attackBonus")}`,
+    inline: true,
+  },
+  {
+    name: "Damage Max",
+    value: `🩸 ${statText(character, "damageMax")}`,
+    inline: true,
+  },
+  {
+    name: "Damage Bonus",
+    value: `🩸 ${statText(character, "damageBonus")}`,
+    inline: true,
+  },
+];

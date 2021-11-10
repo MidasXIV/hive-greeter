@@ -1,4 +1,8 @@
-import { MessageEmbed } from "discord.js";
+import { CommandInteraction, Message, MessageEmbed } from "discord.js";
+import inspect from "../commands/inspect";
+import { equipItem } from "../equipItem";
+import { equipItemRow } from "../equipment/equipItemRow";
+import { getUserCharacter, updateCharacter } from "../gameState";
 import { StatModifier } from "../status-effets/StatModifier";
 
 export type Item = {
@@ -180,6 +184,47 @@ export const itemEmbed = (item: Item): MessageEmbed => {
 
   if (item.modifiers?.ac)
     embed.addField("AC Bonus", item.modifiers?.ac.toString());
+  if (item.modifiers?.monsterDamageMax)
+    embed.addField(
+      "Monster Damage Max",
+      item.modifiers?.monsterDamageMax.toString()
+    );
 
   return embed;
+};
+
+export const equipItemPrompt = async (
+  interaction: CommandInteraction,
+  item: Item
+): Promise<void> => {
+  const content = `Would you like to equip the ${item.name}?`;
+  const message = await interaction.followUp({
+    content,
+    components: [equipItemRow(item)],
+  });
+
+  if (!(message instanceof Message)) return;
+  const response = await message
+    .awaitMessageComponent({
+      filter: (interaction) => {
+        interaction.deferUpdate();
+        return interaction.user.id === interaction.user.id;
+      },
+      componentType: "BUTTON",
+      time: 60000,
+    })
+    .catch(() => {
+      message.edit({
+        content,
+        components: [],
+      });
+    });
+  if (!response) return;
+  updateCharacter(equipItem(getUserCharacter(interaction.user), item));
+  message.edit({
+    content,
+    components: [],
+  });
+  message.reply(`You equip the ${item.name}.`);
+  await inspect.execute(interaction, "followUp");
 };

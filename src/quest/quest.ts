@@ -58,15 +58,15 @@ export const quests: { [id in QuestId]: Quest } = {
   },
 };
 
-const isQuestComplete = (quest: Quest) => quest.progress >= quest.totalRequired;
+export const isQuestComplete = (quest: Quest): boolean =>
+  quest.progress >= quest.totalRequired;
 
-export const getCompletedQuests = (
-  character: Character
-): Map<string, Quest> => {
-  const x = Object.entries(character.quests);
-  const filtered = x.filter(([, quest]) => isQuestComplete(quest));
-  return new Map(filtered);
-};
+export const getCompletedQuests = (character: Character): Map<string, Quest> =>
+  new Map(
+    Object.entries(character.quests).filter(([, quest]) =>
+      isQuestComplete(quest)
+    )
+  );
 
 export const grantQuest = (
   character: Character,

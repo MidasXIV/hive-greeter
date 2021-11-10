@@ -6,7 +6,6 @@ import { defaultCharacter } from "./character/defaultCharacter";
 import { getCharacterStatModified } from "./character/getCharacterStatModified";
 import { isCharacterOnCooldown } from "./character/isCharacterOnCooldown";
 import { StatusEffect } from "./status-effets/StatusEffect";
-import { Item } from "./utils/equipment";
 
 export const DB_FILE = "./db.json";
 
@@ -186,19 +185,6 @@ export const adjustGold = (
   return getCharacter(characterId);
 };
 
-export const grantItem = (
-  characterId: string,
-  item: Item
-): Character | void => {
-  const character = getCharacter(characterId);
-  if (!character) return;
-  gameState.characters.set(characterId, {
-    ...character,
-    inventory: [...character.inventory, item],
-  });
-  return getCharacter(characterId);
-};
-
 export const setGold = (
   characterId: string,
   amount: number
@@ -218,16 +204,20 @@ export const adjustHP = (
 ): Character | void => {
   const character = getCharacter(characterId);
   if (!character) return;
-
+  updateCharacter(adjustCharacterHP(character, amount));
+  return getCharacter(characterId);
+};
+export const adjustCharacterHP = (
+  character: Character,
+  amount: number
+): Character => {
   let newHp = character.hp + amount;
   if (newHp < 0) newHp = 0;
   if (newHp > character.maxHP) newHp = character.maxHP;
-
-  gameState.characters.set(characterId, {
+  return {
     ...character,
     hp: newHp,
-  });
-  return getCharacter(characterId);
+  };
 };
 
 export const d20 = (): number => Math.ceil(Math.random() * 20);

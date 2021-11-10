@@ -5,10 +5,16 @@ import {
   MessageEmbed,
   MessageSelectMenu,
 } from "discord.js";
-import { getUserCharacter, grantItem, updateCharacter } from "../gameState";
-import { dagger, longsword, mace } from "../utils/equipment";
+import { getUserCharacter, updateCharacter } from "../gameState";
+import {
+  dagger,
+  equipItemPrompt,
+  longsword,
+  mace,
+  Weapon,
+} from "../utils/equipment";
 
-export const slayerQuestCompleted = async (
+export const slayerQuestReward = async (
   interaction: CommandInteraction
 ): Promise<void> => {
   const character = getUserCharacter(interaction.user);
@@ -17,7 +23,7 @@ export const slayerQuestCompleted = async (
     new MessageEmbed({
       title: `Slayer Quest Complete!`,
       description:
-        'The Knight Marshal congratulates you with a firm handshake and shoulder slap. "You\'ve done this city a great service, soldier."\n\nNow for your well-earned reward...',
+        'The Knight Marshal congratulates you with a firm handshake and a shoulder slap. "You\'ve done this city a great service, soldier."\n\n"Now for your well-earned reward..."',
     }),
   ];
   const message = await interaction.followUp({
@@ -52,18 +58,29 @@ export const slayerQuestCompleted = async (
     .catch(() => {
       message.edit({ embeds, components: [] });
     });
+  if (!response) {
+    interaction.followUp(
+      `Another time, perhaps? Come back when you're ready to make your choice.`
+    );
+    return;
+  }
   if (!response || !response.isSelectMenu()) return;
   const chosenWeapon = weaponTemplates[parseInt(response.values[0])];
   if (!chosenWeapon) {
     interaction.followUp(
       `Another time, perhaps? Come back when you're ready to make your choice.`
     );
+    return;
   }
-  updateCharacter(
-    grantItem(interaction.user.id, {
-      ...chosenWeapon,
-      modifiers: { ...chosenWeapon.modifiers, monsterDamageBonus: 6 },
-    })
-  );
-  updateCharacter({ ...character, quests: { slayer: undefined } });
+  const weapon: Weapon = {
+    ...chosenWeapon,
+    name: `Slayer's ${chosenWeapon.name}`,
+    modifiers: { ...chosenWeapon.modifiers, monsterDamageMax: 6 },
+  };
+  updateCharacter({
+    ...character,
+    inventory: [...character.inventory, weapon],
+    quests: { slayer: undefined },
+  });
+  await equipItemPrompt(interaction, weapon);
 };

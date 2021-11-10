@@ -8,14 +8,15 @@ export const command = new SlashCommandBuilder()
   .setDescription("View your inventory.");
 
 export const execute = async (
-  interaction: CommandInteraction
+  interaction: CommandInteraction,
+  responseType: "followUp" | "reply" = "reply"
 ): Promise<void> => {
   const player = getUserCharacter(interaction.user);
   if (!player.inventory.length) {
-    await interaction.reply("Your inventory is empty.");
+    await interaction[responseType]("Your inventory is empty.");
     return;
   }
-  interaction.reply({
+  interaction[responseType]({
     embeds: player.inventory.map(itemEmbed),
   });
 };

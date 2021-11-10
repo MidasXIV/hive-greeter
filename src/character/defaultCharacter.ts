@@ -10,7 +10,7 @@ export const defaultCharacter: Omit<Character, "id" | "name"> = {
   ac: 10,
   attackBonus: 1,
   damageBonus: 0,
-  monsterDamageBonus: 0,
+  monsterDamageMax: 0,
   equipment: {},
   cooldowns: {},
   statusEffects: [],

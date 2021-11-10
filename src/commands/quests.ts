@@ -9,7 +9,7 @@ import {
 import { getUserCharacter } from "../gameState";
 import { getCompletedQuests, isQuestId, Quest, QuestId } from "../quest/quest";
 import { progressBar } from "../utils/progress-bar";
-import { slayerQuestCompleted } from "./slayerQuestCompleted";
+import { slayerQuestReward } from "../quest/slayerQuestReward";
 
 export const command = new SlashCommandBuilder()
   .setName("quests")
@@ -79,6 +79,6 @@ const completeQuest = async (
 ): Promise<void> => {
   switch (questId) {
     case "slayer":
-      await slayerQuestCompleted(interaction);
+      await slayerQuestReward(interaction);
   }
 };
