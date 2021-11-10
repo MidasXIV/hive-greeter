@@ -175,7 +175,7 @@ export const monster = async (
     embeds: [summary],
   });
 
-  if (player.hp > 0 && Math.random() <= 0.3) {
+  if (!fled && player.hp > 0 && Math.random() <= 0.3) {
     await chest(interaction, true);
   }
 };
