@@ -7,12 +7,15 @@ import {
   awardXP,
   adjustGold,
   setGold,
+  updateCharacter,
 } from "../../gameState";
 import { playerAttack } from "../../attack/playerAttack";
 import { attack } from "../../attack/attack";
 import { hpBar } from "../../utils/hp-bar";
 import { attackFlavorText, attackRollText } from "../attack";
 import { chest } from "./chest";
+import { addQuestProgress } from "../../quest/quest";
+import { progressBar } from "../../utils/progress-bar";
 
 const getRandomMonster = () => {
   const rand = Math.random();
@@ -149,6 +152,17 @@ export const monster = async (
     summary.addField("XP Gained", monster.xpValue.toString());
     adjustGold(player.id, monster.gold);
     summary.addField("GP Gained", monster.gold.toString());
+    if (player.quests.slayer) {
+      const character = updateCharacter(addQuestProgress(player, "slayer", 1));
+      if (character && character.quests.slayer)
+        summary.addField(
+          "Slayer Progress",
+          progressBar(
+            character.quests.slayer.progress /
+              character.quests.slayer.totalRequired
+          )
+        );
+    }
   }
   if (player.hp === 0) {
     summary.addField("Unconscious", "You were knocked out!");
