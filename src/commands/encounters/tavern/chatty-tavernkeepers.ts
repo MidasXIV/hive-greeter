@@ -13,7 +13,8 @@ import {
   getUserCharacter,
   updateCharacter,
 } from "../../../gameState";
-import { grantQuest, isQuestId, quests } from "../../../quest/quest";
+import { grantQuest } from "../../../quest/grantQuest";
+import { isQuestId, quests } from "../../../quest/quests";
 
 export const chattyTavernkeepers = async (
   interaction: CommandInteraction

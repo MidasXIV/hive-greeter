@@ -1,6 +1,6 @@
 import { Character } from "./Character";
-import { Stat } from "../gameState";
 import { getCharacterStatModifier } from "./getCharacterStatModifier";
+import { Stat } from "./Stats";
 
 export const getCharacterStatModified = (
   character: Character,

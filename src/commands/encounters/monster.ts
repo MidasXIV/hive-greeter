@@ -14,8 +14,8 @@ import { attack } from "../../attack/attack";
 import { hpBar } from "../../utils/hp-bar";
 import { attackFlavorText, attackRollText } from "../attack";
 import { chest } from "./chest";
-import { addQuestProgress } from "../../quest/quest";
 import { progressBar } from "../../utils/progress-bar";
+import { addQuestProgress } from "../../quest/addQuestProgress";
 
 const getRandomMonster = () => {
   const rand = Math.random();

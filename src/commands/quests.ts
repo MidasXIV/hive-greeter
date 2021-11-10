@@ -7,9 +7,11 @@ import {
   MessageEmbed,
 } from "discord.js";
 import { getUserCharacter } from "../gameState";
-import { getCompletedQuests, isQuestId, Quest, QuestId } from "../quest/quest";
 import { progressBar } from "../utils/progress-bar";
 import { slayerQuestReward } from "../quest/slayerQuestReward";
+import { getCompletedQuests } from "../quest/getCompletedQuests";
+import { Quest } from "../quest/Quest";
+import { isQuestId, QuestId } from "../quest/quests";
 
 export const command = new SlashCommandBuilder()
   .setName("quests")
