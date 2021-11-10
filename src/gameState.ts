@@ -98,9 +98,12 @@ export const getCharacter = (id: string): Character | void => {
 };
 
 export const updateCharacter = (
-  character: Character
-): ReturnType<typeof gameState.characters.set> =>
+  character: Character | void
+): Character | void => {
+  if (!character) return;
   gameState.characters.set(character.id, character);
+  return gameState.characters.get(character.id);
+};
 
 export const getUserCharacter = (user: User): Character => {
   purgeExpiredStatuses(user.id);
