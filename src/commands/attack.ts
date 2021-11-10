@@ -8,6 +8,7 @@ import { cooldownRemainingText, sleep } from "../utils";
 import { mentionCharacter } from "../character/mentionCharacter";
 import { hpBar } from "../utils/hp-bar";
 import { attack } from "../attack/attack";
+import { updateQuestProgess } from "../quest/updateQuestProgess";
 
 export const command = new SlashCommandBuilder()
   .setName("attack")
@@ -52,6 +53,9 @@ export const execute = async (
   const embed = attackResultEmbed(result).setTitle(
     `${attacker.name}'s Attack!`
   );
+  if (result.outcome === "hit" && result.defender.hp > 0) {
+    updateQuestProgess(target, "survivor", result.damage);
+  }
   if (result.defender.hp === 0 && defender.gold) {
     adjustGold(attacker.id, defender.gold);
     setGold(defender.id, 0);

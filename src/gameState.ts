@@ -237,20 +237,6 @@ export type TrapResult =
       damage: number;
       defender: Character;
     };
-export const trap = (
-  characterId: string,
-  attackBonus = 1
-): TrapResult | void => {
-  const defender = getCharacter(characterId);
-  if (!defender) return;
-  const attackRoll = d20();
-  const damage = d6();
-  if (attackRoll + attackBonus > getCharacterStatModified(defender, "ac")) {
-    adjustHP(characterId, -damage);
-    return { outcome: "hit", attackRoll, attackBonus, damage, defender };
-  }
-  return { outcome: "miss", attackRoll, attackBonus, damage, defender };
-};
 type HealResult =
   | { outcome: "healed"; amount: number; target: Character }
   | { outcome: "cooldown" };

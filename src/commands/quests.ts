@@ -82,5 +82,7 @@ const completeQuest = async (
   switch (questId) {
     case "slayer":
       await slayerQuestReward(interaction);
+      break;
+    // case 'blessed':
   }
 };

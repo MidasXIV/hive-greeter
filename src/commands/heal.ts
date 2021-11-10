@@ -1,10 +1,8 @@
 import { SlashCommandBuilder } from "@discordjs/builders";
 import { CommandInteraction, MessageEmbed } from "discord.js";
-import { getCharacterStatModified } from "../character/getCharacterStatModified";
 import { getUserCharacter, heal, updateCharacter } from "../gameState";
 import { addQuestProgress } from "../quest/addQuestProgress";
 import { cooldownRemainingText } from "../utils";
-import { hpBar } from "../utils/hp-bar";
 import { hpBarField } from "./inspect";
 
 export const command = new SlashCommandBuilder()
