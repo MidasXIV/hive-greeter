@@ -3,8 +3,8 @@ import moment from "moment";
 import { getUserCharacter } from "../../../gameState";
 import { questProgressField } from "../../../quest/questProgressField";
 import { updateUserQuestProgess } from "../../../quest/updateQuestProgess";
-import { updateStatusEffect } from "../../../status-effets/grantStatusEffect";
-import { StatusEffect } from "../../../status-effets/StatusEffect";
+import { updateStatusEffect } from "../../../statusEffects/grantStatusEffect";
+import { StatusEffect } from "../../../statusEffects/StatusEffect";
 
 export const shrine = async (
   interaction: CommandInteraction,

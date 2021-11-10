@@ -1,7 +1,7 @@
 import { User } from "discord.js";
 import { Quest } from "../quest/Quest";
 import { QuestId } from "../quest/quests";
-import { StatusEffect } from "../status-effets/StatusEffect";
+import { StatusEffect } from "../statusEffects/StatusEffect";
 import { Item, Weapon } from "../utils/equipment";
 import { Stats } from "./Stats";
 

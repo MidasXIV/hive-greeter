@@ -5,7 +5,7 @@ import { Character } from "./character/Character";
 import { defaultCharacter } from "./character/defaultCharacter";
 import { getCharacterStatModified } from "./character/getCharacterStatModified";
 import { isCharacterOnCooldown } from "./character/isCharacterOnCooldown";
-import { StatusEffect } from "./status-effets/StatusEffect";
+import { StatusEffect } from "./statusEffects/StatusEffect";
 
 export const DB_FILE = "./db.json";
 

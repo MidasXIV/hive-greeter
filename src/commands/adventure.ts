@@ -3,7 +3,7 @@ import { CommandInteraction, MessageEmbed } from "discord.js";
 import { getUserCharacter, setCharacterCooldown } from "../gameState";
 import { isCharacterOnCooldown } from "../character/isCharacterOnCooldown";
 import { cooldownRemainingText } from "../utils";
-import { randomEncounter } from "./encounters/random-encounter";
+import { randomEncounter } from "./encounters/randomEncounter";
 
 export const command = new SlashCommandBuilder()
   .setName("adventure")

@@ -1,5 +1,5 @@
 import { CommandInteraction, MessageEmbed } from "discord.js";
-import { StatusEffect } from "../../../status-effets/StatusEffect";
+import { StatusEffect } from "../../../statusEffects/StatusEffect";
 import { shrine } from "./shrine";
 
 export const attackShrine = async (

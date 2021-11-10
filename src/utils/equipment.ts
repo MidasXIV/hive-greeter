@@ -3,7 +3,7 @@ import inspect from "../commands/inspect";
 import { equipItem } from "../equipItem";
 import { equipItemRow } from "../equipment/equipItemRow";
 import { getUserCharacter, updateCharacter } from "../gameState";
-import { StatModifier } from "../status-effets/StatModifier";
+import { StatModifier } from "../statusEffects/StatModifier";
 
 export type Item = {
   type: "weapon" | "armor" | "shield";

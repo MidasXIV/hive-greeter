@@ -1,10 +1,10 @@
 import { CommandInteraction } from "discord.js";
 import { armorShrine } from "./shrine/armor";
 import { attackShrine } from "./shrine/attack";
-import { divineBlessing } from "./divine-blessing";
-import { fairyWell } from "./fairy-well";
+import { divineBlessing } from "./divineBlessing";
+import { fairyWell } from "./fairyWell";
 import { monster } from "./monster";
-import { tavern } from "./tavern";
+import { tavern } from "./tavern/tavern";
 import { trap } from "./trap";
 import { travel } from "./travel";
 import { chest } from "./chest";

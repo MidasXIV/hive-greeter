@@ -11,7 +11,7 @@ import {
   d6,
   getUserCharacter,
 } from "../../gameState";
-import { updateStatusEffect } from "../../status-effets/grantStatusEffect";
+import { updateStatusEffect } from "../../statusEffects/grantStatusEffect";
 
 const chestImage = new MessageAttachment("./images/chest.jpg", "chest.jpg");
 
