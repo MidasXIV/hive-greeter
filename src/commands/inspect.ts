@@ -1,17 +1,22 @@
 import { SlashCommandBuilder } from "@discordjs/builders";
-import { CommandInteraction, Emoji, MessageEmbed } from "discord.js";
+import {
+  CommandInteraction,
+  EmbedFieldData,
+  Emoji,
+  MessageEmbed,
+} from "discord.js";
 import moment from "moment";
 import { Character } from "../character/Character";
 import {
   defaultProfile,
   defaultProfileAttachment,
   getUserCharacter,
-  Stat,
 } from "../gameState";
 import { getCharacterStatModifier } from "../character/getCharacterStatModifier";
 import { getCharacterStatModified } from "../character/getCharacterStatModified";
 import { cooldownRemainingText } from "../utils";
 import { hpBar } from "../utils/hp-bar";
+import { Stat } from "../character/Stats";
 
 export const command = new SlashCommandBuilder()
   .setName("inspect")
@@ -56,20 +61,7 @@ export const characterEmbed = (
     .setTitle(character.name)
     .setImage(character.profile)
     .addFields([
-      {
-        name: "HP",
-        value: `${character.hp}/${character.maxHP}\n${hpBar(character)}`,
-      },
-      {
-        name: "XP",
-        value: (xpEmoji?.toString() ?? "🧠") + " " + character.xp.toString(),
-        inline: true,
-      },
-      {
-        name: "GP",
-        value: "💰 " + character.gold.toString(),
-        inline: true,
-      },
+      ...primaryStatFields(character, xpEmoji),
       ...statFields(character),
       ...actionFields(character),
     ]);
@@ -91,6 +83,37 @@ export const characterEmbed = (
   );
   return embed;
 };
+
+export const hpBarField = (character: Character): EmbedFieldData => ({
+  name: "HP",
+  value: `${character.hp}/${getCharacterStatModified(
+    character,
+    "maxHP"
+  )}\n${hpBar(character)}`,
+});
+
+export const primaryStatFields = (
+  character: Character,
+  xpEmoji?: Emoji
+): EmbedFieldData[] => [
+  {
+    name: "HP",
+    value: `${character.hp}/${getCharacterStatModified(
+      character,
+      "maxHP"
+    )}\n${hpBar(character)}`,
+  },
+  {
+    name: "XP",
+    value: (xpEmoji?.toString() ?? "🧠") + " " + character.xp.toString(),
+    inline: true,
+  },
+  {
+    name: "GP",
+    value: "💰 " + character.gold.toString(),
+    inline: true,
+  },
+];
 
 const actionFields = (character: Character) => [
   {
@@ -114,7 +137,7 @@ const actionFields = (character: Character) => [
   },
 ];
 
-const statFields = (character: Character) => [
+export const statFields = (character: Character) => [
   {
     name: "**Stats**",
     value: `───────────`,

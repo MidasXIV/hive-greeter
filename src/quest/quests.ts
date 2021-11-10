@@ -6,6 +6,7 @@ const questIds = [
   "afflicted",
   "traveler",
   "blessed",
+  "healer",
 ] as const;
 
 export type QuestId = typeof questIds[number];
@@ -49,5 +50,12 @@ export const quests: {
     totalRequired: 10,
     objective: "Receive 10 blessings.",
     reward: "Blessings now last an hour.",
+  },
+  healer: {
+    title: "Healer",
+    progress: 0,
+    totalRequired: 50,
+    objective: "Heal 50 hp",
+    reward: "??",
   },
 };

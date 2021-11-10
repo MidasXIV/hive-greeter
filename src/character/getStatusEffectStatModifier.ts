@@ -1,5 +1,5 @@
 import { Character } from "./Character";
-import { Stat } from "../gameState";
+import { Stat } from "./Stats";
 
 export const getStatusEffectStatModifier = (
   character: Character,

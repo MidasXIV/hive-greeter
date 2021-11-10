@@ -2,9 +2,7 @@ import { SlashCommandBuilder } from "@discordjs/builders";
 import { CommandInteraction, MessageEmbed } from "discord.js";
 import { Character } from "../character/Character";
 import { getUserCharacter, getUserCharacters } from "../gameState";
-import { cooldownRemainingText } from "../utils";
-import { hpBar } from "../utils/hp-bar";
-import { statText } from "./inspect";
+import { primaryStatFields, statFields } from "./inspect";
 
 export const command = new SlashCommandBuilder()
   .setName("list")
@@ -21,51 +19,14 @@ export const execute = async (
   interaction.reply({
     embeds: getUserCharacters()
       .sort((a, b) => b.xp - a.xp)
-      .map(characterEmbed),
+      .map(limitedCharacterEmbed),
   });
 };
 
 export default { command, execute };
 
-export const characterEmbed = (character: Character): MessageEmbed =>
+export const limitedCharacterEmbed = (character: Character): MessageEmbed =>
   new MessageEmbed()
     .setTitle(character.name)
     .setThumbnail(character.profile)
-    .addFields([
-      {
-        name: "HP",
-        value: `${character.hp}/${character.maxHP}\n${hpBar(character)}`,
-      },
-      {
-        name: "AC",
-        value: `🛡 ${statText(character, "ac")}`,
-        inline: true,
-      },
-      {
-        name: "Attack",
-        value: `⚔ ${statText(character, "attackBonus")}`,
-        inline: true,
-      },
-      {
-        name: "XP",
-        value: character.xp.toString(),
-        inline: true,
-      },
-      {
-        name: "GP",
-        value: character.gold.toString(),
-        inline: true,
-      },
-      {
-        name: "Attack Available",
-        value: cooldownRemainingText(character.id, "attack"),
-      },
-      {
-        name: "Adventure Available",
-        value: cooldownRemainingText(character.id, "adventure"),
-      },
-      {
-        name: "Heal Available",
-        value: cooldownRemainingText(character.id, "adventure"),
-      },
-    ]);
+    .addFields([...primaryStatFields(character), ...statFields(character)]);

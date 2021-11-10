@@ -15,8 +15,6 @@ type GameState = {
 
 export const gameState: GameState = { characters: new Map() };
 
-export type Stat = "ac" | "attackBonus" | "damageBonus" | "damageMax";
-
 export const defaultProfile = "attachment://profile.png";
 export const defaultProfileAttachment = new MessageAttachment(
   "./images/default-profile.png",
@@ -211,9 +209,10 @@ export const adjustCharacterHP = (
   character: Character,
   amount: number
 ): Character => {
+  const maxHP = getCharacterStatModified(character, "maxHP");
   let newHp = character.hp + amount;
   if (newHp < 0) newHp = 0;
-  if (newHp > character.maxHP) newHp = character.maxHP;
+  if (newHp > maxHP) newHp = maxHP;
   return {
     ...character,
     hp: newHp,

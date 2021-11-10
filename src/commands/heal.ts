@@ -1,6 +1,8 @@
 import { SlashCommandBuilder } from "@discordjs/builders";
 import { CommandInteraction, MessageEmbed } from "discord.js";
-import { getUserCharacter, heal } from "../gameState";
+import { getCharacterStatModified } from "../character/getCharacterStatModified";
+import { getUserCharacter, heal, updateCharacter } from "../gameState";
+import { addQuestProgress } from "../quest/addQuestProgress";
 import { cooldownRemainingText } from "../utils";
 import { hpBar } from "../utils/hp-bar";
 
@@ -20,6 +22,7 @@ export const execute = async (
     await interaction.reply(`You must specify a target @player`);
     return;
   }
+
   // ensure characters exist
   // TODO: a better way?
   getUserCharacter(initiator);
@@ -33,6 +36,13 @@ export const execute = async (
       );
       break;
     case "healed":
+      updateCharacter(
+        addQuestProgress(
+          getUserCharacter(interaction.user),
+          "healer",
+          result.amount
+        )
+      );
       await interaction.reply({
         embeds: [
           new MessageEmbed()
@@ -41,10 +51,10 @@ export const execute = async (
             .setImage("https://i.imgur.com/S32LDbM.png")
             .addField(
               "HP",
-              `${result.target.hp}/${result.target.maxHP}\n${hpBar(
+              `${result.target.hp}/${getCharacterStatModified(
                 result.target,
-                result.amount
-              )}`
+                "maxHP"
+              )}\n${hpBar(result.target, result.amount)}`
             ),
         ],
       });

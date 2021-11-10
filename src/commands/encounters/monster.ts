@@ -14,8 +14,8 @@ import { attack } from "../../attack/attack";
 import { hpBar } from "../../utils/hp-bar";
 import { attackFlavorText, attackRollText } from "../attack";
 import { chest } from "./chest";
-import { progressBar } from "../../utils/progress-bar";
 import { addQuestProgress } from "../../quest/addQuestProgress";
+import { questProgressBar } from "../../quest/questProgressBar";
 
 const getRandomMonster = () => {
   const rand = Math.random();
@@ -157,10 +157,7 @@ export const monster = async (
       if (character && character.quests.slayer)
         summary.addField(
           "Slayer Progress",
-          progressBar(
-            character.quests.slayer.progress /
-              character.quests.slayer.totalRequired
-          )
+          questProgressBar(character.quests.slayer)
         );
     }
   }

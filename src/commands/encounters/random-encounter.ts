@@ -1,6 +1,6 @@
 import { CommandInteraction } from "discord.js";
-import { armorShrine } from "./armor-shrine";
-import { attackShrine } from "./attack-shrine";
+import { armorShrine } from "./shrine/armor";
+import { attackShrine } from "./shrine/attack";
 import { divineBlessing } from "./divine-blessing";
 import { fairyWell } from "./fairy-well";
 import { monster } from "./monster";
@@ -8,6 +8,7 @@ import { tavern } from "./tavern";
 import { trap } from "./trap";
 import { travel } from "./travel";
 import { chest } from "./chest";
+import { vigorShrine } from "./shrine/vigor";
 
 type CommandHandler = (interaction: CommandInteraction) => Promise<void>;
 type EncounterId =
@@ -19,6 +20,7 @@ type EncounterId =
   | "tavern"
   | "attackShrine"
   | "armorShrine"
+  | "vigorShrine"
   | "chest";
 
 type Encounters = {
@@ -35,10 +37,12 @@ const encounters: Encounters = {
   armorShrine,
   attackShrine,
   chest,
+  vigorShrine,
 };
 
 type randomEncounter = CommandHandler;
 export const randomEncounter = (): CommandHandler => {
+  return encounters["vigorShrine"];
   const rand = Math.random();
   switch (true) {
     case rand >= 0.99:
