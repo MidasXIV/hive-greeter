@@ -16,4 +16,4 @@ export const updateCharacterQuestProgess = (
   questId: QuestId,
   change: number
 ): Character | void =>
-  updateCharacter(addQuestProgress(character, questId, change));
+  updateCharacter(addQuestProgress(character.id, questId, change));

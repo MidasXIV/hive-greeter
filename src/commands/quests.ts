@@ -19,15 +19,17 @@ export const command = new SlashCommandBuilder()
   .setDescription("Check your quest progress.");
 
 export const execute = async (
-  interaction: CommandInteraction
+  interaction: CommandInteraction,
+  responseType: "reply" | "followUp" = "reply"
 ): Promise<void> => {
   const character = getUserCharacter(interaction.user);
   const completedQuests = getCompletedQuests(character);
   const embed = new MessageEmbed().setTitle("Quests");
   if (Object.values(character.quests).length === 0) {
-    return await interaction.reply(
+    await interaction[responseType](
       `You do not have any active quests. \`/adventure\` to find some!`
     );
+    return;
   }
   Object.values(character.quests).map((quest) => {
     embed.addField(
@@ -37,7 +39,7 @@ export const execute = async (
       )} ${quest.progress}/${quest.totalRequired}`
     );
   });
-  const message = await interaction.reply({
+  const message = await interaction[responseType]({
     embeds: [embed],
     components: getComponents(completedQuests),
     fetchReply: true,
@@ -59,21 +61,19 @@ export const execute = async (
 export default { command, execute };
 
 function getComponents(completedQuests: Map<string, Quest>) {
-  if (completedQuests.size > 0) {
-    return [
-      new MessageActionRow({
-        components: Array.from(completedQuests.entries()).map(
-          ([id, quest]) =>
-            new MessageButton({
-              customId: id,
-              label: `Turn in ${quest.title} quest`,
-              style: "PRIMARY",
-            })
-        ),
-      }),
-    ];
-  }
-  return [];
+  if (completedQuests.size === 0) return [];
+  return [
+    new MessageActionRow({
+      components: Array.from(completedQuests.entries()).map(
+        ([id, quest]) =>
+          new MessageButton({
+            customId: id,
+            label: `Turn in ${quest.title} quest`,
+            style: "PRIMARY",
+          })
+      ),
+    }),
+  ];
 }
 
 const completeQuest = async (

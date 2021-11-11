@@ -16,6 +16,12 @@ import { attackFlavorText, attackRollText } from "../attack";
 import { chest } from "./chest";
 import { addQuestProgress } from "../../quest/addQuestProgress";
 import { questProgressBar } from "../../quest/questProgressBar";
+import {
+  isQuestComplete,
+  isUserQuestComplete,
+} from "../../quest/isQuestComplete";
+import quests from "../quests";
+import { updateUserQuestProgess } from "../../quest/updateQuestProgess";
 
 const getRandomMonster = () => {
   const rand = Math.random();
@@ -153,12 +159,7 @@ export const monster = async (
     adjustGold(player.id, monster.gold);
     summary.addField("GP Gained", monster.gold.toString());
     if (player.quests.slayer) {
-      const character = updateCharacter(addQuestProgress(player, "slayer", 1));
-      if (character && character.quests.slayer)
-        summary.addField(
-          "Slayer Progress",
-          questProgressBar(character.quests.slayer)
-        );
+      updateUserQuestProgess(interaction.user, "slayer", 1);
     }
   }
   if (player.hp === 0) {
@@ -175,9 +176,10 @@ export const monster = async (
     embeds: [summary],
   });
 
-  if (!fled && player.hp > 0 && Math.random() <= 0.3) {
+  if (!fled && player.hp > 0 && Math.random() <= 0.3)
     await chest(interaction, true);
-  }
+  if (isUserQuestComplete(interaction.user, "slayer"))
+    await quests.execute(interaction, "followUp");
 };
 
 const attackField = (

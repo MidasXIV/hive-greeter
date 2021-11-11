@@ -1,4 +1,4 @@
-import { SlashCommandBuilder } from "@discordjs/builders";
+import { Embed, SlashCommandBuilder } from "@discordjs/builders";
 import {
   CommandInteraction,
   EmbedFieldData,
@@ -17,6 +17,9 @@ import { getCharacterStatModified } from "../character/getCharacterStatModified"
 import { cooldownRemainingText } from "../utils";
 import { hpBar } from "../utils/hp-bar";
 import { Stat } from "../character/Stats";
+import { questProgressField } from "../quest/questProgressField";
+import { itemEmbed } from "../utils/equipment";
+import { StatusEffect } from "../statusEffects/StatusEffect";
 
 export const command = new SlashCommandBuilder()
   .setName("inspect")
@@ -39,7 +42,10 @@ export const execute = async (
   await interaction[responseType]({
     attachments:
       character.profile === defaultProfile ? [defaultProfileAttachment] : [],
-    embeds: [characterEmbed(character, xpEmoji)],
+    embeds: [characterEmbed(character, xpEmoji), actionEmbed(character)]
+      .concat(Object.values(character.equipment).map(itemEmbed))
+      .concat(character.statusEffects?.map(statusEffectEmbed) ?? [])
+      .concat(questEmbed(character) ?? []),
     fetchReply: true,
   });
 };
@@ -60,27 +66,17 @@ export const characterEmbed = (
   const embed = new MessageEmbed()
     .setTitle(character.name)
     .setImage(character.profile)
-    .addFields([
-      ...primaryStatFields(character, xpEmoji),
-      ...statFields(character),
-      ...actionFields(character),
-    ]);
-  if (Object.keys(character.equipment).length)
-    embed.addField("**Equipment**", "───────────");
-  Object.entries(character.equipment).forEach(([type, item]) => {
-    embed.addField(type, item.name, true);
+    .addFields([...primaryStatFields(character, xpEmoji)]);
+  return embed;
+};
+
+const questEmbed = (character: Character) => {
+  if (Object.keys(character.quests).length === 0) return;
+  const embed = new MessageEmbed();
+  embed.setTitle("Quests");
+  Object.values(character.quests).forEach((quest) => {
+    embed.addFields([questProgressField(quest)]);
   });
-  if (character.statusEffects?.length)
-    embed.addField("**Status Effects**", "───────────");
-  character.statusEffects?.forEach((effect) =>
-    embed.addField(
-      effect.name,
-      `Expires ${moment(new Date(effect.started))
-        .add(effect.duration)
-        .fromNow()}`,
-      true
-    )
-  );
   return embed;
 };
 
@@ -115,27 +111,27 @@ export const primaryStatFields = (
   },
 ];
 
-const actionFields = (character: Character) => [
-  {
-    name: "**Actions Available**",
-    value: `───────────`,
-  },
-  {
-    name: "Attack",
-    value: "⚔ " + cooldownRemainingText(character.id, "attack"),
-    inline: true,
-  },
-  {
-    name: "Adventure",
-    value: "🚶‍♀️ " + cooldownRemainingText(character.id, "adventure"),
-    inline: true,
-  },
-  {
-    name: "Heal",
-    value: "🤍 " + cooldownRemainingText(character.id, "adventure"),
-    inline: true,
-  },
-];
+const actionEmbed = (character: Character) =>
+  new MessageEmbed({
+    title: "Actions",
+    fields: [
+      {
+        name: "Attack",
+        value: "⚔ " + cooldownRemainingText(character.id, "attack"),
+        inline: true,
+      },
+      {
+        name: "Adventure",
+        value: "🚶‍♀️ " + cooldownRemainingText(character.id, "adventure"),
+        inline: true,
+      },
+      {
+        name: "Heal",
+        value: "🤍 " + cooldownRemainingText(character.id, "adventure"),
+        inline: true,
+      },
+    ],
+  });
 
 export const statFields = (character: Character) => [
   {
@@ -163,3 +159,14 @@ export const statFields = (character: Character) => [
     inline: true,
   },
 ];
+
+function statusEffectEmbed(effect: StatusEffect) {
+  return new MessageEmbed({
+    title: effect.name,
+    fields: Object.entries(effect.modifiers).map(([name, value]) => ({
+      name,
+      value: value.toString(),
+    })),
+    timestamp: new Date(new Date(effect.started).valueOf() + effect.duration),
+  });
+}
