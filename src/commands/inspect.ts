@@ -1,11 +1,10 @@
-import { Embed, SlashCommandBuilder } from "@discordjs/builders";
+import { SlashCommandBuilder } from "@discordjs/builders";
 import {
   CommandInteraction,
   EmbedFieldData,
   Emoji,
   MessageEmbed,
 } from "discord.js";
-import moment from "moment";
 import { Character } from "../character/Character";
 import {
   defaultProfile,

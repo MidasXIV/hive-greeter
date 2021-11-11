@@ -24,8 +24,9 @@ export const quests: {
     progress: 0,
     totalRequired: 10,
     objective: "Defeat 10 monsters",
-    reward: "Gain a powerful weapon",
-    repeatable: false,
+    reward: "Deal more damage to monsters for a while.",
+    repeatable: true,
+    victoryText: "Your are a slayer!",
   },
   survivor: {
     id: "survivor",
@@ -33,8 +34,9 @@ export const quests: {
     progress: 0,
     totalRequired: 100,
     objective: "Survive 100 damage",
-    reward: "Gain health.",
-    repeatable: false,
+    reward: "Gain temporary health.",
+    repeatable: true,
+    victoryText: "You have survived hardship and it only makes you harder.",
   },
   // afflicted: {
   //   id: "afflicted",

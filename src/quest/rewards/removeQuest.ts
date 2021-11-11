@@ -10,8 +10,6 @@ export function removeQuest({
   questId: QuestId;
 }): void {
   const character = getUserCharacter(user);
-  updateCharacter({
-    ...character,
-    quests: { ...character.quests, [questId]: undefined },
-  });
+  delete character.quests[questId];
+  updateCharacter(character);
 }

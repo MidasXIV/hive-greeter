@@ -8,4 +8,5 @@ export type Quest = {
   objective: string;
   reward: string;
   repeatable: boolean;
+  victoryText: string;
 };

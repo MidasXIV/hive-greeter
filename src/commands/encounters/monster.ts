@@ -7,19 +7,13 @@ import {
   awardXP,
   adjustGold,
   setGold,
-  updateCharacter,
 } from "../../gameState";
 import { playerAttack } from "../../attack/playerAttack";
 import { attack } from "../../attack/attack";
 import { hpBar } from "../../utils/hp-bar";
 import { attackFlavorText, attackRollText } from "../attack";
 import { chest } from "./chest";
-import { addQuestProgress } from "../../quest/addQuestProgress";
-import { questProgressBar } from "../../quest/questProgressBar";
-import {
-  isQuestComplete,
-  isUserQuestComplete,
-} from "../../quest/isQuestComplete";
+import { isUserQuestComplete } from "../../quest/isQuestComplete";
 import quests from "../quests";
 import { updateUserQuestProgess } from "../../quest/updateQuestProgess";
 
@@ -178,7 +172,10 @@ export const monster = async (
 
   if (!fled && player.hp > 0 && Math.random() <= 0.3)
     await chest(interaction, true);
-  if (isUserQuestComplete(interaction.user, "slayer"))
+  if (
+    isUserQuestComplete(interaction.user, "slayer") ||
+    isUserQuestComplete(interaction.user, "survivor")
+  )
     await quests.execute(interaction, "followUp");
 };
 
