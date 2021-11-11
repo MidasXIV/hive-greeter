@@ -2,6 +2,7 @@ import { Character } from "../character/Character";
 import { getCharacter, d20, adjustHP } from "../gameState";
 import { AttackResult } from "./AttackResult";
 import { getCharacterStatModified } from "../character/getCharacterStatModified";
+import { updateCharacterQuestProgess } from "../quest/updateQuestProgess";
 
 export const attack = (
   attackerId: string,
@@ -19,6 +20,8 @@ export const attack = (
     getCharacterStatModified(defender, "ac")
   ) {
     adjustHP(defender.id, -damage);
+    if (defender.hp - damage > 0)
+      updateCharacterQuestProgess(defender, "survivor", damage);
     return {
       outcome: "hit",
       attackRoll,

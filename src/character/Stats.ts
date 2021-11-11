@@ -4,4 +4,6 @@ export type Stats = {
   damageBonus: number;
   damageMax: number;
   maxHP: number;
+  monsterDamageMax: number;
 };
+export type Stat = "ac" | "attackBonus" | "damageBonus" | "damageMax" | "maxHP";

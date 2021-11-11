@@ -4,22 +4,17 @@ import {
   Message,
   MessageActionRow,
   MessageAttachment,
-  MessageButton,
   MessageEmbed,
   MessageSelectMenu,
 } from "discord.js";
 import { Character } from "../character/Character";
-import { equipItem } from "../equipItem";
-import {
-  adjustGold,
-  getUserCharacter,
-  grantItem,
-  updateCharacter,
-} from "../gameState";
+import { adjustGold, getUserCharacter, updateCharacter } from "../gameState";
+import { grantCharacterItem } from "../equipment/grantCharacterItem";
 import {
   buckler,
   chainArmor,
   dagger,
+  equipItemPrompt,
   Item,
   itemEmbed,
   kiteShield,
@@ -96,14 +91,6 @@ export const execute = async (
   await buyItem(interaction, player, item);
 };
 
-const equipItemButton = (item: Item) =>
-  new MessageActionRow().addComponents(
-    new MessageButton()
-      .setCustomId("equip")
-      .setLabel(`Equip the ${item.name}`)
-      .setStyle("PRIMARY")
-  );
-
 const buyItem = async (
   interaction: CommandInteraction,
   player: Character,
@@ -116,40 +103,9 @@ const buyItem = async (
     return;
   }
   adjustGold(player.id, -item.goldValue);
-  grantItem(player.id, item);
+  updateCharacter(grantCharacterItem(getUserCharacter(interaction.user), item));
 
-  const content = `You are the proud owner of a new ${item.name}.`;
-
-  const message = await interaction.followUp({
-    content,
-    components: [equipItemButton(item)],
-  });
-
-  if (!(message instanceof Message)) return;
-  const response = await message
-    .awaitMessageComponent({
-      filter: (interaction) => {
-        interaction.deferUpdate();
-        return interaction.user.id === interaction.user.id;
-      },
-      componentType: "BUTTON",
-      time: 60000,
-    })
-    .catch(() => {
-      message.edit({
-        content,
-        components: [],
-      });
-      return;
-    });
-  if (response) {
-    updateCharacter(equipItem(getUserCharacter(interaction.user), item));
-    message.edit({
-      content,
-      components: [],
-    });
-    message.reply(`You equip the ${item.name}.`);
-  }
+  await equipItemPrompt(interaction, item);
 };
 
 export default { command, execute };

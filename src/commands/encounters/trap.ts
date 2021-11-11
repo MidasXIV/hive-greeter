@@ -1,6 +1,8 @@
 import { CommandInteraction, Message, MessageEmbed } from "discord.js";
-import { awardXP, trap as trapAttack } from "../../gameState";
+import { awardXP, getUserCharacter } from "../../gameState";
+import { trapAttack as trapAttack } from "../../trap/trap";
 import { sleep } from "../../utils";
+import { updateUserQuestProgess } from "../../quest/updateQuestProgess";
 
 export const trap = async (interaction: CommandInteraction): Promise<void> => {
   const message = await interaction.reply({
@@ -18,9 +20,12 @@ export const trap = async (interaction: CommandInteraction): Promise<void> => {
   if (!result)
     return await interaction.reply("No result. This should not happen.");
   await sleep(2000);
+  const character = getUserCharacter(interaction.user);
   switch (result.outcome) {
     case "hit":
       awardXP(interaction.user.id, 1);
+      if (character.hp > 0)
+        updateUserQuestProgess(interaction.user, "survivor", result.damage);
       await interaction.followUp({
         embeds: [
           new MessageEmbed()

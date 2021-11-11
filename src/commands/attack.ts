@@ -6,8 +6,8 @@ import { getCharacterStatModified } from "../character/getCharacterStatModified"
 import { playerAttack } from "../attack/playerAttack";
 import { cooldownRemainingText, sleep } from "../utils";
 import { mentionCharacter } from "../character/mentionCharacter";
-import { hpBar } from "../utils/hp-bar";
 import { attack } from "../attack/attack";
+import { hpBarField } from "./inspect";
 
 export const command = new SlashCommandBuilder()
   .setName("attack")
@@ -50,7 +50,7 @@ export const execute = async (
       )}.`
     );
   const embed = attackResultEmbed(result).setTitle(
-    `${attacker.name}'s Attack!`
+    `${attacker.name} attacks ${defender.name}!`
   );
   if (result.defender.hp === 0 && defender.gold) {
     adjustGold(attacker.id, defender.gold);
@@ -68,7 +68,7 @@ export const execute = async (
     const result = attack(defender.id, attacker.id);
     if (!result || result.outcome === "cooldown") return; // TODO: cooldown shouldn't be a possible outcome here
     const embed = attackResultEmbed(result).setTitle(
-      `${defender.name}'s Retaliation!`
+      `${defender.name} retaliats against ${attacker.name}!`
     );
     if (result.defender.hp === 0 && defender.gold) {
       adjustGold(result.attacker.id, result.defender.gold);
@@ -175,9 +175,10 @@ export const hpText = (result: ReturnType<typeof playerAttack>): string =>
   result
     ? result.outcome === "cooldown"
       ? "on cooldown"
-      : `${result.defender.hp}/${result.defender.maxHP} ${
-          result.defender.hp <= 0 ? "(unconscious)" : ""
-        }`
+      : `${result.defender.hp}/${getCharacterStatModified(
+          result.defender,
+          "maxHP"
+        )} ${result.defender.hp <= 0 ? "(unconscious)" : ""}`
     : "No result";
 
 export const attackRollText = (
@@ -218,15 +219,7 @@ const attackResultEmbed = (
   }
 
   embed.addFields([
-    {
-      name: `${result.defender.name}'s HP`,
-      value:
-        hpText(result) +
-        `\n${hpBar(
-          result.defender,
-          result.outcome === "hit" ? -result.damage : 0
-        )}`,
-    },
+    hpBarField(result.defender),
     {
       name: `Attack`,
       value: attackRollText(result),

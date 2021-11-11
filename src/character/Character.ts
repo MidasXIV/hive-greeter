@@ -1,5 +1,7 @@
 import { User } from "discord.js";
-import { StatusEffect } from "../status-effets/StatusEffect";
+import { Quest } from "../quest/Quest";
+import { QuestId } from "../quest/quests";
+import { StatusEffect } from "../statusEffects/StatusEffect";
 import { Item, Weapon } from "../utils/equipment";
 import { Stats } from "./Stats";
 
@@ -19,8 +21,12 @@ export type Character = Stats & {
     attack?: string;
     adventure?: string;
     heal?: string;
+    renew?: string;
   };
   statusEffects?: StatusEffect[];
+  quests: {
+    [id in QuestId]?: Quest;
+  };
 
   xp: number;
   gold: number;

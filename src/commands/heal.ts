@@ -2,7 +2,7 @@ import { SlashCommandBuilder } from "@discordjs/builders";
 import { CommandInteraction, MessageEmbed } from "discord.js";
 import { getUserCharacter, heal } from "../gameState";
 import { cooldownRemainingText } from "../utils";
-import { hpBar } from "../utils/hp-bar";
+import { hpBarField } from "./inspect";
 
 export const command = new SlashCommandBuilder()
   .setName("heal")
@@ -20,6 +20,7 @@ export const execute = async (
     await interaction.reply(`You must specify a target @player`);
     return;
   }
+
   // ensure characters exist
   // TODO: a better way?
   getUserCharacter(initiator);
@@ -39,13 +40,7 @@ export const execute = async (
             .setTitle(`Heal`)
             .setDescription(`Healed ${target} for ${result.amount}!`)
             .setImage("https://i.imgur.com/S32LDbM.png")
-            .addField(
-              "HP",
-              `${result.target.hp}/${result.target.maxHP}\n${hpBar(
-                result.target,
-                result.amount
-              )}`
-            ),
+            .addFields([hpBarField(getUserCharacter(interaction.user))]),
         ],
       });
       break;

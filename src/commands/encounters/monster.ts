@@ -13,6 +13,9 @@ import { attack } from "../../attack/attack";
 import { hpBar } from "../../utils/hp-bar";
 import { attackFlavorText, attackRollText } from "../attack";
 import { chest } from "./chest";
+import { isUserQuestComplete } from "../../quest/isQuestComplete";
+import quests from "../quests";
+import { updateUserQuestProgess } from "../../quest/updateQuestProgess";
 
 const getRandomMonster = () => {
   const rand = Math.random();
@@ -149,6 +152,9 @@ export const monster = async (
     summary.addField("XP Gained", monster.xpValue.toString());
     adjustGold(player.id, monster.gold);
     summary.addField("GP Gained", monster.gold.toString());
+    if (player.quests.slayer) {
+      updateUserQuestProgess(interaction.user, "slayer", 1);
+    }
   }
   if (player.hp === 0) {
     summary.addField("Unconscious", "You were knocked out!");
@@ -164,9 +170,13 @@ export const monster = async (
     embeds: [summary],
   });
 
-  if (player.hp > 0 && Math.random() <= 0.3) {
+  if (!fled && player.hp > 0 && Math.random() <= 0.3)
     await chest(interaction, true);
-  }
+  if (
+    isUserQuestComplete(interaction.user, "slayer") ||
+    isUserQuestComplete(interaction.user, "survivor")
+  )
+    await quests.execute(interaction, "followUp");
 };
 
 const attackField = (

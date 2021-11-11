@@ -5,8 +5,7 @@ import { Character } from "./character/Character";
 import { defaultCharacter } from "./character/defaultCharacter";
 import { getCharacterStatModified } from "./character/getCharacterStatModified";
 import { isCharacterOnCooldown } from "./character/isCharacterOnCooldown";
-import { StatusEffect } from "./status-effets/StatusEffect";
-import { Item } from "./utils/equipment";
+import { StatusEffect } from "./statusEffects/StatusEffect";
 
 export const DB_FILE = "./db.json";
 
@@ -15,8 +14,6 @@ type GameState = {
 };
 
 export const gameState: GameState = { characters: new Map() };
-
-export type Stat = "ac" | "attackBonus" | "damageBonus" | "damageMax";
 
 export const defaultProfile = "attachment://profile.png";
 export const defaultProfileAttachment = new MessageAttachment(
@@ -98,9 +95,12 @@ export const getCharacter = (id: string): Character | void => {
 };
 
 export const updateCharacter = (
-  character: Character
-): ReturnType<typeof gameState.characters.set> =>
+  character: Character | void
+): Character | void => {
+  if (!character) return;
   gameState.characters.set(character.id, character);
+  return gameState.characters.get(character.id);
+};
 
 export const getUserCharacter = (user: User): Character => {
   purgeExpiredStatuses(user.id);
@@ -130,12 +130,16 @@ export const setCharacterCooldown = (
   return getCharacter(characterId);
 };
 
+const cooldowns: { [key in keyof Character["cooldowns"]]: number } = {
+  renew: 120,
+};
+
 export const getCooldownRemaining = (
   characterId: string,
   type: keyof Character["cooldowns"]
 ): number => {
   try {
-    const cooldown = 5 * 60000; //5m
+    const cooldown = cooldowns[type] ?? 5;
     const lastUsed = gameState.characters.get(characterId)?.cooldowns[type];
     if (!lastUsed) return 0;
     return new Date(lastUsed).valueOf() + cooldown - Date.now();
@@ -183,19 +187,6 @@ export const adjustGold = (
   return getCharacter(characterId);
 };
 
-export const grantItem = (
-  characterId: string,
-  item: Item
-): Character | void => {
-  const character = getCharacter(characterId);
-  if (!character) return;
-  gameState.characters.set(characterId, {
-    ...character,
-    inventory: [...character.inventory, item],
-  });
-  return getCharacter(characterId);
-};
-
 export const setGold = (
   characterId: string,
   amount: number
@@ -215,16 +206,21 @@ export const adjustHP = (
 ): Character | void => {
   const character = getCharacter(characterId);
   if (!character) return;
-
+  updateCharacter(adjustCharacterHP(character, amount));
+  return getCharacter(characterId);
+};
+export const adjustCharacterHP = (
+  character: Character,
+  amount: number
+): Character => {
+  const maxHP = getCharacterStatModified(character, "maxHP");
   let newHp = character.hp + amount;
   if (newHp < 0) newHp = 0;
-  if (newHp > character.maxHP) newHp = character.maxHP;
-
-  gameState.characters.set(characterId, {
+  if (newHp > maxHP) newHp = maxHP;
+  return {
     ...character,
     hp: newHp,
-  });
-  return getCharacter(characterId);
+  };
 };
 
 export const d20 = (): number => Math.ceil(Math.random() * 20);
@@ -245,20 +241,6 @@ export type TrapResult =
       damage: number;
       defender: Character;
     };
-export const trap = (
-  characterId: string,
-  attackBonus = 1
-): TrapResult | void => {
-  const defender = getCharacter(characterId);
-  if (!defender) return;
-  const attackRoll = d20();
-  const damage = d6();
-  if (attackRoll + attackBonus > getCharacterStatModified(defender, "ac")) {
-    adjustHP(characterId, -damage);
-    return { outcome: "hit", attackRoll, attackBonus, damage, defender };
-  }
-  return { outcome: "miss", attackRoll, attackBonus, damage, defender };
-};
 type HealResult =
   | { outcome: "healed"; amount: number; target: Character }
   | { outcome: "cooldown" };
