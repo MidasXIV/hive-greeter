@@ -17,5 +17,5 @@ export const defaultCharacter: Omit<Character, "id" | "name"> = {
   quests: {},
   xp: 0,
   xpValue: 10,
-  damageMax: 6,
+  damageMax: 4,
 };
