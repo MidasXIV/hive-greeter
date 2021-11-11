@@ -2,7 +2,7 @@ import { SlashCommandBuilder } from "@discordjs/builders";
 import { CommandInteraction, MessageEmbed } from "discord.js";
 import { Character } from "../character/Character";
 import { getUserCharacter, getUserCharacters } from "../gameState";
-import { primaryStatFields, statFields } from "./inspect";
+import { primaryStatFields } from "./inspect";
 
 export const command = new SlashCommandBuilder()
   .setName("list")
@@ -30,4 +30,4 @@ export const limitedCharacterEmbed = (character: Character): MessageEmbed =>
   new MessageEmbed()
     .setTitle(character.name)
     .setThumbnail(character.profile)
-    .addFields([...primaryStatFields(character), ...statFields(character)]);
+    .addFields(primaryStatFields(character));
