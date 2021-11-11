@@ -224,32 +224,39 @@ function triggerTrap(interaction: CommandInteraction, chest: Chest) {
   chest.trapTriggered = true;
   const attack = trapAttack(interaction.user.id, 1);
   if (!attack) return interaction.reply("No attack. This should not happen.");
+
   if (attack.outcome === "hit") {
-    adjustHP(interaction.user.id, -attack.damage);
-    updateStatusEffect(interaction.user.id, {
-      name: "Poison Trap",
-      debuff: true,
-      buff: false,
-      modifiers: {
-        attackBonus: -2,
-      },
-      duration: 30 * 60000,
-      started: new Date().toString(),
-    });
-    chest.trapResult = `A needle pricks your finger. You take ${attack.damage} damage and feel ill!`;
-  }
-  if (attack.outcome === "miss") {
-    adjustHP(interaction.user.id, -attack.damage);
-    updateStatusEffect(interaction.user.id, {
-      name: "Slow Trap",
-      debuff: true,
-      buff: false,
-      modifiers: {
-        ac: -2,
-      },
-      duration: 30 * 60000,
-      started: new Date().toString(),
-    });
-    chest.trapResult = `A strange dust explodes in your face. You take ${attack.damage} damage and feel sluggish!`;
+    const roll = Math.random();
+
+    switch (true) {
+      case roll <= 0.5:
+        adjustHP(interaction.user.id, -attack.damage);
+        updateStatusEffect(interaction.user.id, {
+          name: "Poison Trap",
+          debuff: true,
+          buff: false,
+          modifiers: {
+            attackBonus: -2,
+          },
+          duration: 30 * 60000,
+          started: new Date().toString(),
+        });
+        chest.trapResult = `A needle pricks your finger. You take ${attack.damage} damage and feel ill!`;
+        break;
+      case roll <= 1:
+        adjustHP(interaction.user.id, -attack.damage);
+        updateStatusEffect(interaction.user.id, {
+          name: "Slow Trap",
+          debuff: true,
+          buff: false,
+          modifiers: {
+            ac: -2,
+          },
+          duration: 30 * 60000,
+          started: new Date().toString(),
+        });
+        chest.trapResult = `A strange dust explodes in your face. You take ${attack.damage} damage and feel sluggish!`;
+        break;
+    }
   }
 }
