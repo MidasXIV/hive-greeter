@@ -1,5 +1,6 @@
 import adventure from "./adventure";
 import attack from "./attack";
+import cooldowns from "./cooldowns";
 import dance from "./dance";
 import db from "./db";
 import equip from "./equip";
@@ -17,6 +18,7 @@ import shop from "./shop";
 const commands = new Map();
 commands.set("adventure", adventure);
 commands.set("attack", attack);
+commands.set("cooldowns", cooldowns);
 commands.set("dance", dance);
 commands.set("db", db);
 commands.set("equip", equip);

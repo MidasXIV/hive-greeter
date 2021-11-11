@@ -142,7 +142,9 @@ export const getCooldownRemaining = (
     const cooldown = cooldowns[type] ?? 5 * 60000;
     const lastUsed = gameState.characters.get(characterId)?.cooldowns[type];
     if (!lastUsed) return 0;
-    return new Date(lastUsed).valueOf() + cooldown - Date.now();
+    const remaining = new Date(lastUsed).valueOf() + cooldown - Date.now();
+    if (remaining < 0) return 0;
+    return remaining;
   } catch (e) {
     console.error(`failed to getCooldownRemaining for user ${characterId}`);
     return 0;
