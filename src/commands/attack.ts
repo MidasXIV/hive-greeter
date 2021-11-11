@@ -68,7 +68,7 @@ export const execute = async (
     const result = attack(defender.id, attacker.id);
     if (!result || result.outcome === "cooldown") return; // TODO: cooldown shouldn't be a possible outcome here
     const embed = attackResultEmbed(result).setTitle(
-      `${defender.name} retaliats against ${attacker.name}!`
+      `${defender.name} retaliates against ${attacker.name}!`
     );
     if (result.defender.hp === 0 && defender.gold) {
       adjustGold(result.attacker.id, result.defender.gold);
