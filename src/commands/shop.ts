@@ -29,12 +29,13 @@ export const command = new SlashCommandBuilder()
   .setName("shop")
   .setDescription("If you have coin, game has wares.");
 
-const shopImage = new MessageAttachment("./images/weapon-shop.jpg", "shop.png");
-const shopEmbed = new MessageEmbed().setImage(`attachment://${shopImage.name}`);
-
 export const execute = async (
   interaction: CommandInteraction
 ): Promise<void> => {
+  const shopImage = new MessageAttachment(
+    "./images/weapon-shop.jpg",
+    "shop.png"
+  );
   const player = getUserCharacter(interaction.user);
   const inventory = [
     dagger,
@@ -51,7 +52,9 @@ export const execute = async (
   const message = await interaction.reply({
     files: [shopImage],
     embeds: [
-      shopEmbed.addField("Your Gold", "💰 " + player.gold.toString()),
+      new MessageEmbed()
+        .setImage(`attachment://${shopImage.name}`)
+        .addField("Your Gold", "💰 " + player.gold.toString()),
       ...inventory.map(itemEmbed),
     ],
     components: [
@@ -60,32 +63,33 @@ export const execute = async (
     fetchReply: true,
   });
   if (!(message instanceof Message)) return;
-  const response = await awaitUserResponse(message, "SELECT_MENU").catch(() => {
-    message.edit({
-      files: [shopImage],
-      embeds: [shopEmbed, ...inventory.map(itemEmbed)],
-      components: [],
+  const response = await message
+    .awaitMessageComponent({
+      filter: (i) => {
+        i.deferUpdate();
+        return i.user.id === interaction.user.id;
+      },
+      componentType: "SELECT_MENU",
+      time: 60000,
+    })
+    .catch(() => {
+      message.edit({
+        files: [shopImage],
+        embeds: [
+          new MessageEmbed()
+            .setImage(`attachment://${shopImage.name}`)
+            .addField("Your Gold", "💰 " + player.gold.toString()),
+          ...inventory.map(itemEmbed),
+        ],
+        components: [],
+      });
     });
-  });
 
   if (!response || !response.isSelectMenu()) return;
   const item = inventory[parseInt(response.values[0])];
   if (!item) return;
   await buyItem(interaction, player, item);
 };
-
-const awaitUserResponse = (
-  message: Message,
-  componentType: "BUTTON" | "SELECT_MENU"
-) =>
-  message.awaitMessageComponent({
-    filter: (interaction) => {
-      interaction.deferUpdate();
-      return interaction.user.id === interaction.user.id;
-    },
-    componentType,
-    time: 60000,
-  });
 
 const buyItem = async (
   interaction: CommandInteraction,
