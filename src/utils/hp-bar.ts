@@ -29,7 +29,6 @@ export const hpBar = (c: Character, adjustment = 0): string => {
       repeat("🖤", empty)
     );
   } catch (e) {
-    debugger;
     console.error("hp bar failed", e);
     return `hp bar failed ${e}`;
   }
