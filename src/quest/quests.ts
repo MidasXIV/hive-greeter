@@ -3,9 +3,9 @@ import { Quest } from "./Quest";
 const questIds = [
   "slayer",
   "survivor",
+  "blessed",
   // "afflicted",
   // "traveler",
-  "blessed",
   // "healer",
   // "rogue",
 ] as const;
@@ -24,7 +24,7 @@ export const quests: {
     progress: 0,
     totalRequired: 10,
     objective: "Defeat 10 monsters",
-    reward: "Deal more damage to monsters for a while.",
+    reward: "Deal more damage to monsters.",
     repeatable: true,
     victoryText: "Your are a slayer!",
   },
@@ -61,7 +61,7 @@ export const quests: {
     title: "Blessed",
     progress: 0,
     totalRequired: 10,
-    objective: "Receive 10 blessings.",
+    objective: "Find 10 shrines.",
     reward: "Shrines last twice as long.",
     repeatable: false,
     victoryText: "#blessed is the shrine seeker.",
