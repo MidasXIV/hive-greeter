@@ -131,7 +131,7 @@ export const setCharacterCooldown = (
 };
 
 const cooldowns: { [key in keyof Character["cooldowns"]]: number } = {
-  renew: 120,
+  renew: 120 * 60000,
 };
 
 export const getCooldownRemaining = (
@@ -139,7 +139,7 @@ export const getCooldownRemaining = (
   type: keyof Character["cooldowns"]
 ): number => {
   try {
-    const cooldown = cooldowns[type] ?? 5;
+    const cooldown = cooldowns[type] ?? 5 * 60000;
     const lastUsed = gameState.characters.get(characterId)?.cooldowns[type];
     if (!lastUsed) return 0;
     return new Date(lastUsed).valueOf() + cooldown - Date.now();
