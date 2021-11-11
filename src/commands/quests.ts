@@ -13,6 +13,7 @@ import { Quest } from "../quest/Quest";
 import { isQuestId, QuestId } from "../quest/quests";
 import { slayerBuffQuestReward } from "../quest/rewards/slayerBuffQuest";
 import { survivorBuffQuestReward } from "../quest/rewards/survivorBuffQuest";
+import { blessedBuffQuestReward } from "../quest/rewards/blessedBuffQuest";
 
 export const command = new SlashCommandBuilder()
   .setName("quests")
@@ -85,5 +86,7 @@ const completeQuest = async (
       return await slayerBuffQuestReward(interaction);
     case "survivor":
       return await survivorBuffQuestReward(interaction);
+    case "blessed":
+      return await blessedBuffQuestReward(interaction);
   }
 };

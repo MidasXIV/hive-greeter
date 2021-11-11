@@ -13,10 +13,11 @@ import questsCommand from "../../quests";
 
 // TODO: omit quests the user already has
 export const chattyTavernkeepers = async (
-  interaction: CommandInteraction
+  interaction: CommandInteraction,
+  replyType: "reply" | "followUp" = "followUp"
 ): Promise<void> => {
   awardXP(interaction.user.id, 1);
-  const message = await interaction.reply({
+  const message = await interaction[replyType]({
     fetchReply: true,
     files: [new MessageAttachment("./images/Tavernkeepers.jpg")],
     embeds: [
@@ -47,14 +48,22 @@ export const chattyTavernkeepers = async (
   });
 
   if (!(message instanceof Message)) return;
-  const response = await message.awaitMessageComponent({
-    filter: (i) => {
-      i.deferUpdate();
-      return i.user.id === interaction.user.id;
-    },
-    componentType: "SELECT_MENU",
-    time: 60000,
-  });
+  const response = await message
+    .awaitMessageComponent({
+      filter: (i) => {
+        i.deferUpdate();
+        return i.user.id === interaction.user.id;
+      },
+      componentType: "SELECT_MENU",
+      time: 60000,
+    })
+    .catch(() => {
+      interaction.followUp("Another time, perhaps!");
+    });
+  if (!response) {
+    interaction.followUp("Another time, perhaps!");
+    return;
+  }
   const questId = response.values[0];
   if (!isQuestId(questId)) {
     interaction.followUp(`${questId} is not a valid quest id`);

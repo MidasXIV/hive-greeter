@@ -9,7 +9,7 @@ export const command = new SlashCommandBuilder()
 export const execute = async (
   interaction: CommandInteraction
 ): Promise<void> => {
-  await chattyTavernkeepers(interaction);
+  await chattyTavernkeepers(interaction, "reply");
 };
 
 export default { command, execute };

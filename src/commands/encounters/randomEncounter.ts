@@ -9,60 +9,50 @@ import { trap } from "./trap";
 import { travel } from "./travel";
 import { chest } from "./chest";
 import { vigorShrine } from "./shrine/vigor";
+import { weightedRandom } from "./weightedRandom";
 
 type CommandHandler = (interaction: CommandInteraction) => Promise<void>;
 type EncounterId =
-  | "fairyWell"
+  | "armorShrine"
+  | "attackShrine"
+  | "chest"
   | "divineBlessing"
-  | "trap"
-  | "travel"
+  | "fairyWell"
   | "monster"
   | "tavern"
-  | "attackShrine"
-  | "armorShrine"
-  | "vigorShrine"
-  | "chest";
+  | "trap"
+  | "travel"
+  | "vigorShrine";
 
 type Encounters = {
   [key in EncounterId]: CommandHandler;
 };
 
-const encounters: Encounters = {
-  divineBlessing,
-  fairyWell,
-  trap,
-  travel,
-  monster,
-  tavern,
+type randomEncounter = CommandHandler;
+const weights = {
+  armorShrine: 1,
+  attackShrine: 1,
+  chest: 2,
+  divineBlessing: 0.01,
+  fairyWell: 1,
+  monster: 3,
+  tavern: 2,
+  trap: 1,
+  travel: 1,
+  vigorShrine: 1,
+};
+const items: CommandHandler[] = [
   armorShrine,
   attackShrine,
   chest,
+  divineBlessing,
+  fairyWell,
+  monster,
+  tavern,
+  trap,
+  travel,
   vigorShrine,
-};
+];
 
-// TODO: increase monster encounter rate
-type randomEncounter = CommandHandler;
-export const randomEncounter = (): CommandHandler => {
-  return encounters["monster"];
-  const rand = Math.random();
-  switch (true) {
-    case rand >= 0.99:
-      return encounters["divineBlessing"];
-    case rand >= 0.8:
-      return encounters["fairyWell"];
-    case rand >= 0.7:
-      return encounters["armorShrine"];
-    case rand >= 0.6:
-      return encounters["attackShrine"];
-    case rand >= 0.5:
-      return encounters["chest"];
-    case rand >= 0.4:
-      return encounters["monster"];
-    case rand >= 0.3:
-      return encounters["tavern"];
-    case rand >= 0.2:
-      return encounters["trap"];
-    default:
-      return encounters["travel"];
-  }
-};
+export const randomEncounter = (): CommandHandler =>
+  items[weightedRandom(Object.values(weights))];

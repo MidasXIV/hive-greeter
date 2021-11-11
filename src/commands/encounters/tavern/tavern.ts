@@ -1,7 +1,15 @@
 import { CommandInteraction, Message, MessageEmbed } from "discord.js";
-import { sleep } from "../../../utils";
+import { CommandHandler, sleep } from "../../../utils";
+import { weightedRandom } from "../weightedRandom";
 import { barFight } from "./barFight";
+import { chattyTavernkeepers } from "./chattyTavernkeepers";
 import { restfulNight } from "./restfulNight";
+
+const weights = { restfulNight: 1, barFight: 1, chattyTavernkeepers: 200 };
+const items: CommandHandler[] = [restfulNight, barFight, chattyTavernkeepers];
+
+const randomEncounter = (): CommandHandler =>
+  items[weightedRandom(Object.values(weights))];
 
 export const tavern = async (
   interaction: CommandInteraction
@@ -19,12 +27,6 @@ export const tavern = async (
     fetchReply: true,
   });
   if (!(message instanceof Message)) return;
-
   await sleep(2000);
-
-  if (Math.random() > 0.5) {
-    await restfulNight(interaction);
-  } else {
-    await barFight(interaction);
-  }
+  await randomEncounter()(interaction);
 };

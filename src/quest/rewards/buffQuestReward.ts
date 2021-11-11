@@ -14,8 +14,8 @@ export async function buffQuestReward(
   const character = getUserCharacter(interaction.user);
   const embeds = [
     new MessageEmbed({
-      title: `Survivor Quest Complete!`,
-      description: "You have survived hardship and it only makes you harder.",
+      title: `${quest.title} Complete!`,
+      description: quest.victoryText,
     }),
   ];
 

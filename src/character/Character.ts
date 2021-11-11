@@ -21,6 +21,7 @@ export type Character = Stats & {
     attack?: string;
     adventure?: string;
     heal?: string;
+    renew?: string;
   };
   statusEffects?: StatusEffect[];
   quests: {
