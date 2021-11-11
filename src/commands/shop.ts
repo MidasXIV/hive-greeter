@@ -96,7 +96,7 @@ const buyItem = async (
   player: Character,
   item: Item
 ) => {
-  if (player.gold <= item.goldValue) {
+  if (player.gold < item.goldValue) {
     await interaction.followUp(
       `You cannot afford the ${item.name}. You have only ${player.gold} gold and it costs ${item.goldValue}.`
     );
