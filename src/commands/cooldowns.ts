@@ -1,5 +1,5 @@
 import { SlashCommandBuilder } from "@discordjs/builders";
-import { CommandInteraction, Message, MessageEmbed, User } from "discord.js";
+import { CommandInteraction, MessageEmbed } from "discord.js";
 import { Character } from "../character/Character";
 import { getUserCharacter } from "../gameState";
 import { cooldownRemainingText } from "../utils";
