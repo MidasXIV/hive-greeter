@@ -1,7 +1,7 @@
 import { EmbedFieldData } from "discord.js";
-import { Character } from "./Character";
-import { getCharacterStatModified } from "./getCharacterStatModified";
-import { hpBar } from "../utils/hp-bar";
+import { Character } from "../Character";
+import { getCharacterStatModified } from "../getCharacterStatModified";
+import { hpBar } from "./hpBar";
 
 export const hpBarField = (
   character: Character,

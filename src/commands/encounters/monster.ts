@@ -10,7 +10,7 @@ import {
 } from "../../gameState";
 import { playerAttack } from "../../attack/playerAttack";
 import { attack } from "../../attack/attack";
-import { hpBar } from "../../utils/hp-bar";
+import { hpBar } from "../../character/hpBar/hpBar";
 import { attackFlavorText, attackRollText } from "../attack";
 import { chest } from "./chest";
 import { isUserQuestComplete } from "../../quest/isQuestComplete";

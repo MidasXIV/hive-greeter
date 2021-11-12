@@ -6,7 +6,7 @@ import db from "./db";
 import equip from "./equip";
 import heal from "./heal";
 import hp from "./hp";
-import hpbartest from "../character/hpbartest";
+import hpbartest from "../character/hpBar/hpbartest";
 import inspect from "./inspect";
 import inventory from "./inventory";
 import list from "./list";

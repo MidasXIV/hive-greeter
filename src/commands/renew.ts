@@ -3,7 +3,7 @@ import { CommandInteraction, Message, MessageEmbed } from "discord.js";
 import { isCharacterOnCooldown } from "../character/isCharacterOnCooldown";
 import { adjustHP, getUserCharacter } from "../gameState";
 import { cooldownRemainingText } from "../utils";
-import { hpBarField } from "../character/hpBarField";
+import { hpBarField } from "../character/hpBar/hpBarField";
 
 export const command = new SlashCommandBuilder()
   .setName("renew")
