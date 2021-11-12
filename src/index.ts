@@ -1,4 +1,6 @@
 import dotenv from "dotenv";
+dotenv.config({ path: ".env" });
+
 import { REST } from "@discordjs/rest";
 import express, { Request, Response } from "express";
 import Discord, { Intents } from "discord.js";
@@ -6,8 +8,6 @@ import { exit } from "process";
 import { Routes } from "discord-api-types/v9";
 import commands from "./commands";
 import { loadDB } from "./gameState";
-
-dotenv.config({ path: ".env" });
 
 if (!process.env.token) exit(1);
 

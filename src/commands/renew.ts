@@ -29,9 +29,9 @@ export const execute = async (
   // const tickRate = 5 * 60000;
   const message = await interaction.reply({
     fetchReply: true,
+    content: `${interaction.user} renews ${target} for ${heal}`,
     embeds: [
       new MessageEmbed({
-        title: `${interaction.user} renews ${target} for ${heal}`,
         fields: [hpBarField(getUserCharacter(target))],
         timestamp: new Date(new Date().valueOf() + tickRate),
       }),
@@ -40,7 +40,7 @@ export const execute = async (
   if (!(message instanceof Message)) return;
   const timer = setInterval(() => {
     message.edit({
-      content: `${interaction.user} heals ${target} for ${heal}`,
+      content: `${interaction.user} renews ${target} for ${heal}`,
       embeds: [
         new MessageEmbed({
           fields: [hpBarField(getUserCharacter(target))],
