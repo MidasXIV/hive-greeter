@@ -74,5 +74,19 @@ client.on("error", (e) => {
 client.login(process.env.token);
 app.listen(PORT, () => console.log(`Server started on port ${PORT}!`));
 
-process.on("exit", saveDB);
-process.on("SIGINT", saveDB);
+const autoSaveDbFile = "./db.autosave.json";
+
+setInterval(() => {
+  console.error(`Auto saving to ${autoSaveDbFile}.`);
+  saveDB(autoSaveDbFile);
+}, 30 * 60000);
+
+["beforeExit", "exit", "uncaughtException", "SIGINT"].map((command) => {
+  process.on(command, (code) => {
+    console.error(
+      `Cleaning up due to ${command}. Saving db to ${autoSaveDbFile}.`,
+      code
+    );
+    saveDB(autoSaveDbFile);
+  });
+});

@@ -31,9 +31,13 @@ export const getDBJSON = (space = 2): string =>
     space
   );
 
-export const saveDB = async (): Promise<void> => {
+const isEmptyState = (state: GameState) => state.characters.size === 0;
+
+export const saveDB = async (file = DB_FILE): Promise<void> => {
+  console.log("saving db");
+  if (isEmptyState(gameState)) return;
   const data = getDBJSON();
-  await writeFile(DB_FILE, data, { encoding: "utf-8" });
+  await writeFile(file, data, { encoding: "utf-8" });
 };
 
 export const loadDB = async (): Promise<void> => {
@@ -61,7 +65,7 @@ export const loadSerializedDB = (serialized: string): GameState => {
 export const grantDivineBlessing = (characterId: string): void => {
   const character = getCharacter(characterId);
   if (!character) return;
-  gameState.characters.set(characterId, {
+  updateCharacter({
     ...character,
     maxHP: character.maxHP + 1,
     hp: character.hp + 1,
@@ -71,7 +75,7 @@ export const grantDivineBlessing = (characterId: string): void => {
 const purgeExpiredStatuses = (characterId: string): void => {
   const character = gameState.characters.get(characterId);
   if (!character) return;
-  gameState.characters.set(characterId, {
+  updateCharacter({
     ...character,
     statusEffects:
       character.statusEffects?.filter(
@@ -126,7 +130,7 @@ export const setCharacterCooldown = (
     ...character,
     cooldowns: { ...character.cooldowns, [type]: new Date().toString() },
   };
-  gameState.characters.set(characterId, updatedCharacter);
+  updateCharacter(updatedCharacter);
   return getCharacter(characterId);
 };
 
@@ -158,7 +162,7 @@ export const createCharacter = (
     id: character?.id ?? randomUUID(),
     ...character,
   };
-  gameState.characters.set(newCharacter.id, newCharacter);
+  updateCharacter(newCharacter);
   console.log(`created ${newCharacter.id}`);
   return newCharacter;
 };
@@ -169,7 +173,7 @@ export const awardXP = (
 ): Character | void => {
   const character = getCharacter(characterId);
   if (!character) return undefined;
-  gameState.characters.set(characterId, {
+  updateCharacter({
     ...character,
     xp: character.xp + amount,
   });
@@ -182,7 +186,7 @@ export const adjustGold = (
 ): Character | void => {
   const character = getCharacter(characterId);
   if (!character) return;
-  gameState.characters.set(characterId, {
+  updateCharacter({
     ...character,
     gold: character.gold + amount,
   });
@@ -195,7 +199,7 @@ export const setGold = (
 ): Character | void => {
   const character = getCharacter(characterId);
   if (!character) return;
-  gameState.characters.set(characterId, {
+  updateCharacter({
     ...character,
     gold: amount,
   });
@@ -267,6 +271,6 @@ export const heal = (
 export const setProfile = (id: string, url: string): Character | void => {
   const character = getCharacter(id);
   if (!character) return;
-  gameState.characters.set(id, { ...character, profile: url });
+  updateCharacter({ ...character, profile: url });
   return character;
 };
