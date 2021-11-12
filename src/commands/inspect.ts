@@ -79,12 +79,15 @@ const questEmbed = (character: Character) => {
   return embed;
 };
 
-export const hpBarField = (character: Character): EmbedFieldData => ({
+export const hpBarField = (
+  character: Character,
+  adjustment = 0
+): EmbedFieldData => ({
   name: "HP",
   value: `${character.hp}/${getCharacterStatModified(
     character,
     "maxHP"
-  )}\n${hpBar(character)}`,
+  )}\n${hpBar(character, adjustment)}`,
 });
 
 export const primaryStatFields = (

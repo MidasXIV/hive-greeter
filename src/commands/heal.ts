@@ -40,7 +40,9 @@ export const execute = async (
             .setTitle(`Heal`)
             .setDescription(`Healed ${target} for ${result.amount}!`)
             .setImage("https://i.imgur.com/S32LDbM.png")
-            .addFields([hpBarField(getUserCharacter(interaction.user))]),
+            .addFields([
+              hpBarField(getUserCharacter(interaction.user), result.amount),
+            ]),
         ],
       });
       break;
