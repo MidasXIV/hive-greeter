@@ -1,3 +1,12 @@
+# Adventure Bot
+
+Slay monsters, earn gold, evade traps, travel, gear up, complete quests, and stab your friends when they're at their weakest so you can steal all _their_ gold. As you do.
+
+Adventure Bot is the DM in your friend's Discord roleplaying game.
+
+![](./images/inspect-example.png)
+
+
 <img src="https://user-images.githubusercontent.com/24829816/87224966-7c89b180-c39a-11ea-93c9-5be0c46b96da.png" alt="hive-greeter-logo">
 
 ***
