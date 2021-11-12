@@ -20,7 +20,7 @@ export const hpBar = (c: Character, adjustment = 0): string => {
   });
   const heal = Math.max(0, Math.floor(adjustPercent * barLength));
   const empty = barLength - full - damage - heal;
-
+  console.log("hpBar", { full, damage, heal, empty });
   try {
     return (
       repeat("💚", full) +
