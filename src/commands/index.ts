@@ -9,9 +9,9 @@ import hp from "./hp";
 import inspect from "./inspect";
 import inventory from "./inventory";
 import list from "./list";
-// import quest from "./quest";
+import quest from "./quest";
 import quests from "./quests";
-// import renew from "./renew";
+import renew from "./renew";
 import set from "./set";
 import shop from "./shop";
 
@@ -27,9 +27,14 @@ commands.set("hp", hp);
 commands.set("inspect", inspect);
 commands.set("inventory", inventory);
 commands.set("list", list);
-// commands.set("quest", quest);
 commands.set("quests", quests);
-// commands.set("renew", renew);
 commands.set("set", set);
 commands.set("shop", shop);
+
+if (process.env.ADMIN_COMMANDS === "true") {
+  console.warn("⚠ ADMIN COMMANDS LOADED ⚠");
+  commands.set("quest", quest);
+  commands.set("renew", renew);
+}
+
 export default commands;
