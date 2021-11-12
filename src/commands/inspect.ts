@@ -41,7 +41,11 @@ export const execute = async (
   await interaction[responseType]({
     attachments:
       character.profile === defaultProfile ? [defaultProfileAttachment] : [],
-    embeds: [characterEmbed(character, xpEmoji), actionEmbed(character)]
+    embeds: [
+      characterEmbed(character, xpEmoji),
+      statEmbed(character),
+      actionEmbed(character),
+    ]
       .concat(Object.values(character.equipment).map(itemEmbed))
       .concat(character.statusEffects?.map(statusEffectEmbed) ?? [])
       .concat(questEmbed(character) ?? []),
@@ -65,7 +69,10 @@ export const characterEmbed = (
   const embed = new MessageEmbed()
     .setTitle(character.name)
     .setImage(character.profile)
-    .addFields([...primaryStatFields(character, xpEmoji)]);
+    .addFields([
+      ...primaryStatFields(character, xpEmoji),
+      ...statFields(character),
+    ]);
   return embed;
 };
 
@@ -161,6 +168,32 @@ export const statFields = (character: Character) => [
     inline: true,
   },
 ];
+export const statEmbed = (character: Character): MessageEmbed =>
+  new MessageEmbed({
+    title: `Stats`,
+    fields: [
+      {
+        name: "AC",
+        value: `🛡 ${statText(character, "ac")}`,
+        inline: true,
+      },
+      {
+        name: "Attack Bonus",
+        value: `⚔ ${statText(character, "attackBonus")}`,
+        inline: true,
+      },
+      {
+        name: "Damage Max",
+        value: `🩸 ${statText(character, "damageMax")}`,
+        inline: true,
+      },
+      {
+        name: "Damage Bonus",
+        value: `🩸 ${statText(character, "damageBonus")}`,
+        inline: true,
+      },
+    ],
+  });
 
 function statusEffectEmbed(effect: StatusEffect) {
   return new MessageEmbed({
