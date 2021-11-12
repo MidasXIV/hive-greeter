@@ -9,6 +9,7 @@ import hp from "./hp";
 import inspect from "./inspect";
 import inventory from "./inventory";
 import list from "./list";
+import monster from "./monster";
 import quest from "./quest";
 import quests from "./quests";
 import renew from "./renew";
@@ -34,6 +35,7 @@ commands.set("shop", shop);
 if (process.env.ADMIN_COMMANDS === "true") {
   console.warn("⚠ ADMIN COMMANDS LOADED ⚠");
   commands.set("quest", quest);
+  commands.set("monster", monster);
   commands.set("renew", renew);
 }
 
