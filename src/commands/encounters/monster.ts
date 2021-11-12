@@ -16,6 +16,7 @@ import { chest } from "./chest";
 import { isUserQuestComplete } from "../../quest/isQuestComplete";
 import quests from "../quests";
 import { updateUserQuestProgess } from "../../quest/updateQuestProgess";
+import { questProgressField } from "../../quest/questProgressField";
 
 const getRandomMonster = () => {
   const rand = Math.random();
@@ -153,7 +154,9 @@ export const monster = async (
     adjustGold(player.id, monster.gold);
     summary.addField("GP Gained", monster.gold.toString());
     if (player.quests.slayer) {
-      updateUserQuestProgess(interaction.user, "slayer", 1);
+      const character = updateUserQuestProgess(interaction.user, "slayer", 1);
+      if (character && character.quests.slayer)
+        summary.addFields([questProgressField(character.quests.slayer)]);
     }
   }
   if (player.hp === 0) {
