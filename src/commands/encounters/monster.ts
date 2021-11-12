@@ -26,6 +26,7 @@ const getRandomMonster = () => {
         name: "Orc",
         profile: "https://i.imgur.com/2cT3cLm.jpeg",
         gold: Math.floor(Math.random() * 6) + 2,
+        isMonster: true,
       });
     case rand > 0.3:
       return createCharacter({
@@ -35,8 +36,8 @@ const getRandomMonster = () => {
         profile: "https://i.imgur.com/MV96z4T.png",
         xpValue: 4,
         gold: Math.floor(Math.random() * 5) + 1,
+        isMonster: true,
       });
-
     default:
       return createCharacter({
         hp: 5,
@@ -45,6 +46,7 @@ const getRandomMonster = () => {
         profile: "https://i.imgur.com/gPH1JSl.png",
         xpValue: 3,
         gold: Math.floor(Math.random() * 3) + 1,
+        isMonster: true,
       });
   }
 };
