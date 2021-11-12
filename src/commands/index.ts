@@ -6,7 +6,7 @@ import db from "./db";
 import equip from "./equip";
 import heal from "./heal";
 import hp from "./hp";
-import hpbar from "./hpbar";
+import hpbartest from "../character/hpbartest";
 import inspect from "./inspect";
 import inventory from "./inventory";
 import list from "./list";
@@ -36,7 +36,7 @@ commands.set("shop", shop);
 if (process.env.ADMIN_COMMANDS === "true") {
   console.warn("⚠ ADMIN COMMANDS LOADED ⚠");
   commands.set("quest", quest);
-  commands.set("hpbar", hpbar);
+  commands.set("hpbartest", hpbartest);
   commands.set("monster", monster);
   commands.set("renew", renew);
 }

@@ -35,7 +35,7 @@ const weights = {
   chest: 2,
   divineBlessing: 0.01,
   fairyWell: 1,
-  monster: 3,
+  monster: 3000,
   tavern: 2,
   trap: 1,
   travel: 1,

@@ -1,10 +1,10 @@
 import { SlashCommandBuilder } from "@discordjs/builders";
 import { CommandInteraction, MessageEmbed } from "discord.js";
 import { getUserCharacter } from "../gameState";
-import { hpBarField } from "./inspect";
+import { hpBarField } from "./hpBarField";
 
 export const command = new SlashCommandBuilder()
-  .setName("hpbar")
+  .setName("hpbartest")
   .setDescription("Show hp bar variants.");
 
 export const execute = async (

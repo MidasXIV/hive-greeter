@@ -7,7 +7,7 @@ import { playerAttack } from "../attack/playerAttack";
 import { cooldownRemainingText, sleep } from "../utils";
 import { mentionCharacter } from "../character/mentionCharacter";
 import { attack } from "../attack/attack";
-import { hpBarField } from "./inspect";
+import { hpBarField } from "../character/hpBarField";
 
 export const command = new SlashCommandBuilder()
   .setName("attack")

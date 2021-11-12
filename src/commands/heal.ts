@@ -2,7 +2,7 @@ import { SlashCommandBuilder } from "@discordjs/builders";
 import { CommandInteraction, MessageEmbed } from "discord.js";
 import { getUserCharacter, heal } from "../gameState";
 import { cooldownRemainingText } from "../utils";
-import { hpBarField } from "./inspect";
+import { hpBarField } from "../character/hpBarField";
 
 export const command = new SlashCommandBuilder()
   .setName("heal")
