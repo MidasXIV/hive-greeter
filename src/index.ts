@@ -60,7 +60,11 @@ client.on("interactionCreate", async (interaction) => {
   if (!interaction.isCommand()) return;
   console.log("interactionCreate");
   console.time(interaction.commandName);
-  await commands.get(interaction.commandName).execute(interaction);
+  try {
+    await commands.get(interaction.commandName).execute(interaction);
+  } catch (e) {
+    await interaction.reply(`Command failed: ${e}`);
+  }
   console.timeEnd(interaction.commandName);
 });
 client.on("error", (e) => {
