@@ -18,4 +18,5 @@ export const defaultCharacter: Omit<Character, "id" | "name"> = {
   xp: 0,
   xpValue: 10,
   damageMax: 4,
+  isMonster: false,
 };
