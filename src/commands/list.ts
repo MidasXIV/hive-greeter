@@ -1,10 +1,9 @@
 import { SlashCommandBuilder } from "@discordjs/builders";
 import { CommandInteraction, MessageEmbed } from "discord.js";
-import { Character } from "../character/Character";
 import { getMonsters } from "../character/getMonsters";
 import { getUserCharacter } from "../character/getUserCharacter";
 import { getUserCharacters } from "../character/getUserCharacters";
-import { primaryStatFields } from "./inspect";
+import { limitedCharacterEmbed } from "./limitedCharacterEmbed";
 
 export const command = new SlashCommandBuilder()
   .setName("list")
@@ -31,14 +30,8 @@ export const execute = async (
 
 export default { command, execute };
 
-export const limitedCharacterEmbed = (character: Character): MessageEmbed =>
-  new MessageEmbed()
-    .setTitle(character.name)
-    .setThumbnail(character.profile)
-    .addFields(primaryStatFields(character));
-
 function showCharacters(interaction: CommandInteraction) {
-  getUserCharacter(interaction.user); // ensure Character existence to prevent empty lists
+  getUserCharacter(interaction.user); // ensure Character existence to prevent an empty list
   interaction.reply({
     embeds: getUserCharacters()
       .sort((a, b) => b.xp - a.xp)

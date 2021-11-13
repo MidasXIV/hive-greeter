@@ -14,16 +14,20 @@ export function createEncounter({
 }): Encounter {
   const encounter: Encounter = {
     characterId: player.id,
+    monsterId: monster.id,
     date: new Date().toString(),
     id: randomUUID(),
+    playerAttacks: [],
+    monsterAttacks: [],
+    inProgress: true,
   };
   updateMonster({
     ...monster,
-    encounters: [...monster.encounters, encounter],
+    activeEncounters: monster.activeEncounters.set(encounter.id, true),
   });
   updateCharacter({
     ...player,
-    encounters: [...monster.encounters, encounter],
+    activeEncounters: player.activeEncounters.set(encounter.id, true),
   });
   return encounter;
 }

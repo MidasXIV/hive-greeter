@@ -2,12 +2,13 @@ import { MessageAttachment } from "discord.js";
 import { readFile, writeFile } from "fs/promises";
 import { Character } from "./character/Character";
 import { defaultCharacter } from "./character/defaultCharacter";
-import { getCharacter } from "./character/getCharacter";
-import { Monster } from "./monster/Monster";
-import { updateCharacter } from "./character/updateCharacter";
-import { LootResult } from "./character/loot/loot";
 import { defaultCooldowns } from "./character/defaultCooldowns";
+import { getCharacter } from "./character/getCharacter";
+import { LootResult } from "./character/loot/loot";
+import { updateCharacter } from "./character/updateCharacter";
 import { isStatusEffectExpired } from "./isStatusEffectExpired";
+import { Encounter } from "./monster/Encounter";
+import { Monster } from "./monster/Monster";
 
 export const DB_FILE = "./db.json";
 
@@ -15,6 +16,7 @@ type GameState = {
   characters: Map<string, Character>;
   monsters: Map<string, Monster>;
   loots: Map<string, LootResult>;
+  encounters: Map<string, Encounter>;
   cooldowns: typeof defaultCooldowns;
 };
 
@@ -22,6 +24,7 @@ export const gameState: GameState = {
   characters: new Map(),
   monsters: new Map(),
   loots: new Map(),
+  encounters: new Map(),
   cooldowns: defaultCooldowns,
 };
 
@@ -37,6 +40,7 @@ export const getDBJSON = (space = 2): string =>
       lastSave: new Date().toString(),
       characters: Array.from(gameState.characters.entries()),
       monsters: Array.from(gameState.monsters.entries()),
+      encounters: Array.from(gameState.encounters.entries()),
       cooldowns: gameState.cooldowns,
     },
     null,

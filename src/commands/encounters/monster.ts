@@ -1,5 +1,4 @@
 import { CommandInteraction, Message, MessageEmbed } from "discord.js";
-import { adjustGold } from "../../character/adjustGold";
 import { getUserCharacter } from "../../character/getUserCharacter";
 import { playerAttack } from "../../attack/playerAttack";
 import { hpBar } from "../../character/hpBar/hpBar";
@@ -7,40 +6,42 @@ import { attackFlavorText, attackRollText } from "../attack";
 import { chest } from "./chest";
 import { isUserQuestComplete } from "../../quest/isQuestComplete";
 import quests from "../quests";
-import { updateUserQuestProgess } from "../../quest/updateQuestProgess";
-import { questProgressField } from "../../quest/questProgressField";
 import { getRandomMonster } from "../../monster/getRandomMonster";
 import { Monster } from "../../monster/Monster";
 import { Encounter } from "../../monster/Encounter";
 import { AttackResult } from "../../attack/AttackResult";
-import { awardXP } from "../../character/awardXP";
 import { characterAttack } from "../../attack/characterAttack";
 import { Character } from "../../character/Character";
 import { getCharacterUpdate } from "../../character/getCharacterUpdate";
 import { getMonsterUpate } from "../../character/getMonsterUpdate";
-import { loot } from "../../character/loot/loot";
 import { getCharacter } from "../../character/getCharacter";
 import { createEncounter } from "../../encounter/createEncounter";
+import { encounterSummary } from "./encounterSummary";
+import { monsterEmbed } from "./monsterEmbed";
+import { getCharacterEncounters } from "./getCharacterEncounters";
 
 export const monster = async (
   interaction: CommandInteraction
 ): Promise<void> => {
-  // TODO: explore do/while refactor
   let monster = getRandomMonster();
   let player = getUserCharacter(interaction.user);
-  createEncounter({ monster, player });
+  const encounter = createEncounter({ monster, player });
   let round = 0;
   let fled = false;
   let timeout = false;
-  const playerAttacks: AttackResult[] = [];
-  const monsterAttacks: AttackResult[] = [];
   const message = await interaction.reply({
     embeds: monsterEmbeds(monster),
     fetchReply: true,
   });
   if (!(message instanceof Message)) return;
 
-  while (monster.hp > 0 && player.hp > 0 && !fled && !timeout) {
+  // TODO: consider do/while refactor?
+  while (
+    getMonsterUpate(monster).hp > 0 &&
+    getCharacterUpdate(player).hp > 0 &&
+    !fled &&
+    !timeout
+  ) {
     console.log("monster while", monster.hp, player.hp, fled, timeout);
     round++;
     await message.react("⚔");
@@ -74,10 +75,11 @@ export const monster = async (
 
     const playerResult = characterAttack(player, monster);
     const monsterResult = characterAttack(monster, player);
-    monsterAttacks.push(monsterResult);
-    playerAttacks.push(playerResult);
+    encounter.monsterAttacks.push(monsterResult);
+    encounter.playerAttacks.push(playerResult);
     monster = getMonsterUpate(monster);
     player = getCharacterUpdate(player);
+    console.log("monster hp after update", monster.hp);
 
     const userReactions = message.reactions.cache.filter((reaction) =>
       reaction.users.cache.has(interaction.user.id)
@@ -99,47 +101,12 @@ export const monster = async (
           player,
           monsterResult,
         }),
-        ...monster.encounters.map(encounterEmbed),
+        encounterEmbed(encounter),
       ],
     });
   }
 
-  const summary = new MessageEmbed({
-    title: `Fight summary`,
-  });
-
-  if (fled) {
-    summary.addField("Fled", `You escaped with your life!`);
-  }
-  if (monster.hp === 0 && player.hp > 0) {
-    summary.addField("Triumphant!", `You defeated the ${monster.name}! 🎉`);
-    awardXP(player.id, monster.xpValue);
-    summary.addField("XP Gained", monster.xpValue.toString());
-    loot({ looterId: player.id, targetId: monster.id });
-    summary.addField("GP Gained", ":gold: " + monster.gold.toString());
-    if (player.quests.slayer) {
-      const character = updateUserQuestProgess(interaction.user, "slayer", 1);
-      if (character && character.quests.slayer)
-        summary.addFields([questProgressField(character.quests.slayer)]);
-    }
-  }
-  if (monster.hp > 0 && player.hp === 0) {
-    summary.addField("Defeat!", `You were defeated by the ${monster.name}!`);
-    awardXP(monster.id, player.xpValue);
-    summary.addField("XP Gained", monster.xpValue.toString());
-    adjustGold(player.id, monster.gold);
-    loot({ looterId: monster.id, targetId: player.id });
-    summary.addField("GP Looted", monster.gold.toString());
-    // TODO: martyr quest
-    // if (player.quests.martyr) {
-    //   const character = updateUserQuestProgess(interaction.user, "martyr", 1);
-    //   if (character && character.quests.martyr)
-    //     summary.addFields([questProgressField(character.quests.martyr)]);
-    // }
-  }
-  if (monster.hp === 0 && player.hp === 0) {
-    summary.addField("Double Knockout!", "You were both knocked out!");
-  }
+  const summary = encounterSummary({ fled, monster, player, interaction });
 
   message.reactions.removeAll();
 
@@ -171,26 +138,43 @@ const attackField = (
     : "No result.",
 ];
 
-const monsterEmbed = (monster: Monster) =>
-  new MessageEmbed()
-    .setTitle(monster.name)
-    .setColor("RED")
-    .setImage(monster.profile);
-
 const encounterEmbed = (encounter: Encounter) => {
   const character = getCharacter(encounter.characterId);
   if (!character)
     return new MessageEmbed({
       title: `Character ${encounter.characterId} not found`,
+      fields: [
+        {
+          name: "Result",
+          value: encounter.result ?? "unknown",
+          inline: true,
+        },
+      ],
+      timestamp: encounter.date,
     });
   return new MessageEmbed({
     title: `Encountered ${character.name}`,
+    fields: [
+      {
+        name: "In Progress",
+        value: encounter.inProgress ? "Yes" : "No",
+        inline: true,
+      },
+      {
+        name: "Result",
+        value: encounter.result ?? "unknown",
+        inline: true,
+      },
+    ],
     timestamp: encounter.date,
   }).setThumbnail(character.profile);
 };
 
 function monsterEmbeds(monster: Monster): MessageEmbed[] {
-  return [monsterEmbed(monster), ...monster.encounters.map(encounterEmbed)];
+  return [
+    monsterEmbed(monster),
+    ...getCharacterEncounters(monster).map(encounterEmbed),
+  ];
 }
 
 function monsterExchangeDetails({

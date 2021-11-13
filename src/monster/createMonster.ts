@@ -11,7 +11,7 @@ export const createMonster = (
     id: monster?.id ?? randomUUID(),
     ...monster,
     isMonster: true,
-    encounters: [],
+    activeEncounters: new Map(),
   };
   updateMonster(newMonster);
   console.log(`created monster ${newMonster.id}`);

@@ -1,6 +1,13 @@
+import { AttackResult } from "../attack/AttackResult";
+
 export type Encounter = {
   id: string;
   characterId: string;
+  monsterId: string;
+  playerAttacks: AttackResult[];
+  monsterAttacks: AttackResult[];
+
   date: string;
-  result?: "won" | "lost" | "fled" | "evaded";
+  inProgress: boolean;
+  result?: "victory" | "defeat" | "retreat" | "monster fled";
 };
