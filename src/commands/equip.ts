@@ -6,7 +6,7 @@ import {
   MessageSelectMenu,
 } from "discord.js";
 import { equipItem } from "../equipItem";
-import { updateCharacter } from "../gameState";
+import { updateCharacter } from "../updateCharacter";
 import { getUserCharacter } from "../getUserCharacter";
 import { Item, itemEmbed, itemIsEquippable } from "../utils/equipment";
 

@@ -2,7 +2,7 @@ import { CommandInteraction, Message, MessageEmbed } from "discord.js";
 import inspect from "../commands/inspect";
 import { equipItem } from "../equipItem";
 import { equipItemRow } from "../equipment/equipItemRow";
-import { updateCharacter } from "../gameState";
+import { updateCharacter } from "../updateCharacter";
 import { getUserCharacter } from "../getUserCharacter";
 import { StatModifier } from "../statusEffects/StatModifier";
 

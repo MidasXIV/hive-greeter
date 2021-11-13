@@ -1,6 +1,6 @@
 import { Character } from "../character/Character";
 import { StatusEffect } from "./StatusEffect";
-import { updateCharacter } from "../gameState";
+import { updateCharacter } from "../updateCharacter";
 import { getCharacter } from "../character/getCharacter";
 
 export const updateStatusEffect = (

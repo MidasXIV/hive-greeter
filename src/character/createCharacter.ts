@@ -1,7 +1,7 @@
 import { randomUUID } from "crypto";
 import { Character } from "./Character";
 import { defaultCharacter } from "./defaultCharacter";
-import { updateCharacter } from "../gameState";
+import { updateCharacter } from "../updateCharacter";
 
 export const createCharacter = (
   character: Partial<Character> & { name: string }

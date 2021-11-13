@@ -8,7 +8,8 @@ import {
   MessageSelectMenu,
 } from "discord.js";
 import { Character } from "../character/Character";
-import { adjustGold, updateCharacter } from "../gameState";
+import { adjustGold } from "../character/adjustGold";
+import { updateCharacter } from "../updateCharacter";
 import { getUserCharacter } from "../getUserCharacter";
 import { grantCharacterItem } from "../equipment/grantCharacterItem";
 import {

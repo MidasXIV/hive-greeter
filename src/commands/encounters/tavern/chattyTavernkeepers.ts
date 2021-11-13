@@ -6,7 +6,8 @@ import {
   MessageEmbed,
   MessageSelectMenu,
 } from "discord.js";
-import { awardXP, updateCharacter } from "../../../gameState";
+import { awardXP } from "../../../awardXP";
+import { updateCharacter } from "../../../updateCharacter";
 import { getUserCharacter } from "../../../getUserCharacter";
 import { grantQuest } from "../../../quest/grantQuest";
 import { isQuestId, quests } from "../../../quest/quests";

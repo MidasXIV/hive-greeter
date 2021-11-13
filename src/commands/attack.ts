@@ -1,6 +1,7 @@
 import { SlashCommandBuilder } from "@discordjs/builders";
 import { CommandInteraction, MessageEmbed } from "discord.js";
-import { adjustGold, setGold } from "../gameState";
+import { setGold } from "../setGold";
+import { adjustGold } from "../character/adjustGold";
 import { getUserCharacter } from "../getUserCharacter";
 import { getCharacterStatModifier } from "../character/getCharacterStatModifier";
 import { getCharacterStatModified } from "../character/getCharacterStatModified";

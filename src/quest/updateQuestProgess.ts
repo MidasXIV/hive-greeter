@@ -1,6 +1,6 @@
 import { User } from "discord.js";
 import { Character } from "../character/Character";
-import { updateCharacter } from "../gameState";
+import { updateCharacter } from "../updateCharacter";
 import { getUserCharacter } from "../getUserCharacter";
 import { addQuestProgress } from "./addQuestProgress";
 import { QuestId } from "./quests";

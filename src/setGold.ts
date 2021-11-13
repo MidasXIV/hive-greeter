@@ -2,16 +2,15 @@ import { Character } from "./character/Character";
 import { getCharacter } from "./character/getCharacter";
 import { updateCharacter } from "./updateCharacter";
 
-export const setCharacterCooldown = (
+export const setGold = (
   characterId: string,
-  type: keyof Character["cooldowns"]
+  amount: number
 ): Character | void => {
   const character = getCharacter(characterId);
   if (!character) return;
-  const updatedCharacter = {
+  updateCharacter({
     ...character,
-    cooldowns: { ...character.cooldowns, [type]: new Date().toString() },
-  };
-  updateCharacter(updatedCharacter);
+    gold: amount,
+  });
   return getCharacter(characterId);
 };

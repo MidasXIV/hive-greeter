@@ -2,12 +2,13 @@ import { MessageAttachment } from "discord.js";
 import { readFile, writeFile } from "fs/promises";
 import { Character } from "./character/Character";
 import { defaultCharacter } from "./character/defaultCharacter";
-import { getCharacterStatModified } from "./character/getCharacterStatModified";
 import { isCharacterOnCooldown } from "./character/isCharacterOnCooldown";
 import { getCharacter } from "./character/getCharacter";
 import { StatusEffect } from "./statusEffects/StatusEffect";
 import { Monster } from "./monster/Monster";
 import { setCharacterCooldown } from "./setCharacterCooldown";
+import { updateCharacter } from "./updateCharacter";
+import { adjustHP } from "./character/adjustHP";
 
 export const DB_FILE = "./db.json";
 
@@ -99,95 +100,6 @@ export const getUserCharacters = (): Character[] =>
   Array.from(gameState.characters.values()).filter(
     (character) => character.user
   );
-
-export const updateCharacter = (
-  character: Character | void
-): Character | void => {
-  if (!character) return;
-  gameState.characters.set(character.id, character);
-  return gameState.characters.get(character.id);
-};
-const cooldowns: { [key in keyof Character["cooldowns"]]: number } = {
-  renew: 120 * 60000,
-};
-
-export const getCooldownRemaining = (
-  characterId: string,
-  type: keyof Character["cooldowns"]
-): number => {
-  try {
-    const cooldown = cooldowns[type] ?? 5 * 60000;
-    const lastUsed = gameState.characters.get(characterId)?.cooldowns[type];
-    if (!lastUsed) return 0;
-    const remaining = new Date(lastUsed).valueOf() + cooldown - Date.now();
-    if (remaining < 0) return 0;
-    return remaining;
-  } catch (e) {
-    console.error(`failed to getCooldownRemaining for user ${characterId}`);
-    return 0;
-  }
-};
-export const awardXP = (
-  characterId: string,
-  amount: number
-): Character | void => {
-  const character = getCharacter(characterId);
-  if (!character) return undefined;
-  updateCharacter({
-    ...character,
-    xp: character.xp + amount,
-  });
-  return getCharacter(characterId);
-};
-
-export const adjustGold = (
-  characterId: string,
-  amount: number
-): Character | void => {
-  const character = getCharacter(characterId);
-  if (!character) return;
-  updateCharacter({
-    ...character,
-    gold: character.gold + amount,
-  });
-  return getCharacter(characterId);
-};
-
-export const setGold = (
-  characterId: string,
-  amount: number
-): Character | void => {
-  const character = getCharacter(characterId);
-  if (!character) return;
-  updateCharacter({
-    ...character,
-    gold: amount,
-  });
-  return getCharacter(characterId);
-};
-
-export const adjustHP = (
-  characterId: string,
-  amount: number
-): Character | void => {
-  const character = getCharacter(characterId);
-  if (!character) return;
-  updateCharacter(adjustCharacterHP(character, amount));
-  return getCharacter(characterId);
-};
-export const adjustCharacterHP = (
-  character: Character,
-  amount: number
-): Character => {
-  const maxHP = getCharacterStatModified(character, "maxHP");
-  let newHp = character.hp + amount;
-  if (newHp < 0) newHp = 0;
-  if (newHp > maxHP) newHp = maxHP;
-  return {
-    ...character,
-    hp: newHp,
-  };
-};
 
 export const d20 = (): number => Math.ceil(Math.random() * 20);
 export const d6 = (): number => Math.ceil(Math.random() * 6);

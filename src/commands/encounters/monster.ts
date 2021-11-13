@@ -1,5 +1,6 @@
 import { CommandInteraction, Message, MessageEmbed } from "discord.js";
-import { awardXP, adjustGold, setGold } from "../../gameState";
+import { setGold } from "../../setGold";
+import { adjustGold } from "../../character/adjustGold";
 import { getUserCharacter } from "../../getUserCharacter";
 import { getCharacter } from "../../character/getCharacter";
 import { playerAttack } from "../../attack/playerAttack";
@@ -15,6 +16,7 @@ import { getRandomMonster } from "../../monster/getRandomMonster";
 import { getMonster } from "../../character/getMonster";
 import { Monster } from "../../monster/Monster";
 import { AttackResult } from "../../attack/AttackResult";
+import { awardXP } from "../../character/awardXP";
 
 export const monster = async (
   interaction: CommandInteraction

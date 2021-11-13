@@ -1,5 +1,5 @@
 import { CommandInteraction, Message, MessageEmbed } from "discord.js";
-import { awardXP } from "../../gameState";
+import { awardXP } from "../../awardXP";
 import { getUserCharacter } from "../../getUserCharacter";
 import { trapAttack as trapAttack } from "../../trap/trap";
 import { sleep } from "../../utils";
