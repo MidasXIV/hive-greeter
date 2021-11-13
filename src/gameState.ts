@@ -9,17 +9,20 @@ import { Monster } from "./monster/Monster";
 import { adjustHP } from "./character/adjustHP";
 import { updateCharacter } from "./character/updateCharacter";
 import { setCharacterCooldown } from "./character/setCharacterCooldown";
+import { LootResult } from "./character/loot/loot";
 
 export const DB_FILE = "./db.json";
 
 type GameState = {
   characters: Map<string, Character>;
   monsters: Map<string, Monster>;
+  loots: Map<string, LootResult>;
 };
 
 export const gameState: GameState = {
   characters: new Map(),
   monsters: new Map(),
+  loots: new Map(),
 };
 
 export const defaultProfile = "attachment://profile.png";
@@ -39,7 +42,10 @@ export const getDBJSON = (space = 2): string =>
     space
   );
 
-const isEmptyState = (state: GameState) => state.characters.size === 0;
+const isEmptyState = (state: GameState) =>
+  state.characters.size === 0 &&
+  state.monsters.size === 0 &&
+  state.loots.size === 0;
 
 export const saveDB = async (file = DB_FILE): Promise<void> => {
   console.log("saving db");

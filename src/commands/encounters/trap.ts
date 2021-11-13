@@ -1,6 +1,6 @@
 import { CommandInteraction, Message, MessageEmbed } from "discord.js";
 import { getUserCharacter } from "../../character/getUserCharacter";
-import { trapAttack as trapAttack } from "../../trap/trap";
+import { trapAttack as trapAttack } from "../../trap/trapAttack";
 import { sleep } from "../../utils";
 import { updateUserQuestProgess } from "../../quest/updateQuestProgess";
 import { awardXP } from "../../character/awardXP";
@@ -19,7 +19,7 @@ export const trap = async (interaction: CommandInteraction): Promise<void> => {
   if (!(message instanceof Message)) return;
   const result = trapAttack(interaction.user.id);
   if (!result)
-    return await interaction.reply("No result. This should not happen.");
+    return await interaction.reply("No result. This should not happen."); // TODO: then why have this?
   await sleep(2000);
   const character = getUserCharacter(interaction.user);
   switch (result.outcome) {

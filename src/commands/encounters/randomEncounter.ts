@@ -29,7 +29,7 @@ type Encounters = {
 };
 
 type randomEncounter = CommandHandler;
-const weights = {
+const encounterWeights = {
   armorShrine: 1,
   attackShrine: 1,
   chest: 2,
@@ -41,7 +41,7 @@ const weights = {
   travel: 1,
   vigorShrine: 1,
 };
-const items: CommandHandler[] = [
+const encounters: CommandHandler[] = [
   armorShrine,
   attackShrine,
   chest,
@@ -55,4 +55,4 @@ const items: CommandHandler[] = [
 ];
 
 export const randomEncounter = (): CommandHandler =>
-  items[weightedRandom(Object.values(weights))];
+  encounters[weightedRandom(Object.values(encounterWeights))];

@@ -11,13 +11,17 @@ import { updateUserQuestProgess } from "../../quest/updateQuestProgess";
 import { questProgressField } from "../../quest/questProgressField";
 import { getRandomMonster } from "../../monster/getRandomMonster";
 import { Monster } from "../../monster/Monster";
+import { Encounter } from "../../monster/Encounter";
 import { AttackResult } from "../../attack/AttackResult";
 import { awardXP } from "../../character/awardXP";
 import { characterAttack } from "../../attack/characterAttack";
-import { getMonsterUpate } from "../../character/getMonsterUpdate";
 import { Character } from "../../character/Character";
 import { getCharacterUpdate } from "../../character/getCharacterUpdate";
-import { setGold } from "../../character/setGold";
+import { getMonsterUpate } from "../../character/getMonsterUpdate";
+import { loot } from "../../character/loot/loot";
+import { updateMonster } from "../../updateMonster";
+import { getCharacter } from "../../character/getCharacter";
+import { randomUUID } from "crypto";
 
 export const monster = async (
   interaction: CommandInteraction
@@ -25,18 +29,20 @@ export const monster = async (
   // TODO: explore do/while refactor
   let monster = getRandomMonster();
   let player = getUserCharacter(interaction.user);
+  monster = createEncounter(monster, player);
   let round = 0;
   let fled = false;
   let timeout = false;
   const playerAttacks: AttackResult[] = [];
   const monsterAttacks: AttackResult[] = [];
   const message = await interaction.reply({
-    embeds: [monsterEmbed(monster)],
+    embeds: monsterEmbeds(monster),
     fetchReply: true,
   });
   if (!(message instanceof Message)) return;
 
   while (monster.hp > 0 && player.hp > 0 && !fled && !timeout) {
+    console.log("monster while", monster.hp, player.hp, fled, timeout);
     round++;
     await message.react("⚔");
     await message.react("🏃‍♀️");
@@ -94,6 +100,7 @@ export const monster = async (
           player,
           monsterResult,
         }),
+        ...monster.encounters.map(encounterEmbed),
       ],
     });
   }
@@ -107,7 +114,7 @@ export const monster = async (
     summary.addField("Triumphant!", `You defeated the ${monster.name}! 🎉`);
     awardXP(player.id, monster.xpValue);
     summary.addField("XP Gained", monster.xpValue.toString());
-    adjustGold(player.id, monster.gold);
+    loot({ looterId: player.id, targetId: monster.id });
     summary.addField("GP Gained", monster.gold.toString());
     if (player.quests.slayer) {
       const character = updateUserQuestProgess(interaction.user, "slayer", 1);
@@ -115,12 +122,22 @@ export const monster = async (
         summary.addFields([questProgressField(character.quests.slayer)]);
     }
   }
-  if (player.hp === 0) {
-    summary.addField("Unconscious", "You were knocked out!");
-    if (monster.hp > 0 && player.gold > 0) {
-      setGold(player.id, 0);
-      summary.addField("Looted", `You lost 💰${player.gold} gold!`);
-    }
+  if (monster.hp > 0 && player.hp === 0) {
+    summary.addField("Defeat!", `You were defeated by the ${monster.name}!`);
+    awardXP(monster.id, player.xpValue);
+    summary.addField("XP Gained", monster.xpValue.toString());
+    adjustGold(player.id, monster.gold);
+    loot({ looterId: monster.id, targetId: player.id });
+    summary.addField("GP Looted", monster.gold.toString());
+    // TODO: martyr quest
+    // if (player.quests.martyr) {
+    //   const character = updateUserQuestProgess(interaction.user, "martyr", 1);
+    //   if (character && character.quests.martyr)
+    //     summary.addFields([questProgressField(character.quests.martyr)]);
+    // }
+  }
+  if (monster.hp === 0 && player.hp === 0) {
+    summary.addField("Double Knockout!", "You were both knocked out!");
   }
 
   message.reactions.removeAll();
@@ -159,6 +176,35 @@ const monsterEmbed = (monster: Monster) =>
     .setColor("RED")
     .setImage(monster.profile);
 
+const encounterEmbed = (encounter: Encounter) => {
+  const character = getCharacter(encounter.characterId);
+  if (!character)
+    return new MessageEmbed({
+      title: `Character ${encounter.characterId} not found`,
+    });
+  return new MessageEmbed({
+    title: `Encountered ${character.name}`,
+    timestamp: encounter.date,
+  }).setThumbnail(character.profile);
+};
+
+function createEncounter(monster: Monster, player: Character) {
+  const encounter: Encounter = {
+    characterId: player.id,
+    date: new Date().toString(),
+    id: randomUUID(),
+  };
+  monster = updateMonster({
+    ...monster,
+    encounters: [...monster.encounters, encounter],
+  });
+  return monster;
+}
+
+function monsterEmbeds(monster: Monster): MessageEmbed[] {
+  return [monsterEmbed(monster), ...monster.encounters.map(encounterEmbed)];
+}
+
 function monsterExchangeDetails({
   monster,
   round,
@@ -172,30 +218,28 @@ function monsterExchangeDetails({
   player: Character;
   monsterResult: AttackResult;
 }) {
-  const embed = monsterEmbed(monster).addFields([
-    {
-      name: "Round",
-      value: round.toString(),
-      inline: true,
-    },
-    {
-      name: `${monster.name}'s HP`,
-      value: `${hpBar(
-        monster,
-        playerResult.outcome === "hit" ? -playerResult.damage : 0
-      )}`,
-    },
-    {
-      name: `${player.name}'s HP`,
-      value: `${hpBar(
-        player,
-        monsterResult.outcome === "hit" ? -monsterResult.damage : 0
-      )}`,
-    },
-  ]);
-  console.log(attackField(monsterResult), attackField(playerResult));
-  embed
+  return monsterEmbed(monster)
+    .addFields([
+      {
+        name: "Round",
+        value: round.toString(),
+        inline: true,
+      },
+      {
+        name: `${monster.name}'s HP`,
+        value: `${hpBar(
+          monster,
+          playerResult.outcome === "hit" ? -playerResult.damage : 0
+        )}`,
+      },
+      {
+        name: `${player.name}'s HP`,
+        value: `${hpBar(
+          player,
+          monsterResult.outcome === "hit" ? -monsterResult.damage : 0
+        )}`,
+      },
+    ])
     .addField(...attackField(monsterResult))
     .addField(...attackField(playerResult));
-  return embed;
 }

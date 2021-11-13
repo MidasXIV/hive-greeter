@@ -6,12 +6,20 @@ const getRandomItem = <K, V>(iterable: Map<K, V>) =>
   iterable.get([...iterable.keys()][Math.floor(Math.random() * iterable.size)]);
 
 export const getRandomMonster = (): Monster => {
-  const rand = Math.random();
-  if (gameState.monsters.size) {
+  console.log(
+    "chance to encounter existing monster",
+    gameState.monsters.size / 10
+  );
+  if (
+    gameState.monsters.size &&
+    Math.random() <= gameState.monsters.size / 10
+  ) {
     console.log("returning existing monster");
     const monster = getRandomItem(gameState.monsters);
     if (monster) return monster;
   }
+  const rand = Math.random();
+  console.log("spawning new monster");
   switch (true) {
     case rand > 0.6:
       return createMonster({

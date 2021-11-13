@@ -4,6 +4,7 @@ import { QuestId } from "../quest/quests";
 import { StatusEffect } from "../statusEffects/StatusEffect";
 import { Item, Weapon } from "../equipment/equipment";
 import { Stats } from "./Stats";
+import { Encounter } from "../monster/Encounter";
 
 export type Character = Stats & {
   id: string;
@@ -27,6 +28,7 @@ export type Character = Stats & {
   quests: {
     [id in QuestId]?: Quest;
   };
+  encounters: Encounter[];
 
   xp: number;
   gold: number;

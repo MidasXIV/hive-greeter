@@ -8,10 +8,14 @@ export const adjustHP = (
   amount: number
 ): Character | void => {
   const character = getCharacter(characterId);
-  if (!character) return;
+  if (!character) {
+    console.error(`adjustHP could not find characterId: ${characterId}`);
+    return;
+  }
   updateCharacter(adjustCharacterHP(character, amount));
   return getCharacter(characterId);
 };
+
 export const adjustCharacterHP = (
   character: Character,
   amount: number

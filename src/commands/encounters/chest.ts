@@ -9,7 +9,7 @@ import { adjustHP } from "../../character/adjustHP";
 import { awardXP } from "../../character/awardXP";
 import { getUserCharacter } from "../../character/getUserCharacter";
 import { updateStatusEffect } from "../../statusEffects/grantStatusEffect";
-import { trapAttack } from "../../trap/trap";
+import { trapAttack } from "../../trap/trapAttack";
 
 const chestImage = new MessageAttachment("./images/chest.jpg", "chest.jpg");
 
