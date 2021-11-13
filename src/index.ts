@@ -11,7 +11,6 @@ import { loadDB, saveDB } from "./gameState";
 
 if (!process.env.token) exit(1);
 
-// TODO: save db on exit
 loadDB().then(() => console.log("database loaded"));
 
 const rest = new REST({ version: "9" }).setToken(process.env.token);

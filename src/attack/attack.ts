@@ -1,5 +1,6 @@
 import { Character } from "../character/Character";
-import { getCharacter, d20, adjustHP } from "../gameState";
+import { d20, adjustHP } from "../gameState";
+import { getCharacter } from "../character/getCharacter";
 import { AttackResult } from "./AttackResult";
 import { getCharacterStatModified } from "../character/getCharacterStatModified";
 import { updateCharacterQuestProgess } from "../quest/updateQuestProgess";

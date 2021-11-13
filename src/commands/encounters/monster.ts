@@ -1,13 +1,11 @@
 import { CommandInteraction, Message, MessageEmbed } from "discord.js";
-import { Character } from "../../character/Character";
 import {
-  getCharacter,
-  createCharacter,
   getUserCharacter,
   awardXP,
   adjustGold,
   setGold,
 } from "../../gameState";
+import { getCharacter } from "../../character/getCharacter";
 import { playerAttack } from "../../attack/playerAttack";
 import { attack } from "../../attack/attack";
 import { hpBar } from "../../character/hpBar/hpBar";
@@ -17,39 +15,10 @@ import { isUserQuestComplete } from "../../quest/isQuestComplete";
 import quests from "../quests";
 import { updateUserQuestProgess } from "../../quest/updateQuestProgess";
 import { questProgressField } from "../../quest/questProgressField";
-
-const getRandomMonster = () => {
-  const rand = Math.random();
-  switch (true) {
-    case rand > 0.6:
-      return createCharacter({
-        name: "Orc",
-        profile: "https://i.imgur.com/2cT3cLm.jpeg",
-        gold: Math.floor(Math.random() * 6) + 2,
-        isMonster: true,
-      });
-    case rand > 0.3:
-      return createCharacter({
-        hp: 8,
-        maxHP: 8,
-        name: "Bandit",
-        profile: "https://i.imgur.com/MV96z4T.png",
-        xpValue: 4,
-        gold: Math.floor(Math.random() * 5) + 1,
-        isMonster: true,
-      });
-    default:
-      return createCharacter({
-        hp: 5,
-        maxHP: 5,
-        name: "Goblin",
-        profile: "https://i.imgur.com/gPH1JSl.png",
-        xpValue: 3,
-        gold: Math.floor(Math.random() * 3) + 1,
-        isMonster: true,
-      });
-  }
-};
+import { getRandomMonster } from "../../monster/getRandomMonster";
+import { getMonster } from "../../character/getMonster";
+import { Monster } from "../../monster/Monster";
+import { AttackResult } from "../../attack/AttackResult";
 
 export const monster = async (
   interaction: CommandInteraction
@@ -60,8 +29,8 @@ export const monster = async (
   let round = 0;
   let fled = false;
   let timeout = false;
-  const playerAttacks = [];
-  const monsterAttacks = [];
+  const playerAttacks: AttackResult[] = [];
+  const monsterAttacks: AttackResult[] = [];
   const message = await interaction.reply({
     embeds: [monsterEmbed(monster)],
     fetchReply: true,
@@ -100,14 +69,16 @@ export const monster = async (
     }
 
     const playerResult = attack(player.id, monster.id);
-    playerAttacks.push(playerResult);
     const monsterResult = attack(monster.id, player.id);
-    monsterAttacks.push(monsterResult);
 
-    const updatedMonster = getCharacter(monster.id);
+    const updatedMonster = getMonster(monster.id);
     const updatedPlayer = getCharacter(player.id);
-    if (!updatedMonster || !updatedPlayer || !playerResult || !monsterResult)
+    if (!updatedMonster || !updatedPlayer || !playerResult || !monsterResult) {
+      interaction.reply("Something went wrong.");
       return;
+    }
+    monsterAttacks.push(monsterResult);
+    playerAttacks.push(playerResult);
     monster = updatedMonster;
     player = updatedPlayer;
 
@@ -148,7 +119,9 @@ export const monster = async (
 
   const summary = new MessageEmbed().setDescription(`Fight summary`);
 
-  if (fled) summary.addField("Fled", `You escaped with your life!`);
+  if (fled) {
+    summary.addField("Fled", `You escaped with your life!`);
+  }
   if (monster.hp === 0 && player.hp > 0) {
     summary.addField("Triumphant!", `You defeated the ${monster.name}! 🎉`);
     awardXP(player.id, monster.xpValue);
@@ -199,7 +172,7 @@ const attackField = (
     : "No result.",
 ];
 
-const monsterEmbed = (monster: Character) =>
+const monsterEmbed = (monster: Monster) =>
   new MessageEmbed()
     .setTitle(monster.name)
     .setColor("RED")

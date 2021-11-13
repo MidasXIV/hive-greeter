@@ -1,7 +1,7 @@
 import { Character } from "../Character";
 import { getCharacterStatModified } from "../getCharacterStatModified";
 import { clamp, times } from "remeda";
-import { getCharacter } from "../../gameState";
+import { getCharacter } from "../getCharacter";
 
 export const hpBar = (c: Character, adjustment = 0): string => {
   const barLength = 10;

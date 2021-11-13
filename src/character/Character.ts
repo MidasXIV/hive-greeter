@@ -31,5 +31,4 @@ export type Character = Stats & {
   xp: number;
   gold: number;
   xpValue: number;
-  isMonster: boolean;
 };

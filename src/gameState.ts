@@ -1,19 +1,25 @@
-import { randomUUID } from "crypto";
 import { MessageAttachment, User } from "discord.js";
 import { readFile, writeFile } from "fs/promises";
 import { Character } from "./character/Character";
 import { defaultCharacter } from "./character/defaultCharacter";
 import { getCharacterStatModified } from "./character/getCharacterStatModified";
 import { isCharacterOnCooldown } from "./character/isCharacterOnCooldown";
+import { createCharacter } from "./character/createCharacter";
+import { getCharacter } from "./character/getCharacter";
 import { StatusEffect } from "./statusEffects/StatusEffect";
+import { Monster } from "./monster/Monster";
 
 export const DB_FILE = "./db.json";
 
 type GameState = {
   characters: Map<string, Character>;
+  monsters: Map<string, Monster>;
 };
 
-export const gameState: GameState = { characters: new Map() };
+export const gameState: GameState = {
+  characters: new Map(),
+  monsters: new Map(),
+};
 
 export const defaultProfile = "attachment://profile.png";
 export const defaultProfileAttachment = new MessageAttachment(
@@ -72,7 +78,7 @@ export const grantDivineBlessing = (characterId: string): void => {
   });
 };
 
-const purgeExpiredStatuses = (characterId: string): void => {
+export const purgeExpiredStatuses = (characterId: string): void => {
   const character = gameState.characters.get(characterId);
   if (!character) return;
   updateCharacter({
@@ -93,17 +99,17 @@ export const getUserCharacters = (): Character[] =>
     (character) => character.user
   );
 
-export const getCharacter = (id: string): Character | void => {
-  purgeExpiredStatuses(id);
-  return gameState.characters.get(id);
-};
-
 export const updateCharacter = (
   character: Character | void
 ): Character | void => {
   if (!character) return;
   gameState.characters.set(character.id, character);
   return gameState.characters.get(character.id);
+};
+export const updateMonster = (character: Monster | void): Monster | void => {
+  if (!character) return;
+  gameState.characters.set(character.id, character);
+  return gameState.monsters.get(character.id);
 };
 
 export const getUserCharacter = (user: User): Character => {
@@ -154,19 +160,6 @@ export const getCooldownRemaining = (
     return 0;
   }
 };
-export const createCharacter = (
-  character: Partial<Character> & { name: string }
-): Character => {
-  const newCharacter: Character = {
-    ...defaultCharacter,
-    id: character?.id ?? randomUUID(),
-    ...character,
-  };
-  updateCharacter(newCharacter);
-  console.log(`created ${newCharacter.id}`);
-  return newCharacter;
-};
-
 export const awardXP = (
   characterId: string,
   amount: number
