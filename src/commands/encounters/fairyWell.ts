@@ -5,7 +5,7 @@ import { adjustHP, awardXP } from "../../gameState";
 export const fairyWell = async (
   interaction: CommandInteraction
 ): Promise<void> => {
-  const healAmount = Math.floor(Math.random() * 6);
+  const healAmount = Math.ceil(Math.random() * 6);
   adjustHP(interaction.user.id, healAmount);
   awardXP(interaction.user.id, 1);
   // updateUserQuestProgess(interaction.user, "healer", healAmount);
