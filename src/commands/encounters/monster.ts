@@ -19,9 +19,8 @@ import { Character } from "../../character/Character";
 import { getCharacterUpdate } from "../../character/getCharacterUpdate";
 import { getMonsterUpate } from "../../character/getMonsterUpdate";
 import { loot } from "../../character/loot/loot";
-import { updateMonster } from "../../updateMonster";
 import { getCharacter } from "../../character/getCharacter";
-import { randomUUID } from "crypto";
+import { createEncounter } from "../../encounter/createEncounter";
 
 export const monster = async (
   interaction: CommandInteraction
@@ -29,7 +28,7 @@ export const monster = async (
   // TODO: explore do/while refactor
   let monster = getRandomMonster();
   let player = getUserCharacter(interaction.user);
-  monster = createEncounter(monster, player);
+  createEncounter({ monster, player });
   let round = 0;
   let fled = false;
   let timeout = false;
@@ -189,19 +188,6 @@ const encounterEmbed = (encounter: Encounter) => {
     timestamp: encounter.date,
   }).setThumbnail(character.profile);
 };
-
-function createEncounter(monster: Monster, player: Character) {
-  const encounter: Encounter = {
-    characterId: player.id,
-    date: new Date().toString(),
-    id: randomUUID(),
-  };
-  monster = updateMonster({
-    ...monster,
-    encounters: [...monster.encounters, encounter],
-  });
-  return monster;
-}
 
 function monsterEmbeds(monster: Monster): MessageEmbed[] {
   return [monsterEmbed(monster), ...monster.encounters.map(encounterEmbed)];
