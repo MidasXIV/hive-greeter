@@ -14,7 +14,7 @@ import { cooldownRemainingText } from "../utils";
 import { hpBar } from "../character/hpBar/hpBar";
 import { Stat } from "../character/Stats";
 import { questProgressField } from "../quest/questProgressField";
-import { itemEmbed } from "../utils/equipment";
+import { itemEmbed } from "../equipment/equipment";
 import { StatusEffect } from "../statusEffects/StatusEffect";
 
 export const command = new SlashCommandBuilder()

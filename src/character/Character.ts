@@ -2,7 +2,7 @@ import { User } from "discord.js";
 import { Quest } from "../quest/Quest";
 import { QuestId } from "../quest/quests";
 import { StatusEffect } from "../statusEffects/StatusEffect";
-import { Item, Weapon } from "../utils/equipment";
+import { Item, Weapon } from "../equipment/equipment";
 import { Stats } from "./Stats";
 
 export type Character = Stats & {

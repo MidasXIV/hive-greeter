@@ -6,12 +6,12 @@ import {
   MessageEmbed,
   MessageSelectMenu,
 } from "discord.js";
-import { awardXP } from "../../../awardXP";
 import { updateCharacter } from "../../../updateCharacter";
 import { getUserCharacter } from "../../../getUserCharacter";
 import { grantQuest } from "../../../quest/grantQuest";
 import { isQuestId, quests } from "../../../quest/quests";
 import questsCommand from "../../quests";
+import { awardXP } from "../../../character/awardXP";
 
 // TODO: omit quests the user already has
 export const chattyTavernkeepers = async (

@@ -13,7 +13,7 @@ import {
   longsword,
   mace,
   Weapon,
-} from "../../utils/equipment";
+} from "../../equipment/equipment";
 
 export const slayerQuestReward = async (
   interaction: CommandInteraction

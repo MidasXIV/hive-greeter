@@ -1,6 +1,5 @@
 import { CommandInteraction, MessageEmbed } from "discord.js";
-import { adjustHP } from "../../adjustHP";
-import { awardXP } from "../../awardXP";
+import { adjustHP } from "../../character/adjustHP";
 // import { updateUserQuestProgess } from "../../quest/updateQuestProgess";
 
 export const fairyWell = async (
@@ -23,3 +22,6 @@ export const fairyWell = async (
     ],
   });
 };
+function awardXP(id: string, arg1: number) {
+  throw new Error("Function not implemented.");
+}

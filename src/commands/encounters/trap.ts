@@ -1,9 +1,9 @@
 import { CommandInteraction, Message, MessageEmbed } from "discord.js";
-import { awardXP } from "../../awardXP";
 import { getUserCharacter } from "../../getUserCharacter";
 import { trapAttack as trapAttack } from "../../trap/trap";
 import { sleep } from "../../utils";
 import { updateUserQuestProgess } from "../../quest/updateQuestProgess";
+import { awardXP } from "../../character/awardXP";
 
 export const trap = async (interaction: CommandInteraction): Promise<void> => {
   const message = await interaction.reply({

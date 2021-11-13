@@ -25,7 +25,7 @@ import {
   mace,
   plateArmor,
   towerShield,
-} from "../utils/equipment";
+} from "../equipment/equipment";
 
 export const command = new SlashCommandBuilder()
   .setName("shop")

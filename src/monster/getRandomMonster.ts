@@ -8,6 +8,7 @@ const getRandomItem = <K, V>(iterable: Map<K, V>) =>
 export const getRandomMonster = (): Monster => {
   const rand = Math.random();
   if (gameState.monsters.size) {
+    console.log("returning existing monster");
     const monster = getRandomItem(gameState.monsters);
     if (monster) return monster;
   }
