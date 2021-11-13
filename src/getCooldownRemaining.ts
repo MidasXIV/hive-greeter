@@ -1,6 +1,6 @@
 import { Character } from "./character/Character";
+import { cooldowns } from "./character/updateCharacter";
 import { gameState } from "./gameState";
-import { cooldowns } from "./updateCharacter";
 
 export const getCooldownRemaining = (
   characterId: string,

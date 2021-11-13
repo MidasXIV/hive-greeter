@@ -5,10 +5,10 @@ import {
   MessageActionRow,
   MessageSelectMenu,
 } from "discord.js";
-import { updateCharacter } from "../updateCharacter";
-import { getUserCharacter } from "../getUserCharacter";
+import { getUserCharacter } from "../character/getUserCharacter";
 import { Item, itemEmbed, itemIsEquippable } from "../equipment/equipment";
 import { equipItem } from "../character/equipItem";
+import { updateCharacter } from "../character/updateCharacter";
 
 export const command = new SlashCommandBuilder()
   .setName("equip")

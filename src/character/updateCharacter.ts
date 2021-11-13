@@ -1,5 +1,5 @@
-import { Character } from "./character/Character";
-import { gameState } from "./gameState";
+import { gameState } from "../gameState";
+import { Character } from "./Character";
 
 export const updateCharacter = (
   character: Character | void

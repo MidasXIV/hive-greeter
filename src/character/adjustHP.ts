@@ -1,7 +1,7 @@
-import { updateCharacter } from "../updateCharacter";
 import { Character } from "./Character";
 import { getCharacter } from "./getCharacter";
 import { getCharacterStatModified } from "./getCharacterStatModified";
+import { updateCharacter } from "./updateCharacter";
 
 export const adjustHP = (
   characterId: string,

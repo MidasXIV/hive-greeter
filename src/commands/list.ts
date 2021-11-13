@@ -1,8 +1,8 @@
 import { SlashCommandBuilder } from "@discordjs/builders";
 import { CommandInteraction, MessageEmbed } from "discord.js";
 import { Character } from "../character/Character";
-import { getUserCharacters } from "../gameState";
-import { getUserCharacter } from "../getUserCharacter";
+import { getUserCharacter } from "../character/getUserCharacter";
+import { getUserCharacters } from "../character/getUserCharacters";
 import { primaryStatFields } from "./inspect";
 
 export const command = new SlashCommandBuilder()
@@ -10,19 +10,27 @@ export const command = new SlashCommandBuilder()
   .setDescription("List something")
   .addSubcommand((option) =>
     option.setName("characters").setDescription("List all characters")
+  )
+  .addSubcommand((option) =>
+    option.setName("enemies").setDescription("List all enemies")
   );
 
 export const execute = async (
   interaction: CommandInteraction
 ): Promise<void> => {
-  // ensure character exists to prevent empty response error
-  getUserCharacter(interaction.user);
-  interaction.reply({
-    embeds: getUserCharacters()
-      .sort((a, b) => b.xp - a.xp)
-      .slice(0, 10)
-      .map(limitedCharacterEmbed),
-  });
+  switch (interaction.options.data[0].name) {
+    case "characters":
+      getUserCharacter(interaction.user); // ensure Character existence to prevent empty lists
+      interaction.reply({
+        embeds: getUserCharacters()
+          .sort((a, b) => b.xp - a.xp)
+          .slice(0, 10)
+          .map(limitedCharacterEmbed),
+      });
+      break;
+    case "enemies":
+      break;
+  }
 };
 
 export default { command, execute };

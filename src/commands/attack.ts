@@ -1,8 +1,7 @@
 import { SlashCommandBuilder } from "@discordjs/builders";
 import { CommandInteraction, MessageEmbed } from "discord.js";
-import { setGold } from "../setGold";
 import { adjustGold } from "../character/adjustGold";
-import { getUserCharacter } from "../getUserCharacter";
+import { getUserCharacter } from "../character/getUserCharacter";
 import { getCharacterStatModifier } from "../character/getCharacterStatModifier";
 import { getCharacterStatModified } from "../character/getCharacterStatModified";
 import { playerAttack } from "../attack/playerAttack";
@@ -10,6 +9,7 @@ import { cooldownRemainingText, sleep } from "../utils";
 import { mentionCharacter } from "../character/mentionCharacter";
 import { attack } from "../attack/attack";
 import { hpBarField } from "../character/hpBar/hpBarField";
+import { setGold } from "../character/setGold";
 
 export const command = new SlashCommandBuilder()
   .setName("attack")

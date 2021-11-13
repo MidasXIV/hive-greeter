@@ -1,6 +1,6 @@
 import { User } from "discord.js";
-import { updateCharacter } from "../../updateCharacter";
-import { getUserCharacter } from "../../getUserCharacter";
+import { getUserCharacter } from "../../character/getUserCharacter";
+import { updateCharacter } from "../../character/updateCharacter";
 import { QuestId } from "../quests";
 
 export function removeQuest({

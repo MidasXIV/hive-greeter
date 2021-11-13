@@ -9,8 +9,7 @@ import {
 } from "discord.js";
 import { Character } from "../character/Character";
 import { adjustGold } from "../character/adjustGold";
-import { updateCharacter } from "../updateCharacter";
-import { getUserCharacter } from "../getUserCharacter";
+import { getUserCharacter } from "../character/getUserCharacter";
 import { grantCharacterItem } from "../equipment/grantCharacterItem";
 import {
   buckler,
@@ -26,6 +25,7 @@ import {
   plateArmor,
   towerShield,
 } from "../equipment/equipment";
+import { updateCharacter } from "../character/updateCharacter";
 
 export const command = new SlashCommandBuilder()
   .setName("shop")

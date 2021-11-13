@@ -7,7 +7,7 @@ import {
 } from "discord.js";
 import { Character } from "../character/Character";
 import { defaultProfile, defaultProfileAttachment } from "../gameState";
-import { getUserCharacter } from "../getUserCharacter";
+import { getUserCharacter } from "../character/getUserCharacter";
 import { getCharacterStatModifier } from "../character/getCharacterStatModifier";
 import { getCharacterStatModified } from "../character/getCharacterStatModified";
 import { cooldownRemainingText } from "../utils";

@@ -1,6 +1,6 @@
-import { updateCharacter } from "../updateCharacter";
 import { Character } from "./Character";
 import { getCharacter } from "./getCharacter";
+import { updateCharacter } from "./updateCharacter";
 
 export const awardXP = (
   characterId: string,

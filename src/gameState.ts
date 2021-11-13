@@ -6,9 +6,9 @@ import { isCharacterOnCooldown } from "./character/isCharacterOnCooldown";
 import { getCharacter } from "./character/getCharacter";
 import { StatusEffect } from "./statusEffects/StatusEffect";
 import { Monster } from "./monster/Monster";
-import { setCharacterCooldown } from "./setCharacterCooldown";
-import { updateCharacter } from "./updateCharacter";
 import { adjustHP } from "./character/adjustHP";
+import { updateCharacter } from "./character/updateCharacter";
+import { setCharacterCooldown } from "./character/setCharacterCooldown";
 
 export const DB_FILE = "./db.json";
 
@@ -95,11 +95,6 @@ export const purgeExpiredStatuses = (characterId: string): void => {
 
 const isStatusEffectExpired = (effect: StatusEffect): boolean =>
   Date.now() > new Date(effect.started).valueOf() + effect.duration;
-
-export const getUserCharacters = (): Character[] =>
-  Array.from(gameState.characters.values()).filter(
-    (character) => character.user
-  );
 
 export const d20 = (): number => Math.ceil(Math.random() * 20);
 export const d6 = (): number => Math.ceil(Math.random() * 6);

@@ -1,10 +1,10 @@
 import { CommandInteraction, Message, MessageEmbed } from "discord.js";
 import inspect from "../commands/inspect";
 import { equipItemRow } from "./equipItemRow";
-import { updateCharacter } from "../updateCharacter";
-import { getUserCharacter } from "../getUserCharacter";
+import { getUserCharacter } from "../character/getUserCharacter";
 import { StatModifier } from "../statusEffects/StatModifier";
 import { equipItem } from "../character/equipItem";
+import { updateCharacter } from "../character/updateCharacter";
 
 export type Item = {
   type: "weapon" | "armor" | "shield";

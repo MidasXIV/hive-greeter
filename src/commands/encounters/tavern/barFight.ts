@@ -2,7 +2,7 @@ import { CommandInteraction, MessageEmbed } from "discord.js";
 import { adjustHP } from "../../../character/adjustHP";
 import { awardXP } from "../../../character/awardXP";
 import { d6 } from "../../../gameState";
-import { getUserCharacter } from "../../../getUserCharacter";
+import { getUserCharacter } from "../../../character/getUserCharacter";
 import { questProgressField } from "../../../quest/questProgressField";
 import { updateUserQuestProgess } from "../../../quest/updateQuestProgess";
 

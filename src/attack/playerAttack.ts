@@ -1,7 +1,7 @@
 import { attack } from "./attack";
-import { setCharacterCooldown } from "../setCharacterCooldown";
 import { isCharacterOnCooldown } from "../character/isCharacterOnCooldown";
 import { AttackResult } from "./AttackResult";
+import { setCharacterCooldown } from "../character/setCharacterCooldown";
 
 export const playerAttack = (
   attackerId: string,

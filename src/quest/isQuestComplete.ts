@@ -1,5 +1,5 @@
 import { User } from "discord.js";
-import { getUserCharacter } from "../getUserCharacter";
+import { getUserCharacter } from "../character/getUserCharacter";
 import { Quest } from "./Quest";
 import { QuestId } from "./quests";
 

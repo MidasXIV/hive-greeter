@@ -7,7 +7,7 @@ import {
 import { adjustGold } from "../../character/adjustGold";
 import { adjustHP } from "../../character/adjustHP";
 import { awardXP } from "../../character/awardXP";
-import { getUserCharacter } from "../../getUserCharacter";
+import { getUserCharacter } from "../../character/getUserCharacter";
 import { updateStatusEffect } from "../../statusEffects/grantStatusEffect";
 import { trapAttack } from "../../trap/trap";
 

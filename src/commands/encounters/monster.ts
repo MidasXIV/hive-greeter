@@ -1,10 +1,7 @@
 import { CommandInteraction, Message, MessageEmbed } from "discord.js";
-import { setGold } from "../../setGold";
 import { adjustGold } from "../../character/adjustGold";
-import { getUserCharacter } from "../../getUserCharacter";
-import { getCharacter } from "../../character/getCharacter";
+import { getUserCharacter } from "../../character/getUserCharacter";
 import { playerAttack } from "../../attack/playerAttack";
-import { attack } from "../../attack/attack";
 import { hpBar } from "../../character/hpBar/hpBar";
 import { attackFlavorText, attackRollText } from "../attack";
 import { chest } from "./chest";
@@ -13,10 +10,14 @@ import quests from "../quests";
 import { updateUserQuestProgess } from "../../quest/updateQuestProgess";
 import { questProgressField } from "../../quest/questProgressField";
 import { getRandomMonster } from "../../monster/getRandomMonster";
-import { getMonster } from "../../character/getMonster";
 import { Monster } from "../../monster/Monster";
 import { AttackResult } from "../../attack/AttackResult";
 import { awardXP } from "../../character/awardXP";
+import { characterAttack } from "../../attack/characterAttack";
+import { getMonsterUpate } from "../../character/getMonsterUpdate";
+import { Character } from "../../character/Character";
+import { getCharacterUpdate } from "../../character/getCharacterUpdate";
+import { setGold } from "../../character/setGold";
 
 export const monster = async (
   interaction: CommandInteraction
@@ -66,19 +67,12 @@ export const monster = async (
       break;
     }
 
-    const playerResult = attack(player.id, monster.id);
-    const monsterResult = attack(monster.id, player.id);
-
-    const updatedMonster = getMonster(monster.id);
-    const updatedPlayer = getCharacter(player.id);
-    if (!updatedMonster || !updatedPlayer || !playerResult || !monsterResult) {
-      interaction.reply("Something went wrong.");
-      return;
-    }
+    const playerResult = characterAttack(player, monster);
+    const monsterResult = characterAttack(monster, player);
     monsterAttacks.push(monsterResult);
     playerAttacks.push(playerResult);
-    monster = updatedMonster;
-    player = updatedPlayer;
+    monster = getMonsterUpate(monster);
+    player = getCharacterUpdate(player);
 
     const userReactions = message.reactions.cache.filter((reaction) =>
       reaction.users.cache.has(interaction.user.id)
@@ -93,24 +87,13 @@ export const monster = async (
     }
     message.edit({
       embeds: [
-        monsterEmbed(monster)
-          .addField("Round", round.toString(), true)
-          .addField(
-            `${monster.name}'s HP`,
-            `${hpBar(
-              monster,
-              playerResult.outcome === "hit" ? -playerResult.damage : 0
-            )}`
-          )
-          .addField(
-            `${player.name}'s HP`,
-            `${hpBar(
-              player,
-              monsterResult.outcome === "hit" ? -monsterResult.damage : 0
-            )}`
-          )
-          .addField(...attackField(monsterResult))
-          .addField(...attackField(playerResult)),
+        monsterExchangeDetails({
+          monster,
+          round,
+          playerResult,
+          player,
+          monsterResult,
+        }),
       ],
     });
   }
@@ -175,3 +158,44 @@ const monsterEmbed = (monster: Monster) =>
     .setTitle(monster.name)
     .setColor("RED")
     .setImage(monster.profile);
+
+function monsterExchangeDetails({
+  monster,
+  round,
+  playerResult,
+  player,
+  monsterResult,
+}: {
+  monster: Monster;
+  round: number;
+  playerResult: AttackResult;
+  player: Character;
+  monsterResult: AttackResult;
+}) {
+  const embed = monsterEmbed(monster).addFields([
+    {
+      name: "Round",
+      value: round.toString(),
+      inline: true,
+    },
+    {
+      name: `${monster.name}'s HP`,
+      value: `${hpBar(
+        monster,
+        playerResult.outcome === "hit" ? -playerResult.damage : 0
+      )}`,
+    },
+    {
+      name: `${player.name}'s HP`,
+      value: `${hpBar(
+        player,
+        monsterResult.outcome === "hit" ? -monsterResult.damage : 0
+      )}`,
+    },
+  ]);
+  console.log(attackField(monsterResult), attackField(playerResult));
+  embed
+    .addField(...attackField(monsterResult))
+    .addField(...attackField(playerResult));
+  return embed;
+}

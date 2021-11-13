@@ -1,5 +1,5 @@
-import { Character } from "./character/Character";
-import { getCharacter } from "./character/getCharacter";
+import { Character } from "./Character";
+import { getCharacter } from "./getCharacter";
 import { updateCharacter } from "./updateCharacter";
 
 export const setCharacterCooldown = (

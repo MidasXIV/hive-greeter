@@ -1,6 +1,6 @@
 import { Character } from "./Character";
 import { getCharacter } from "./getCharacter";
-import { updateCharacter } from "../updateCharacter";
+import { updateCharacter } from "./updateCharacter";
 
 export const adjustGold = (
   characterId: string,
