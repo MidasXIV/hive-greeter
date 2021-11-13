@@ -16,6 +16,7 @@ import quests from "./quests";
 import renew from "./renew";
 import set from "./set";
 import shop from "./shop";
+import admin from "./admin";
 
 const commands = new Map();
 commands.set("adventure", adventure);
@@ -35,6 +36,7 @@ commands.set("shop", shop);
 
 if (process.env.ADMIN_COMMANDS === "true") {
   console.warn("⚠ ADMIN COMMANDS LOADED ⚠");
+  commands.set("admin", admin);
   commands.set("quest", quest);
   commands.set("hpbartest", hpbartest);
   commands.set("monster", monster);
