@@ -3,10 +3,7 @@ import { readFile, writeFile } from "fs/promises";
 import { Character } from "./character/Character";
 import { defaultCharacter } from "./character/defaultCharacter";
 import { defaultCooldowns } from "./character/defaultCooldowns";
-import { getCharacter } from "./character/getCharacter";
 import { LootResult } from "./character/loot/loot";
-import { updateCharacter } from "./character/updateCharacter";
-import { isStatusEffectExpired } from "./isStatusEffectExpired";
 import { Encounter } from "./monster/Encounter";
 import { Monster } from "./monster/Monster";
 
@@ -72,6 +69,7 @@ export const loadSerializedDB = (serialized: string): GameState => {
       {
         ...defaultCharacter,
         ...character,
+        activeEncounters: new Map(character.activeEncounters),
       },
     ]
   );
@@ -79,29 +77,6 @@ export const loadSerializedDB = (serialized: string): GameState => {
   gameState.characters = characterMap;
   console.log("Database loaded", gameState);
   return gameState;
-};
-
-export const grantDivineBlessing = (characterId: string): void => {
-  const character = getCharacter(characterId);
-  if (!character) return;
-  updateCharacter({
-    ...character,
-    maxHP: character.maxHP + 1,
-    hp: character.hp + 1,
-  });
-};
-
-export const purgeExpiredStatuses = (characterId: string): void => {
-  const character = gameState.characters.get(characterId);
-  if (!character) return;
-  updateCharacter({
-    ...character,
-    statusEffects:
-      character.statusEffects?.filter(
-        (effect) => !isStatusEffectExpired(effect)
-      ) ?? [],
-  });
-  console.log(`${characterId} status effects purged`);
 };
 
 export const d20 = (): number => Math.ceil(Math.random() * 20);

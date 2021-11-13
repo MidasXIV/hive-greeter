@@ -1,5 +1,6 @@
 import { Character } from "./Character";
-import { purgeExpiredStatuses, gameState } from "../gameState";
+import { gameState } from "../gameState";
+import { purgeExpiredStatuses } from "../purgeExpiredStatuses";
 
 export const getCharacter = (id: string): Character | void => {
   purgeExpiredStatuses(id);

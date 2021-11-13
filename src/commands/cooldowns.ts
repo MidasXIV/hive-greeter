@@ -8,8 +8,8 @@ export const command = new SlashCommandBuilder()
   .setName("cooldowns")
   .setDescription("Check your cooldowns.");
 
-type x = keyof Character["cooldowns"];
-const cooldowns: x[] = ["attack", "adventure", "heal"];
+type Cooldowns = keyof Character["cooldowns"];
+const cooldowns: Cooldowns[] = ["attack", "adventure", "heal"];
 
 export const execute = async (
   interaction: CommandInteraction
@@ -22,12 +22,21 @@ export const execute = async (
 
 export default { command, execute };
 
+const cooldownEmojis = new Map<Cooldowns, string>([
+  ["adventure", "🚶‍♀️"],
+  ["attack", "⚔"],
+  ["heal", "🤍"],
+]);
+
 const cooldownsRemainingEmbed = (character: Character) =>
   new MessageEmbed({
     title: `${character.name}'s Cooldowns`,
     fields: cooldowns.map((name) => ({
       name,
-      value: cooldownRemainingText(character.id, name),
+      value:
+        cooldownEmojis.get(name) +
+        " " +
+        cooldownRemainingText(character.id, name),
     })),
     timestamp: Date.now(),
   });

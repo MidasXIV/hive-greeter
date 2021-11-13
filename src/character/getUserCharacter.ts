@@ -1,7 +1,8 @@
 import { User } from "discord.js";
 import { Character } from "./Character";
 import { createCharacter } from "./createCharacter";
-import { purgeExpiredStatuses, gameState, defaultProfile } from "../gameState";
+import { gameState, defaultProfile } from "../gameState";
+import { purgeExpiredStatuses } from "../purgeExpiredStatuses";
 
 export const getUserCharacter = (user: User): Character => {
   purgeExpiredStatuses(user.id);
