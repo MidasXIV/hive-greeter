@@ -1,7 +1,8 @@
 import { SlashCommandBuilder } from "@discordjs/builders";
 import { CommandInteraction, Message, MessageEmbed } from "discord.js";
 import { isCharacterOnCooldown } from "../character/isCharacterOnCooldown";
-import { adjustHP, getUserCharacter } from "../gameState";
+import { adjustHP } from "../gameState";
+import { getUserCharacter } from "../getUserCharacter";
 import { cooldownRemainingText } from "../utils";
 import { hpBarField } from "../character/hpBar/hpBarField";
 

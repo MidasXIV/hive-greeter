@@ -1,5 +1,5 @@
 import { attack } from "./attack";
-import { setCharacterCooldown } from "../gameState";
+import { setCharacterCooldown } from "../setCharacterCooldown";
 import { isCharacterOnCooldown } from "../character/isCharacterOnCooldown";
 import { AttackResult } from "./AttackResult";
 

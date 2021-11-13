@@ -1,7 +1,8 @@
 import { SlashCommandBuilder } from "@discordjs/builders";
 import { CommandInteraction, MessageEmbed } from "discord.js";
 import { Character } from "../character/Character";
-import { getUserCharacter, getUserCharacters } from "../gameState";
+import { getUserCharacters } from "../gameState";
+import { getUserCharacter } from "../getUserCharacter";
 import { primaryStatFields } from "./inspect";
 
 export const command = new SlashCommandBuilder()

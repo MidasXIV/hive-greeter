@@ -1,6 +1,7 @@
 import { SlashCommandBuilder } from "@discordjs/builders";
 import { CommandInteraction, MessageEmbed } from "discord.js";
-import { getUserCharacter, setCharacterCooldown } from "../gameState";
+import { setCharacterCooldown } from "../setCharacterCooldown";
+import { getUserCharacter } from "../getUserCharacter";
 import { isCharacterOnCooldown } from "../character/isCharacterOnCooldown";
 import { cooldownRemainingText } from "../utils";
 import { randomEncounter } from "./encounters/randomEncounter";

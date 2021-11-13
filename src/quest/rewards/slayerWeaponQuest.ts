@@ -5,7 +5,8 @@ import {
   MessageEmbed,
   MessageSelectMenu,
 } from "discord.js";
-import { getUserCharacter, updateCharacter } from "../../gameState";
+import { updateCharacter } from "../../gameState";
+import { getUserCharacter } from "../../getUserCharacter";
 import {
   dagger,
   equipItemPrompt,

@@ -1,5 +1,5 @@
 import { CommandInteraction } from "discord.js";
-import { getUserCharacter } from "../../gameState";
+import { getUserCharacter } from "../../getUserCharacter";
 import { buffQuestReward } from "./buffQuestReward";
 
 export const blessedBuffQuestReward = async (

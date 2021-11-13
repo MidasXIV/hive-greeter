@@ -1,13 +1,13 @@
-import { MessageAttachment, User } from "discord.js";
+import { MessageAttachment } from "discord.js";
 import { readFile, writeFile } from "fs/promises";
 import { Character } from "./character/Character";
 import { defaultCharacter } from "./character/defaultCharacter";
 import { getCharacterStatModified } from "./character/getCharacterStatModified";
 import { isCharacterOnCooldown } from "./character/isCharacterOnCooldown";
-import { createCharacter } from "./character/createCharacter";
 import { getCharacter } from "./character/getCharacter";
 import { StatusEffect } from "./statusEffects/StatusEffect";
 import { Monster } from "./monster/Monster";
+import { setCharacterCooldown } from "./setCharacterCooldown";
 
 export const DB_FILE = "./db.json";
 
@@ -32,6 +32,7 @@ export const getDBJSON = (space = 2): string =>
     {
       lastSave: new Date().toString(),
       characters: Array.from(gameState.characters.entries()),
+      monsters: Array.from(gameState.monsters.entries()),
     },
     null,
     space
@@ -106,40 +107,6 @@ export const updateCharacter = (
   gameState.characters.set(character.id, character);
   return gameState.characters.get(character.id);
 };
-export const updateMonster = (character: Monster | void): Monster | void => {
-  if (!character) return;
-  gameState.characters.set(character.id, character);
-  return gameState.monsters.get(character.id);
-};
-
-export const getUserCharacter = (user: User): Character => {
-  purgeExpiredStatuses(user.id);
-  const character = gameState.characters.get(user.id);
-  if (!character) {
-    return createCharacter({
-      id: user.id,
-      name: user.username,
-      profile: user.avatarURL() || defaultProfile,
-      user,
-    });
-  }
-  return character;
-};
-
-export const setCharacterCooldown = (
-  characterId: string,
-  type: keyof Character["cooldowns"]
-): Character | void => {
-  const character = getCharacter(characterId);
-  if (!character) return;
-  const updatedCharacter = {
-    ...character,
-    cooldowns: { ...character.cooldowns, [type]: new Date().toString() },
-  };
-  updateCharacter(updatedCharacter);
-  return getCharacter(characterId);
-};
-
 const cooldowns: { [key in keyof Character["cooldowns"]]: number } = {
   renew: 120 * 60000,
 };

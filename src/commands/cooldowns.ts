@@ -1,7 +1,7 @@
 import { SlashCommandBuilder } from "@discordjs/builders";
 import { CommandInteraction, MessageEmbed } from "discord.js";
 import { Character } from "../character/Character";
-import { getUserCharacter } from "../gameState";
+import { getUserCharacter } from "../getUserCharacter";
 import { cooldownRemainingText } from "../utils";
 
 export const command = new SlashCommandBuilder()

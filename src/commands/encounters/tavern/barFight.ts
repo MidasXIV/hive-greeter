@@ -1,5 +1,6 @@
 import { CommandInteraction, MessageEmbed } from "discord.js";
-import { adjustHP, d6, awardXP, getUserCharacter } from "../../../gameState";
+import { adjustHP, d6, awardXP } from "../../../gameState";
+import { getUserCharacter } from "../../../getUserCharacter";
 import { questProgressField } from "../../../quest/questProgressField";
 import { updateUserQuestProgess } from "../../../quest/updateQuestProgess";
 

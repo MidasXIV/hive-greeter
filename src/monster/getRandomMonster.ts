@@ -1,8 +1,16 @@
+import { gameState } from "../gameState";
 import { createMonster } from "./createMonster";
 import { Monster } from "./Monster";
 
+const getRandomItem = <K, V>(iterable: Map<K, V>) =>
+  iterable.get([...iterable.keys()][Math.floor(Math.random() * iterable.size)]);
+
 export const getRandomMonster = (): Monster => {
   const rand = Math.random();
+  if (gameState.monsters.size) {
+    const monster = getRandomItem(gameState.monsters);
+    if (monster) return monster;
+  }
   switch (true) {
     case rand > 0.6:
       return createMonster({

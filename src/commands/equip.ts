@@ -6,7 +6,8 @@ import {
   MessageSelectMenu,
 } from "discord.js";
 import { equipItem } from "../equipItem";
-import { getUserCharacter, updateCharacter } from "../gameState";
+import { updateCharacter } from "../gameState";
+import { getUserCharacter } from "../getUserCharacter";
 import { Item, itemEmbed, itemIsEquippable } from "../utils/equipment";
 
 export const command = new SlashCommandBuilder()

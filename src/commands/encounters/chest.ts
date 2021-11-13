@@ -4,12 +4,8 @@ import {
   MessageAttachment,
   MessageEmbed,
 } from "discord.js";
-import {
-  adjustHP,
-  adjustGold,
-  awardXP,
-  getUserCharacter,
-} from "../../gameState";
+import { adjustHP, adjustGold, awardXP } from "../../gameState";
+import { getUserCharacter } from "../../getUserCharacter";
 import { updateStatusEffect } from "../../statusEffects/grantStatusEffect";
 import { trapAttack } from "../../trap/trap";
 

@@ -1,10 +1,6 @@
 import { CommandInteraction, Message, MessageEmbed } from "discord.js";
-import {
-  getUserCharacter,
-  awardXP,
-  adjustGold,
-  setGold,
-} from "../../gameState";
+import { awardXP, adjustGold, setGold } from "../../gameState";
+import { getUserCharacter } from "../../getUserCharacter";
 import { getCharacter } from "../../character/getCharacter";
 import { playerAttack } from "../../attack/playerAttack";
 import { attack } from "../../attack/attack";

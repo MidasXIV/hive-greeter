@@ -6,11 +6,8 @@ import {
   MessageEmbed,
 } from "discord.js";
 import { Character } from "../character/Character";
-import {
-  defaultProfile,
-  defaultProfileAttachment,
-  getUserCharacter,
-} from "../gameState";
+import { defaultProfile, defaultProfileAttachment } from "../gameState";
+import { getUserCharacter } from "../getUserCharacter";
 import { getCharacterStatModifier } from "../character/getCharacterStatModifier";
 import { getCharacterStatModified } from "../character/getCharacterStatModified";
 import { cooldownRemainingText } from "../utils";
