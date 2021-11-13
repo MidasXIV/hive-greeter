@@ -34,8 +34,8 @@ commands.set("quests", quests);
 commands.set("set", set);
 commands.set("shop", shop);
 
-if (process.env.ADMIN_COMMANDS === "true") {
-  console.warn("⚠ ADMIN COMMANDS LOADED ⚠");
+if (process.env.DEV_COMMANDS === "true") {
+  console.warn("⚠ DEV COMMANDS LOADED ⚠");
   commands.set("admin", admin);
   commands.set("quest", quest);
   commands.set("hpbartest", hpbartest);
