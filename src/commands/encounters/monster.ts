@@ -105,7 +105,9 @@ export const monster = async (
     });
   }
 
-  const summary = new MessageEmbed().setDescription(`Fight summary`);
+  const summary = new MessageEmbed({
+    title: `Fight summary`,
+  });
 
   if (fled) {
     summary.addField("Fled", `You escaped with your life!`);
@@ -115,7 +117,7 @@ export const monster = async (
     awardXP(player.id, monster.xpValue);
     summary.addField("XP Gained", monster.xpValue.toString());
     loot({ looterId: player.id, targetId: monster.id });
-    summary.addField("GP Gained", monster.gold.toString());
+    summary.addField("GP Gained", ":gold: " + monster.gold.toString());
     if (player.quests.slayer) {
       const character = updateUserQuestProgess(interaction.user, "slayer", 1);
       if (character && character.quests.slayer)

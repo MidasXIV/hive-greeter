@@ -3,13 +3,7 @@ import { CommandInteraction, MessageEmbed } from "discord.js";
 
 export const command = new SlashCommandBuilder()
   .setName("admin")
-  .setDescription("Admins only.")
-  .addSubcommandGroup((sg) =>
-    sg
-      .setName("set")
-      .setDescription("set a game value")
-      .addSubcommand((sc) => sc.addIntegerOption((i) => i.setRequired(true)))
-  );
+  .setDescription("Admins only.");
 
 export const execute = async (
   interaction: CommandInteraction

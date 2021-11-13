@@ -2,14 +2,12 @@ import { MessageAttachment } from "discord.js";
 import { readFile, writeFile } from "fs/promises";
 import { Character } from "./character/Character";
 import { defaultCharacter } from "./character/defaultCharacter";
-import { isCharacterOnCooldown } from "./character/isCharacterOnCooldown";
 import { getCharacter } from "./character/getCharacter";
-import { StatusEffect } from "./statusEffects/StatusEffect";
 import { Monster } from "./monster/Monster";
-import { adjustHP } from "./character/adjustHP";
 import { updateCharacter } from "./character/updateCharacter";
-import { setCharacterCooldown } from "./character/setCharacterCooldown";
 import { LootResult } from "./character/loot/loot";
+import { defaultCooldowns } from "./character/defaultCooldowns";
+import { isStatusEffectExpired } from "./isStatusEffectExpired";
 
 export const DB_FILE = "./db.json";
 
@@ -17,12 +15,14 @@ type GameState = {
   characters: Map<string, Character>;
   monsters: Map<string, Monster>;
   loots: Map<string, LootResult>;
+  cooldowns: typeof defaultCooldowns;
 };
 
 export const gameState: GameState = {
   characters: new Map(),
   monsters: new Map(),
   loots: new Map(),
+  cooldowns: defaultCooldowns,
 };
 
 export const defaultProfile = "attachment://profile.png";
@@ -37,6 +37,7 @@ export const getDBJSON = (space = 2): string =>
       lastSave: new Date().toString(),
       characters: Array.from(gameState.characters.entries()),
       monsters: Array.from(gameState.monsters.entries()),
+      cooldowns: gameState.cooldowns,
     },
     null,
     space
@@ -99,51 +100,5 @@ export const purgeExpiredStatuses = (characterId: string): void => {
   console.log(`${characterId} status effects purged`);
 };
 
-const isStatusEffectExpired = (effect: StatusEffect): boolean =>
-  Date.now() > new Date(effect.started).valueOf() + effect.duration;
-
 export const d20 = (): number => Math.ceil(Math.random() * 20);
 export const d6 = (): number => Math.ceil(Math.random() * 6);
-
-export type TrapResult =
-  | {
-      outcome: "hit";
-      attackRoll: number;
-      attackBonus: number;
-      damage: number;
-      defender: Character;
-    }
-  | {
-      outcome: "miss";
-      attackRoll: number;
-      attackBonus: number;
-      damage: number;
-      defender: Character;
-    };
-type HealResult =
-  | { outcome: "healed"; amount: number; target: Character }
-  | { outcome: "cooldown" };
-
-export const heal = (
-  initiatorId: string,
-  targetId: string
-): HealResult | undefined => {
-  if (isCharacterOnCooldown(initiatorId, "heal"))
-    return { outcome: "cooldown" };
-  const healer = getCharacter(initiatorId);
-  getCharacter(targetId);
-  if (!healer) return;
-  setCharacterCooldown(healer.id, "heal");
-  const amount = d6();
-  adjustHP(targetId, amount);
-  const target = getCharacter(targetId);
-  if (!target) return;
-  return { outcome: "healed", amount, target };
-};
-
-export const setProfile = (id: string, url: string): Character | void => {
-  const character = getCharacter(id);
-  if (!character) return;
-  updateCharacter({ ...character, profile: url });
-  return character;
-};

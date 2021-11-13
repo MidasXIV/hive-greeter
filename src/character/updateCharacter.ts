@@ -8,8 +8,3 @@ export const updateCharacter = (
   gameState.characters.set(character.id, character);
   return gameState.characters.get(character.id);
 };
-export const cooldowns: {
-  [key in keyof Character["cooldowns"]]: number;
-} = {
-  renew: 120 * 60000,
-};

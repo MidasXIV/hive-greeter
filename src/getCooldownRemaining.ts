@@ -1,5 +1,4 @@
 import { Character } from "./character/Character";
-import { cooldowns } from "./character/updateCharacter";
 import { gameState } from "./gameState";
 
 export const getCooldownRemaining = (
@@ -7,7 +6,7 @@ export const getCooldownRemaining = (
   type: keyof Character["cooldowns"]
 ): number => {
   try {
-    const cooldown = cooldowns[type] ?? 5 * 60000;
+    const cooldown = gameState.cooldowns[type] ?? 5 * 60000;
     const lastUsed = gameState.characters.get(characterId)?.cooldowns[type];
     if (!lastUsed) return 0;
     const remaining = new Date(lastUsed).valueOf() + cooldown - Date.now();

@@ -18,16 +18,17 @@ const rest = new REST({ version: "9" }).setToken(process.env.token);
   if (!process.env.token || !process.env.CLIENT_ID || !process.env.GUILD_ID)
     return;
   try {
-    console.log("Updating commands");
+    const body = Array.from(commands.values()).map(({ command }) =>
+      command.toJSON()
+    );
+    console.log("Updating commands", body);
     await rest.put(
       Routes.applicationGuildCommands(
         process.env.CLIENT_ID,
         process.env.GUILD_ID
       ),
       {
-        body: Array.from(commands.values()).map(({ command }) =>
-          command.toJSON()
-        ),
+        body,
       }
     );
     console.log("Updating commands complete");
@@ -62,7 +63,7 @@ client.on("interactionCreate", async (interaction) => {
   try {
     await commands.get(interaction.commandName).execute(interaction);
   } catch (e) {
-    await interaction.reply(`Command failed: ${e}`);
+    await interaction.reply(`Command failed: ${e} - ${interaction.command}`);
   }
   console.timeEnd(interaction.commandName);
 });
