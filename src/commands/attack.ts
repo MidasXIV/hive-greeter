@@ -214,7 +214,9 @@ const attackResultEmbed = (
       break;
     case "miss":
     default:
-      embed.setImage("https://i.imgur.com/xVlTNQm.png");
+      embed.setImage(
+        "https://i.pinimg.com/564x/10/5e/9e/105e9ea5f0d2e86bde9e7a365289a9cc.jpg"
+      );
       break;
   }
 
