@@ -36,13 +36,21 @@ export const monster = async (
   if (!(message instanceof Message)) return;
 
   // TODO: consider do/while refactor?
+
+  // TODO: while case never exits, hitpoints don't seem to update?
   while (
     getMonsterUpate(monster).hp > 0 &&
     getCharacterUpdate(player).hp > 0 &&
     !fled &&
     !timeout
   ) {
-    console.log("monster while", monster.hp, player.hp, fled, timeout);
+    console.log(
+      "monster while",
+      getMonsterUpate(monster).hp,
+      getCharacterUpdate(player).hp,
+      fled,
+      timeout
+    );
     round++;
     await message.react("⚔");
     await message.react("🏃‍♀️");
@@ -105,6 +113,7 @@ export const monster = async (
       ],
     });
   }
+  debugger;
 
   const summary = encounterSummary({ fled, monster, player, interaction });
 

@@ -24,6 +24,7 @@ export const command = new SlashCommandBuilder()
     option.setName("target").setDescription("Whom to inspect")
   );
 
+// TODO: inspect hp|stats|inventory|cooldowns
 export const execute = async (
   interaction: CommandInteraction,
   responseType: "followUp" | "reply" = "reply"
