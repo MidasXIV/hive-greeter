@@ -12,11 +12,10 @@ import { getUserCharacter } from "../../character/getUserCharacter";
 import { getRandomMonster } from "../../monster/getRandomMonster";
 import { getMonsterUpate } from "../../character/getMonsterUpdate";
 import { createEncounter } from "../../encounter/createEncounter";
-import { limitedCharacterEmbed } from "../../character/limitedCharacterEmbed";
-import { encounterCard } from "./encounterEmbed";
+import { encounterCard as encounterEmbed } from "./encounterEmbed";
 import { loot } from "../../character/loot/loot";
-import { characterEmbed } from "../inspect";
 import { getCharacterUpdate } from "../../character/getCharacterUpdate";
+import { characterEncounterEmbed } from "../../character/characterEncounterEmbed";
 
 export const monster = async (
   interaction: CommandInteraction
@@ -27,11 +26,7 @@ export const monster = async (
   const encounter = createEncounter({ monster, player });
   let timeout = false;
   const message = await interaction.reply({
-    embeds: [
-      monsterCard(monster),
-      limitedCharacterEmbed(player),
-      encounterCard(encounter),
-    ],
+    embeds: [monsterEmbed(monster), characterEncounterEmbed(player)],
     fetchReply: true,
   });
   if (!(message instanceof Message)) return;
@@ -82,8 +77,6 @@ export const monster = async (
 
     const updatedMonster = getMonsterUpate(monster);
     const updatedPlayer = getCharacterUpdate(player);
-    // if (!updatedMonster || !updatedPlayer || !playerResult || !monsterResult)
-    //   return;
     monster = updatedMonster;
     player = updatedPlayer;
 
@@ -99,10 +92,10 @@ export const monster = async (
       console.error("Failed to remove reactions.");
     }
     const embeds = [
-      monsterCard(monster),
-      characterEmbed(player),
-      encounterCard(encounter),
-
+      monsterEmbed(monster),
+      characterEncounterEmbed(player),
+      characterEncounterEmbed(monster),
+      encounterEmbed(encounter),
       new MessageEmbed({}).addField(...attackField(playerResult)),
       new MessageEmbed({}).addField(...attackField(monsterResult)),
       // .addField(...attackField(monsterResult))
@@ -171,7 +164,7 @@ const attackField = (
     : "No result.",
 ];
 
-const monsterCard = (monster: Character) =>
+const monsterEmbed = (monster: Character) =>
   new MessageEmbed({
     title: monster.name,
     color: "RED",

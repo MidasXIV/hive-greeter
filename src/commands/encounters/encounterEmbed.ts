@@ -3,6 +3,15 @@ import { getCharacter } from "../../character/getCharacter";
 import { Encounter } from "../../monster/Encounter";
 import { getMonster } from "../../character/getMonster";
 import { hpBarField } from "../../character/hpBar/hpBarField";
+import { getCharacterStatModified } from "../../character/getCharacterStatModified";
+import { progressBar } from "../../utils/progress-bar";
+import { AttackResult } from "../../attack/AttackResult";
+import { Character } from "../../character/Character";
+import { Monster } from "../../monster/Monster";
+
+// given a bonus to your roll, what are the chances of rolling above a target?
+const chanceToHit = ({ bonus, dc }: { bonus: number; dc: number }): number =>
+  (21 - dc - bonus) / 20; // https://rpg.stackexchange.com/a/70349
 
 export const encounterCard = (encounter: Encounter): MessageEmbed => {
   const character = getCharacter(encounter.characterId);
@@ -29,14 +38,13 @@ export const encounterCard = (encounter: Encounter): MessageEmbed => {
         inline: true,
       },
       {
-        name: "Total Monster Damage Dealt",
-        value: encounter.monsterAttacks
-          .reduce(
-            (total, attack) =>
-              total + (attack.outcome === "hit" ? attack.damage : 0),
-            0
-          )
-          .toString(),
+        name: "Monster accuracy",
+        value: `Hit chance ${hitChanceText(character, monster)}
+          ${accuracyBar(encounter.monsterAttacks)}`,
+      },
+      {
+        name: "Player accuracy",
+        value: accuracyBar(encounter.playerAttacks),
       },
       hpBarField(monster),
       hpBarField(character),
@@ -44,3 +52,26 @@ export const encounterCard = (encounter: Encounter): MessageEmbed => {
     timestamp: encounter.date,
   }).setThumbnail(monster.profile);
 };
+
+const averageRoll = (attacks: AttackResult[]) =>
+  attacks.reduce(
+    (total, attack) =>
+      total + (attack.outcome !== "cooldown" ? attack.attackRoll : 0),
+    0
+  ) / attacks.length;
+
+const accuracyBar = (attacks: AttackResult[]) =>
+  `${progressBar(averageRoll(attacks) / 20, 10)} 
+  Average Roll: ${averageRoll(attacks).toFixed(2).toString()}`;
+
+function hitChanceText(monster: Character, character: Character): string {
+  return (
+    (
+      100 *
+      chanceToHit({
+        bonus: getCharacterStatModified(monster, "attackBonus"),
+        dc: getCharacterStatModified(character, "ac"),
+      })
+    ).toString() + "%"
+  );
+}
