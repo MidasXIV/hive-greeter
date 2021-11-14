@@ -11,6 +11,7 @@
 Merge blockers
 
 - [ ] no gold display
+- [ ] monster should 
 
 
 When adventuring, there is a chance to encounter a monster. 

@@ -16,6 +16,7 @@ import { encounterCard as encounterEmbed } from "./encounterEmbed";
 import { loot } from "../../character/loot/loot";
 import { getCharacterUpdate } from "../../character/getCharacterUpdate";
 import { characterEncounterEmbed } from "../../character/characterEncounterEmbed";
+import { Monster } from "../../monster/Monster";
 
 export const monster = async (
   interaction: CommandInteraction
@@ -75,9 +76,9 @@ export const monster = async (
     const monsterResult = attack(monster.id, player.id);
     monsterResult && encounter.monsterAttacks.push(monsterResult);
 
-    const updatedMonster = getMonsterUpate(monster);
+    const updatedMonster = getCharacterUpdate(monster);
     const updatedPlayer = getCharacterUpdate(player);
-    monster = updatedMonster;
+    monster = updatedMonster as Monster;
     player = updatedPlayer;
 
     const userReactions = message.reactions.cache.filter((reaction) =>
@@ -116,6 +117,7 @@ export const monster = async (
     summary.addField("Fled", `You escaped with your life!`);
   }
   if (monster.hp === 0 && player.hp > 0) {
+    encounter.status = "victory";
     summary.addField("Triumphant!", `You defeated the ${monster.name}! 🎉`);
     loot({ targetId: monster.id, looterId: player.id });
     summary.addField("XP Gained", monster.xpValue.toString());
@@ -129,8 +131,11 @@ export const monster = async (
   if (player.hp === 0) {
     summary.addField("😫 Unconscious", "You were knocked out!");
     if (monster.hp > 0) {
+      encounter.status = "defeat";
       loot({ looterId: monster.id, targetId: player.id });
       summary.addField("Looted", `You lost 💰${player.gold} gold!`);
+    } else {
+      encounter.status = "defeat";
     }
   }
 

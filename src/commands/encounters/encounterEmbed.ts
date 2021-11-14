@@ -39,12 +39,12 @@ export const encounterCard = (encounter: Encounter): MessageEmbed => {
       },
       {
         name: "Monster accuracy",
-        value: `Hit chance ${hitChanceText(character, monster)}
-          ${accuracyBar(encounter.monsterAttacks)}`,
+        value: accuracyText(character, monster, encounter.monsterAttacks),
       },
       {
         name: "Player accuracy",
-        value: accuracyBar(encounter.playerAttacks),
+        value: `Hit chance ${hitChanceText(character, monster)}
+          ${accuracyBar(encounter.monsterAttacks)}`,
       },
       hpBarField(monster),
       hpBarField(character),
@@ -64,13 +64,28 @@ const accuracyBar = (attacks: AttackResult[]) =>
   `${progressBar(averageRoll(attacks) / 20, 10)} 
   Average Roll: ${averageRoll(attacks).toFixed(2).toString()}`;
 
-function hitChanceText(monster: Character, character: Character): string {
+const averageDamage = (attacks: AttackResult[]) =>
+  attacks.reduce(
+    (total, attack) => total + (attack.outcome === "hit" ? attack.damage : 0),
+    0
+  ) / attacks.filter((x) => x.outcome === "hit").length;
+
+function accuracyText(
+  attacker: Character,
+  defender: Character,
+  attacks: AttackResult[]
+): string {
+  return `Hit chance ${hitChanceText(attacker, defender)}
+          ${accuracyBar(attacks)}`;
+}
+
+function hitChanceText(attacker: Character, defender: Character): string {
   return (
     (
       100 *
       chanceToHit({
-        bonus: getCharacterStatModified(monster, "attackBonus"),
-        dc: getCharacterStatModified(character, "ac"),
+        bonus: getCharacterStatModified(attacker, "attackBonus"),
+        dc: getCharacterStatModified(defender, "ac"),
       })
     ).toString() + "%"
   );
