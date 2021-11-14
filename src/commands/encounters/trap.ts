@@ -4,6 +4,7 @@ import { trapAttack as trapAttack } from "../../trap/trapAttack";
 import { sleep } from "../../utils";
 import { updateUserQuestProgess } from "../../quest/updateQuestProgess";
 import { awardXP } from "../../character/awardXP";
+import { trapRollText } from "./trapRollText";
 
 export const trap = async (interaction: CommandInteraction): Promise<void> => {
   const message = await interaction.reply({
@@ -52,12 +53,3 @@ export const trap = async (interaction: CommandInteraction): Promise<void> => {
       break;
   }
 };
-
-const trapRollText = (result: ReturnType<typeof trapAttack>): string =>
-  result
-    ? `${result.attackRoll}+${result.attackBonus} (${
-        result.attackRoll + result.attackBonus
-      }) vs ${result.defender.ac} ac${
-        result.outcome === "hit" ? ` for ${result.damage} damage` : ""
-      }.`
-    : "No result";
