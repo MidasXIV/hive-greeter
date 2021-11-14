@@ -2,23 +2,21 @@ import { CommandInteraction, Message, MessageEmbed } from "discord.js";
 import { Character } from "../../character/Character";
 import { playerAttack } from "../../attack/playerAttack";
 import { attack } from "../../attack/attack";
-import { hpBar } from "../../character/hpBar/hpBar";
 import { attackFlavorText, attackRollText } from "../attack";
 import { chest } from "./chest";
 import { isUserQuestComplete } from "../../quest/isQuestComplete";
 import quests from "../quests";
 import { updateUserQuestProgess } from "../../quest/updateQuestProgess";
 import { questProgressField } from "../../quest/questProgressField";
-import { adjustGold } from "../../character/adjustGold";
-import { awardXP } from "../../character/awardXP";
-import { getCharacter } from "../../character/getCharacter";
 import { getUserCharacter } from "../../character/getUserCharacter";
-import { setGold } from "../../character/setGold";
 import { getRandomMonster } from "../../monster/getRandomMonster";
 import { getMonsterUpate } from "../../character/getMonsterUpdate";
 import { createEncounter } from "../../encounter/createEncounter";
 import { limitedCharacterEmbed } from "../../character/limitedCharacterEmbed";
-import { encounterEmbed } from "./encounterEmbed";
+import { encounterCard } from "./encounterEmbed";
+import { loot } from "../../character/loot/loot";
+import { characterEmbed } from "../inspect";
+import { getCharacterUpdate } from "../../character/getCharacterUpdate";
 
 export const monster = async (
   interaction: CommandInteraction
@@ -27,24 +25,24 @@ export const monster = async (
   let monster = getRandomMonster();
   let player = getUserCharacter(interaction.user);
   const encounter = createEncounter({ monster, player });
-  let round = 0;
-  let fled = false;
   let timeout = false;
-  const playerAttacks = [];
-  const monsterAttacks = [];
   const message = await interaction.reply({
     embeds: [
-      monsterEmbed(monster),
+      monsterCard(monster),
       limitedCharacterEmbed(player),
-      encounterEmbed(encounter),
+      encounterCard(encounter),
     ],
     fetchReply: true,
   });
   if (!(message instanceof Message)) return;
 
-  while (monster.hp > 0 && player.hp > 0 && !fled && !timeout) {
+  while (
+    monster.hp > 0 &&
+    player.hp > 0 &&
+    encounter.status === "in progress" &&
+    !timeout
+  ) {
     encounter.rounds++;
-    round++;
     await message.react("⚔");
     await message.react("🏃‍♀️");
     const collected = await message
@@ -57,6 +55,7 @@ export const monster = async (
         errors: ["time"],
       })
       .catch(() => {
+        encounter.status = "retreat";
         timeout = true;
       });
     if (!collected || timeout) {
@@ -70,19 +69,21 @@ export const monster = async (
     }
 
     if (reaction.emoji.name === "🏃‍♀️") {
-      fled = true;
-      break;
+      encounter.status = "retreat";
     }
 
-    const playerResult = attack(player.id, monster.id);
-    playerAttacks.push(playerResult);
+    let playerResult;
+    if (encounter.status === "in progress") {
+      playerResult = attack(player.id, monster.id);
+      playerResult && encounter.playerAttacks.push(playerResult);
+    }
     const monsterResult = attack(monster.id, player.id);
-    monsterAttacks.push(monsterResult);
+    monsterResult && encounter.monsterAttacks.push(monsterResult);
 
     const updatedMonster = getMonsterUpate(monster);
-    const updatedPlayer = getCharacter(player.id);
-    if (!updatedMonster || !updatedPlayer || !playerResult || !monsterResult)
-      return;
+    const updatedPlayer = getCharacterUpdate(player);
+    // if (!updatedMonster || !updatedPlayer || !playerResult || !monsterResult)
+    //   return;
     monster = updatedMonster;
     player = updatedPlayer;
 
@@ -97,40 +98,34 @@ export const monster = async (
     } catch (error) {
       console.error("Failed to remove reactions.");
     }
+    const embeds = [
+      monsterCard(monster),
+      characterEmbed(player),
+      encounterCard(encounter),
+
+      new MessageEmbed({}).addField(...attackField(playerResult)),
+      new MessageEmbed({}).addField(...attackField(monsterResult)),
+      // .addField(...attackField(monsterResult))
+    ];
+    if (encounter.status === "in progress") {
+      playerResult = attack(player.id, monster.id);
+      playerResult && encounter.playerAttacks.push(playerResult);
+    }
+
     message.edit({
-      embeds: [
-        monsterEmbed(monster)
-          .addField("Round", round.toString(), true)
-          .addField(
-            `${monster.name}'s HP`,
-            `${hpBar(
-              monster,
-              playerResult.outcome === "hit" ? -playerResult.damage : 0
-            )}`
-          )
-          .addField(
-            `${player.name}'s HP`,
-            `${hpBar(
-              player,
-              monsterResult.outcome === "hit" ? -monsterResult.damage : 0
-            )}`
-          )
-          .addField(...attackField(monsterResult))
-          .addField(...attackField(playerResult)),
-        limitedCharacterEmbed(player),
-        encounterEmbed(encounter),
-      ],
+      embeds,
     });
   }
 
   const summary = new MessageEmbed().setDescription(`Fight summary`);
 
-  if (fled) summary.addField("Fled", `You escaped with your life!`);
+  if (encounter.status === "retreat") {
+    summary.addField("Fled", `You escaped with your life!`);
+  }
   if (monster.hp === 0 && player.hp > 0) {
     summary.addField("Triumphant!", `You defeated the ${monster.name}! 🎉`);
-    awardXP(player.id, monster.xpValue);
+    loot({ targetId: monster.id, looterId: player.id });
     summary.addField("XP Gained", monster.xpValue.toString());
-    adjustGold(player.id, monster.gold);
     summary.addField("GP Gained", monster.gold.toString());
     if (player.quests.slayer) {
       const character = updateUserQuestProgess(interaction.user, "slayer", 1);
@@ -139,9 +134,9 @@ export const monster = async (
     }
   }
   if (player.hp === 0) {
-    summary.addField("Unconscious", "You were knocked out!");
-    if (monster.hp > 0 && player.gold > 0) {
-      setGold(player.id, 0);
+    summary.addField("😫 Unconscious", "You were knocked out!");
+    if (monster.hp > 0) {
+      loot({ looterId: monster.id, targetId: player.id });
       summary.addField("Looted", `You lost 💰${player.gold} gold!`);
     }
   }
@@ -152,7 +147,7 @@ export const monster = async (
     embeds: [summary],
   });
 
-  if (!fled && player.hp > 0 && Math.random() <= 0.3)
+  if (encounter.status === "victory" && player.hp > 0 && Math.random() <= 0.3)
     await chest(interaction, true);
   if (
     isUserQuestComplete(interaction.user, "slayer") ||
@@ -176,8 +171,8 @@ const attackField = (
     : "No result.",
 ];
 
-const monsterEmbed = (monster: Character) =>
-  new MessageEmbed()
-    .setTitle(monster.name)
-    .setColor("RED")
-    .setImage(monster.profile);
+const monsterCard = (monster: Character) =>
+  new MessageEmbed({
+    title: monster.name,
+    color: "RED",
+  }).setImage(monster.profile);

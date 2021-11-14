@@ -1,6 +1,6 @@
 import { SlashCommandBuilder } from "@discordjs/builders";
 import { CommandInteraction, MessageAttachment, Permissions } from "discord.js";
-import { DB_FILE, loadDB, saveDB } from "../gameState";
+import { DB_FILE, getDBJSON, loadDB, saveDB } from "../gameState";
 import { CommandHandler } from "../utils";
 
 export const command = new SlashCommandBuilder()

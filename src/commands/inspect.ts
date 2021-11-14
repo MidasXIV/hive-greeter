@@ -1,5 +1,6 @@
 import { SlashCommandBuilder } from "@discordjs/builders";
 import {
+  CacheType,
   CommandInteraction,
   EmbedFieldData,
   Emoji,
@@ -33,9 +34,7 @@ export const execute = async (
     (interaction.options.data[0] && interaction.options.data[0].user) ||
     interaction.user;
   const character = getUserCharacter(user);
-  const xpEmoji = interaction.guild?.emojis.cache.find(
-    (emoji) => emoji.name === "xp"
-  );
+  const xpEmoji = newFunction(interaction);
   await interaction[responseType]({
     attachments:
       character.profile === defaultProfile ? [defaultProfileAttachment] : [],
@@ -68,7 +67,7 @@ export const characterEmbed = (
     .setTitle(character.name)
     .setImage(character.profile)
     .addFields([
-      ...primaryStatFields(character, xpEmoji),
+      ...primaryStatFields({ character, xpEmoji }),
       ...statFields(character),
     ]);
   return embed;
@@ -84,28 +83,39 @@ const questEmbed = (character: Character) => {
   return embed;
 };
 
-export const primaryStatFields = (
-  character: Character,
-  xpEmoji?: Emoji
-): EmbedFieldData[] => [
-  {
-    name: "HP",
-    value: `${character.hp}/${getCharacterStatModified(
-      character,
-      "maxHP"
-    )}\n${hpBar(character)}`,
-  },
-  {
-    name: "XP",
-    value: (xpEmoji?.toString() ?? "🧠") + " " + character.xp.toString(),
-    inline: true,
-  },
-  {
-    name: "GP",
-    value: "💰 " + character.gold.toString(),
-    inline: true,
-  },
-];
+function newFunction(interaction: CommandInteraction<CacheType>) {
+  return interaction.guild?.emojis.cache.find((emoji) => emoji.name === "xp");
+}
+
+export function primaryStatFields({
+  character,
+  xpEmoji,
+  adjustment = 0,
+}: {
+  character: Character;
+  xpEmoji?: Emoji;
+  adjustment?: number;
+}): EmbedFieldData[] {
+  return [
+    {
+      name: "HP",
+      value: `${character.hp}/${getCharacterStatModified(
+        character,
+        "maxHP"
+      )}\n${hpBar(character, adjustment)}`,
+    },
+    {
+      name: "XP",
+      value: (xpEmoji?.toString() ?? "🧠") + " " + character.xp.toString(),
+      inline: true,
+    },
+    {
+      name: "GP",
+      value: "💰 " + character.gold.toString(),
+      inline: true,
+    },
+  ];
+}
 
 const actionEmbed = (character: Character) =>
   new MessageEmbed({
@@ -129,7 +139,9 @@ const actionEmbed = (character: Character) =>
     ],
   });
 
-export const statFields = (character: Character) => [
+export const statFields = (
+  character: Character
+): { name: string; value: string; inline?: boolean }[] => [
   {
     name: "**Stats**",
     value: `───────────`,

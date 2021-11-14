@@ -2,8 +2,9 @@ import { MessageEmbed } from "discord.js";
 import { getCharacter } from "../../character/getCharacter";
 import { Encounter } from "../../monster/Encounter";
 import { getMonster } from "../../character/getMonster";
+import { hpBarField } from "../../character/hpBar/hpBarField";
 
-export const encounterEmbed = (encounter: Encounter) => {
+export const encounterCard = (encounter: Encounter): MessageEmbed => {
   const character = getCharacter(encounter.characterId);
   const monster = getMonster(encounter.monsterId);
   if (!character)
@@ -15,16 +16,11 @@ export const encounterEmbed = (encounter: Encounter) => {
       title: `Monster ${encounter.monsterId} not found`,
     });
   return new MessageEmbed({
-    title: `${character.name} encountered ${monster.name}`,
+    title: `Encounter: ${character.name} vs ${monster.name}`,
     fields: [
       {
-        name: "Result",
-        value: encounter.result ?? "unknown",
-        inline: true,
-      },
-      {
-        name: "Result",
-        value: encounter.result ?? "unknown",
+        name: "Status",
+        value: encounter.status ?? "unknown",
         inline: true,
       },
       {
@@ -32,6 +28,18 @@ export const encounterEmbed = (encounter: Encounter) => {
         value: encounter.rounds.toString(),
         inline: true,
       },
+      {
+        name: "Total Monster Damage Dealt",
+        value: encounter.monsterAttacks
+          .reduce(
+            (total, attack) =>
+              total + (attack.outcome === "hit" ? attack.damage : 0),
+            0
+          )
+          .toString(),
+      },
+      hpBarField(monster),
+      hpBarField(character),
     ],
     timestamp: encounter.date,
   }).setThumbnail(monster.profile);

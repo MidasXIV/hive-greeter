@@ -6,6 +6,7 @@ import { randomUUID } from "crypto";
 import { updateCharacter } from "../character/updateCharacter";
 import { getCharacterUpdate } from "../character/getCharacterUpdate";
 import { getMonsterUpate } from "../character/getMonsterUpdate";
+import { setEncounter } from "./setEncounter";
 
 export function createEncounter({
   monster,
@@ -21,8 +22,8 @@ export function createEncounter({
     id: randomUUID(),
     playerAttacks: [],
     monsterAttacks: [],
-    inProgress: true,
     rounds: 1,
+    status: "in progress",
   };
   updateMonster({
     ...getMonsterUpate(monster),
@@ -32,5 +33,6 @@ export function createEncounter({
     ...getCharacterUpdate(player),
     activeEncounters: player.activeEncounters.concat(encounter.id),
   });
+  setEncounter(encounter);
   return encounter;
 }

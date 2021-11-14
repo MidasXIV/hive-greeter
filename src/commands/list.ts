@@ -4,6 +4,8 @@ import { getMonsters } from "../character/getMonsters";
 import { getUserCharacter } from "../character/getUserCharacter";
 import { getUserCharacters } from "../character/getUserCharacters";
 import { limitedCharacterEmbed } from "../character/limitedCharacterEmbed";
+import { getEncounters } from "../encounter/getEncounters";
+import { encounterCard } from "./encounters/encounterEmbed";
 
 export const command = new SlashCommandBuilder()
   .setName("list")
@@ -13,6 +15,9 @@ export const command = new SlashCommandBuilder()
   )
   .addSubcommand((option) =>
     option.setName("monsters").setDescription("Previously encountered monsters")
+  )
+  .addSubcommand((option) =>
+    option.setName("encounters").setDescription("Encounter history")
   );
 
 export const execute = async (
@@ -24,6 +29,9 @@ export const execute = async (
       break;
     case "monsters":
       showMonsters(interaction);
+      break;
+    case "encounters":
+      showEncounters(interaction);
       break;
   }
 };
@@ -50,7 +58,25 @@ function showMonsters(interaction: CommandInteraction) {
             .sort((a, b) => b.xp - a.xp)
             .slice(0, 10)
             .map(limitedCharacterEmbed)
-        : [new MessageEmbed({ description: "No monsters." })]),
+        : [
+            new MessageEmbed({
+              description:
+                "No monsters encountered yet. `/adventure` to find some!",
+            }),
+          ]),
     ],
+  });
+}
+function showEncounters(interaction: CommandInteraction) {
+  const encounters = getEncounters();
+  interaction.reply({
+    embeds:
+      encounters.size > 0
+        ? Array.from(encounters.values()).map(encounterCard).slice(0, 10)
+        : [
+            new MessageEmbed({
+              description: "No encounters yet. `/adventure` to find some!",
+            }),
+          ],
   });
 }

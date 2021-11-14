@@ -26,6 +26,7 @@ export function loot({
   updateCharacter({
     ...looter,
     gold: looter.gold + goldTaken,
+    xp: looter.xp + target.xpValue,
   });
   updateCharacter({
     ...target,

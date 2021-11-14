@@ -8,6 +8,5 @@ export type Encounter = {
   monsterAttacks: AttackResult[];
   rounds: number;
   date: string;
-  inProgress: boolean;
-  result?: "victory" | "defeat" | "retreat" | "monster fled";
+  status: "in progress" | "victory" | "defeat" | "retreat" | "monster fled";
 };
