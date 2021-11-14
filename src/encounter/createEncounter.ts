@@ -23,11 +23,11 @@ export function createEncounter({
   };
   updateMonster({
     ...monster,
-    activeEncounters: monster.activeEncounters.set(encounter.id, true),
+    activeEncounters: monster.activeEncounters.concat(encounter.id),
   });
   updateCharacter({
     ...player,
-    activeEncounters: player.activeEncounters.set(encounter.id, true),
+    activeEncounters: player.activeEncounters.concat(encounter.id),
   });
   return encounter;
 }

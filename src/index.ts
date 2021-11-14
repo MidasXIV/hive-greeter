@@ -81,12 +81,12 @@ setInterval(() => {
   saveDB(autoSaveDbFile);
 }, 30 * 60000);
 
-["beforeExit", "exit", "uncaughtException", "SIGINT"].map((command) => {
-  process.on(command, (code) => {
-    console.error(
-      `Cleaning up due to ${command}. Saving db to ${autoSaveDbFile}.`,
-      code
-    );
-    saveDB(autoSaveDbFile);
-  });
-});
+// ["beforeExit", "exit", "uncaughtException", "SIGINT"].map((command) => {
+//   process.on(command, (code) => {
+//     console.error(
+//       `Cleaning up due to ${command}. Saving db to ${autoSaveDbFile}.`,
+//       code
+//     );
+//     saveDB(autoSaveDbFile);
+//   });
+// });

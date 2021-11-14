@@ -27,7 +27,7 @@ export type Character = Stats & {
   quests: {
     [id in QuestId]?: Quest;
   };
-  activeEncounters: Map<string, true>;
+  activeEncounters: string[];
 
   xp: number;
   gold: number;

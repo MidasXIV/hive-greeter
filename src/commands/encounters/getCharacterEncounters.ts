@@ -5,8 +5,7 @@ import { flatMap, map, pipe } from "remeda";
 
 export const getCharacterEncounters = (character: Character): Encounter[] =>
   pipe(
-    character.activeEncounters.keys(),
-    Array.from,
+    character.activeEncounters,
     map(getEncounter),
     flatMap((x) => (x ? [x] : []))
   );

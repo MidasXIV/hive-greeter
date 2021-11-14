@@ -14,7 +14,7 @@ export const defaultCharacter: Omit<Character, "id" | "name"> = {
   equipment: {},
   cooldowns: {},
   statusEffects: [],
-  activeEncounters: new Map(),
+  activeEncounters: [],
   quests: {},
   xp: 0,
   xpValue: 10,
