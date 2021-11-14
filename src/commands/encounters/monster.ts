@@ -33,7 +33,7 @@ export const monster = async (
   const playerAttacks = [];
   const monsterAttacks = [];
   const message = await interaction.reply({
-    embeds: [encounterInProgressEmbed(encounter)],
+    embeds: [encounterInProgressEmbed(encounter), attackExchangeEmbed()],
     fetchReply: true,
   });
   if (!(message instanceof Message)) return;
@@ -55,17 +55,13 @@ export const monster = async (
       .catch(() => {
         timeout = true;
       });
-    if (!collected || timeout) {
-      await interaction.followUp(`Timed out`);
-      return;
-    }
-    const reaction = collected.first();
-    if (!reaction) {
-      await interaction.followUp(`No reaction received.`);
-      return;
-    }
-
-    if (reaction.emoji.name === "🏃‍♀️") {
+    const reaction = collected?.first();
+    if (
+      !collected ||
+      timeout ||
+      !reaction ||
+      (reaction && reaction.emoji.name === "🏃‍♀️")
+    ) {
       fled = true;
       encounter.outcome = "player fled";
     }
@@ -94,12 +90,14 @@ export const monster = async (
     } catch (error) {
       console.error("Failed to remove reactions.");
     }
-    const exchangeDetails = attackExchangeEmbed({
-      playerAttack: playerResult,
-      monsterAttack: monsterResult,
-    });
     message.edit({
-      embeds: [encounterInProgressEmbed(encounter), exchangeDetails],
+      embeds: [
+        encounterInProgressEmbed(encounter),
+        attackExchangeEmbed({
+          playerAttack: playerResult,
+          monsterAttack: monsterResult,
+        }),
+      ],
     });
   }
 
@@ -110,7 +108,7 @@ export const monster = async (
     encounter.outcome = "player fled";
   }
   if (monster.hp === 0 && player.hp > 0) {
-    encounter.outcome = "victory";
+    encounter.outcome = "player victory";
     summary.addField("Triumphant!", `You defeated the ${monster.name}! 🎉`);
     awardXP(player.id, monster.xpValue);
     summary.addField("XP Gained", monster.xpValue.toString());
@@ -125,7 +123,7 @@ export const monster = async (
   if (player.hp === 0) {
     summary.addField("Unconscious", "You were knocked out!");
     if (monster.hp > 0 && player.gold > 0) {
-      encounter.outcome = "player fled";
+      encounter.outcome = "player defeated";
       setGold(player.id, 0);
       summary.addField("Looted", `You lost 💰${player.gold} gold!`);
     } else {

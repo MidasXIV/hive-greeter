@@ -10,8 +10,8 @@ export type Encounter = {
   date: string;
   outcome:
     | "in progress"
-    | "victory"
-    | "defeated"
+    | "player victory"
+    | "player defeated"
     | "player fled"
     | "monster fled"
     | "double ko";

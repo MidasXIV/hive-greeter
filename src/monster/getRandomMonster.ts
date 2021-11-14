@@ -1,9 +1,8 @@
 import { gameState } from "../gameState";
 import { createMonster } from "./createMonster";
+import { getRandomItem } from "./getRandomItem";
+import { getRoamingMonsters } from "./getRoamingMonsters";
 import { Monster } from "./Monster";
-
-const getRandomItem = <K, V>(iterable: Map<K, V>) =>
-  iterable.get([...iterable.keys()][Math.floor(Math.random() * iterable.size)]);
 
 export const getRandomMonster = (): Monster => {
   console.log(
@@ -15,7 +14,7 @@ export const getRandomMonster = (): Monster => {
     Math.random() <= gameState.monsters.size / 10
   ) {
     console.log("returning existing monster");
-    const monster = getRandomItem(gameState.monsters);
+    const monster = getRandomItem(getRoamingMonsters());
     if (monster) return monster;
   }
   const rand = Math.random();
@@ -30,6 +29,7 @@ export const getRandomMonster = (): Monster => {
         attackBonus: 0,
         damageBonus: 2,
         damageMax: 4,
+        gold: Math.floor(Math.random() * 8) + 3,
         profile:
           "https://dl.airtable.com/.attachmentThumbnails/8f439faeedea2fd168357162ff38d8ec/bb288957",
       });

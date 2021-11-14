@@ -18,7 +18,7 @@ export const encounterEmbed = (encounter: Encounter): MessageEmbed => {
     title: `Encounter: ${character.name} vs ${monster.name}`,
     fields: [
       {
-        name: "Status",
+        name: "Outcome",
         value: encounter.outcome ?? "unknown",
         inline: true,
       },

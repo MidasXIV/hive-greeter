@@ -71,7 +71,6 @@ export const loadSerializedDB = (serialized: string): GameState => {
       {
         ...defaultCharacter,
         ...character,
-        activeEncounters: character.activeEncounters ?? [],
       },
     ])
   );
