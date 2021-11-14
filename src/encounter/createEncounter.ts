@@ -22,6 +22,7 @@ export function createEncounter({
     playerAttacks: [],
     monsterAttacks: [],
     inProgress: true,
+    rounds: 1,
   };
   updateMonster({
     ...getMonsterUpate(monster),

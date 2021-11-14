@@ -3,7 +3,7 @@ import { CommandInteraction, MessageEmbed } from "discord.js";
 import { getMonsters } from "../character/getMonsters";
 import { getUserCharacter } from "../character/getUserCharacter";
 import { getUserCharacters } from "../character/getUserCharacters";
-import { limitedCharacterEmbed } from "./limitedCharacterEmbed";
+import { limitedCharacterEmbed } from "../character/limitedCharacterEmbed";
 
 export const command = new SlashCommandBuilder()
   .setName("list")

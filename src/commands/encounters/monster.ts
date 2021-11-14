@@ -11,41 +11,14 @@ import { updateUserQuestProgess } from "../../quest/updateQuestProgess";
 import { questProgressField } from "../../quest/questProgressField";
 import { adjustGold } from "../../character/adjustGold";
 import { awardXP } from "../../character/awardXP";
-import { createCharacter } from "../../character/createCharacter";
 import { getCharacter } from "../../character/getCharacter";
 import { getUserCharacter } from "../../character/getUserCharacter";
 import { setGold } from "../../character/setGold";
-
-const getRandomMonster = () => {
-  const rand = Math.random();
-  switch (true) {
-    case rand > 0.6:
-      return createCharacter({
-        name: "Orc",
-        profile: "https://i.imgur.com/2cT3cLm.jpeg",
-        gold: Math.floor(Math.random() * 6) + 2,
-      });
-    case rand > 0.3:
-      return createCharacter({
-        hp: 8,
-        maxHP: 8,
-        name: "Bandit",
-        profile: "https://i.imgur.com/MV96z4T.png",
-        xpValue: 4,
-        gold: Math.floor(Math.random() * 5) + 1,
-      });
-
-    default:
-      return createCharacter({
-        hp: 5,
-        maxHP: 5,
-        name: "Goblin",
-        profile: "https://i.imgur.com/gPH1JSl.png",
-        xpValue: 3,
-        gold: Math.floor(Math.random() * 3) + 1,
-      });
-  }
-};
+import { getRandomMonster } from "../../monster/getRandomMonster";
+import { getMonsterUpate } from "../../character/getMonsterUpdate";
+import { createEncounter } from "../../encounter/createEncounter";
+import { limitedCharacterEmbed } from "../../character/limitedCharacterEmbed";
+import { encounterEmbed } from "./encounterEmbed";
 
 export const monster = async (
   interaction: CommandInteraction
@@ -53,18 +26,24 @@ export const monster = async (
   // TODO: explore do/while refactor
   let monster = getRandomMonster();
   let player = getUserCharacter(interaction.user);
+  const encounter = createEncounter({ monster, player });
   let round = 0;
   let fled = false;
   let timeout = false;
   const playerAttacks = [];
   const monsterAttacks = [];
   const message = await interaction.reply({
-    embeds: [monsterEmbed(monster)],
+    embeds: [
+      monsterEmbed(monster),
+      limitedCharacterEmbed(player),
+      encounterEmbed(encounter),
+    ],
     fetchReply: true,
   });
   if (!(message instanceof Message)) return;
 
   while (monster.hp > 0 && player.hp > 0 && !fled && !timeout) {
+    encounter.rounds++;
     round++;
     await message.react("⚔");
     await message.react("🏃‍♀️");
@@ -100,7 +79,7 @@ export const monster = async (
     const monsterResult = attack(monster.id, player.id);
     monsterAttacks.push(monsterResult);
 
-    const updatedMonster = getCharacter(monster.id);
+    const updatedMonster = getMonsterUpate(monster);
     const updatedPlayer = getCharacter(player.id);
     if (!updatedMonster || !updatedPlayer || !playerResult || !monsterResult)
       return;
@@ -138,6 +117,8 @@ export const monster = async (
           )
           .addField(...attackField(monsterResult))
           .addField(...attackField(playerResult)),
+        limitedCharacterEmbed(player),
+        encounterEmbed(encounter),
       ],
     });
   }

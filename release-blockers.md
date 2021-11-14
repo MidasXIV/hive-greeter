@@ -1,4 +1,4 @@
-- [ ] fix monster state
-- [ ] recursive map serialization
+- [x] fix monster state
+- [?] recursive map serialization
 - [ ] opportunity attacks
 - [ ] fleeing monsters

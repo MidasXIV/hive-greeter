@@ -6,7 +6,7 @@ export type Encounter = {
   monsterId: string;
   playerAttacks: AttackResult[];
   monsterAttacks: AttackResult[];
-
+  rounds: number;
   date: string;
   inProgress: boolean;
   result?: "victory" | "defeat" | "retreat" | "monster fled";

@@ -1,6 +1,6 @@
 import { MessageEmbed } from "discord.js";
-import { Character } from "../character/Character";
-import { primaryStatFields } from "./inspect";
+import { Character } from "./Character";
+import { primaryStatFields } from "../commands/inspect";
 
 export const limitedCharacterEmbed = (character: Character): MessageEmbed =>
   new MessageEmbed()
