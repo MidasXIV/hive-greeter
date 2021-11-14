@@ -1,5 +1,4 @@
 import { CommandInteraction, Message, MessageEmbed } from "discord.js";
-import { Character } from "../../character/Character";
 import { playerAttack } from "../../attack/playerAttack";
 import { attack } from "../../attack/attack";
 import { hpBar } from "../../character/hpBar/hpBar";
@@ -19,6 +18,9 @@ import { createEncounter } from "../../encounter/createEncounter";
 import { Monster } from "../../monster/Monster";
 import { encounterInProgressEmbed } from "./encounterInProgressEmbed";
 import { AttackResult } from "../../attack/AttackResult";
+import { Character } from "../../character/Character";
+import { Encounter } from "../../monster/Encounter";
+import { adjustHP } from "../../character/adjustHP";
 
 export const monster = async (
   interaction: CommandInteraction
@@ -27,20 +29,18 @@ export const monster = async (
   let monster = getRandomMonster();
   let player = getUserCharacter(interaction.user);
   const encounter = createEncounter({ monster, player });
-  let round = 0;
   let fled = false;
   let timeout = false;
   const playerAttacks = [];
   const monsterAttacks = [];
   const message = await interaction.reply({
-    embeds: [encounterInProgressEmbed(encounter), attackExchangeEmbed()],
+    embeds: [encounterInProgressEmbed(encounter)],
     fetchReply: true,
   });
   if (!(message instanceof Message)) return;
 
   while (monster.hp > 0 && player.hp > 0 && !fled && !timeout) {
     encounter.rounds++;
-    round++;
     await message.react("⚔");
     await message.react("🏃‍♀️");
     const collected = await message
@@ -66,7 +66,10 @@ export const monster = async (
       encounter.outcome = "player fled";
     }
 
-    const playerResult = fled ? undefined : attack(player.id, monster.id);
+    const playerResult =
+      encounter.outcome == "player fled"
+        ? undefined
+        : attack(player.id, monster.id);
     const monsterResult = attack(monster.id, player.id);
     playerResult && playerAttacks.push(playerResult);
     monsterResult && monsterAttacks.push(monsterResult);
@@ -94,6 +97,8 @@ export const monster = async (
       embeds: [
         encounterInProgressEmbed(encounter),
         attackExchangeEmbed({
+          monster,
+          player,
           playerAttack: playerResult,
           monsterAttack: monsterResult,
         }),
@@ -101,35 +106,27 @@ export const monster = async (
     });
   }
 
-  const summary = new MessageEmbed().setDescription(`Fight summary`);
-
-  if (fled) {
-    summary.addField("Fled", `You escaped with your life!`);
-    encounter.outcome = "player fled";
-  }
   if (monster.hp === 0 && player.hp > 0) {
     encounter.outcome = "player victory";
-    summary.addField("Triumphant!", `You defeated the ${monster.name}! 🎉`);
     awardXP(player.id, monster.xpValue);
-    summary.addField("XP Gained", monster.xpValue.toString());
     adjustGold(player.id, monster.gold);
-    summary.addField("GP Gained", monster.gold.toString());
     if (player.quests.slayer) {
-      const character = updateUserQuestProgess(interaction.user, "slayer", 1);
-      if (character && character.quests.slayer)
-        summary.addFields([questProgressField(character.quests.slayer)]);
+      updateUserQuestProgess(interaction.user, "slayer", 1);
     }
   }
   if (player.hp === 0) {
-    summary.addField("Unconscious", "You were knocked out!");
     if (monster.hp > 0 && player.gold > 0) {
       encounter.outcome = "player defeated";
       setGold(player.id, 0);
-      summary.addField("Looted", `You lost 💰${player.gold} gold!`);
+      adjustGold(monster.id, player.gold);
+      awardXP(monster.id, player.xpValue);
+      adjustHP(monster.id, monster.maxHP - monster.hp); // TODO: heal over time instead of immediately
     } else {
       encounter.outcome = "double ko";
     }
   }
+
+  const summary = encounterSummaryEmbed(encounter, monster, player);
 
   message.reactions.removeAll();
 
@@ -137,49 +134,50 @@ export const monster = async (
     embeds: [summary],
   });
 
-  if (!fled && player.hp > 0 && Math.random() <= 0.3)
+  if (encounter.outcome === "player victory" && Math.random() <= 0.3)
     await chest(interaction, true);
   if (
     isUserQuestComplete(interaction.user, "slayer") ||
     isUserQuestComplete(interaction.user, "survivor")
   )
     await quests.execute(interaction, "followUp");
-
-  function attackExchangeEmbed(
-    {
-      playerAttack,
-      monsterAttack,
-    }: {
-      playerAttack: AttackResult | void;
-      monsterAttack: AttackResult | void;
-    } = { playerAttack: undefined, monsterAttack: undefined }
-  ): MessageEmbed {
-    const embed = new MessageEmbed()
-      .addField(
-        `${monster.name}'s HP`,
-        `${hpBar(
-          monster,
-          playerAttack && playerAttack.outcome === "hit"
-            ? -playerAttack.damage
-            : 0
-        )}`
-      )
-      .addField(
-        `${player.name}'s HP`,
-        `${hpBar(
-          player,
-          monsterAttack && monsterAttack.outcome === "hit"
-            ? -monsterAttack.damage
-            : 0
-        )}`
-      );
-    if (monsterAttack) embed.addField(...attackField(monsterAttack));
-    if (playerAttack) {
-      embed.addField(...attackField(playerAttack));
-    }
-    return embed;
-  }
 };
+function attackExchangeEmbed({
+  monster,
+  player,
+  playerAttack,
+  monsterAttack,
+}: {
+  monster: Monster;
+  player: Character;
+  playerAttack: AttackResult | void;
+  monsterAttack: AttackResult | void;
+}): MessageEmbed {
+  const embed = new MessageEmbed()
+    .addField(
+      `${monster.name}'s HP`,
+      `${hpBar(
+        monster,
+        playerAttack && playerAttack.outcome === "hit"
+          ? -playerAttack.damage
+          : 0
+      )}`
+    )
+    .addField(
+      `${player.name}'s HP`,
+      `${hpBar(
+        player,
+        monsterAttack && monsterAttack.outcome === "hit"
+          ? -monsterAttack.damage
+          : 0
+      )}`
+    );
+  if (monsterAttack) embed.addField(...attackField(monsterAttack));
+  if (playerAttack) {
+    embed.addField(...attackField(playerAttack));
+  }
+  return embed;
+}
 
 const attackField = (
   result: ReturnType<typeof playerAttack>
@@ -196,9 +194,28 @@ const attackField = (
     : "No result.",
 ];
 
-const monsterEmbed = (monster: Character) =>
-  new MessageEmbed()
-    .setTitle(monster.name)
-    .setDescription(monster.id)
-    .setColor("RED")
-    .setImage(monster.profile);
+function encounterSummaryEmbed(
+  encounter: Encounter,
+  monster: Monster,
+  character: Character
+): MessageEmbed {
+  const summary = new MessageEmbed().setDescription(`Fight summary`);
+
+  if (encounter.outcome == "player fled") {
+    summary.addField("Fled", `You escaped with your life!`);
+  }
+  if (encounter.outcome === "player victory") {
+    summary.addField("Triumphant!", `You defeated the ${monster.name}! 🎉`);
+    summary.addField("XP Gained", "🧠" + monster.xpValue.toString());
+    summary.addField("GP Gained", "💰" + monster.gold.toString());
+    if (character && character.quests.slayer)
+      summary.addFields([questProgressField(character.quests.slayer)]);
+  }
+  if (encounter.outcome === "player defeated") {
+    summary.addField("Unconscious", "You were knocked out!");
+    if (monster.hp > 0 && character.gold > 0) {
+      summary.addField("Looted", `You lost 💰${character.gold} gold!`);
+    }
+  }
+  return summary;
+}

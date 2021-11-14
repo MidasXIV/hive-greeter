@@ -6,6 +6,7 @@ import { getCharacterStatModified } from "../character/getCharacterStatModified"
 import { updateCharacterQuestProgess } from "../quest/updateQuestProgess";
 import { adjustHP } from "../character/adjustHP";
 
+// TODO: decouple attack calculations from state side effects
 export const attack = (
   attackerId: string,
   defenderId: string
