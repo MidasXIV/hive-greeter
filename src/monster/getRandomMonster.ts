@@ -26,6 +26,7 @@ export const getRandomMonster = (): Monster => {
         name: "Green Slime Man",
         hp: 24,
         maxHP: 24,
+        ac: 7,
         attackBonus: 0,
         damageBonus: 2,
         damageMax: 4,

@@ -1,2 +1,4 @@
-- [ ] fix monsters while loop bug
+- [ ] fix monster state
 - [ ] recursive map serialization
+- [ ] opportunity attacks
+- [ ] fleeing monsters

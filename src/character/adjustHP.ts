@@ -7,6 +7,7 @@ export const adjustHP = (
   characterId: string,
   amount: number
 ): Character | void => {
+  console.log("adjustHP", characterId, amount);
   const character = getCharacter(characterId);
   if (!character) {
     console.error(`adjustHP could not find characterId: ${characterId}`);
@@ -24,6 +25,7 @@ export const adjustCharacterHP = (
   let newHp = character.hp + amount;
   if (newHp < 0) newHp = 0;
   if (newHp > maxHP) newHp = maxHP;
+  console.log("adjustCharacterHP", character.name, newHp);
   return {
     ...character,
     hp: newHp,

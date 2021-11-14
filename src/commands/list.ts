@@ -44,7 +44,7 @@ function showMonsters(interaction: CommandInteraction) {
   const monsters = Array.from(getMonsters().values());
   interaction.reply({
     embeds: [
-      new MessageEmbed({ title: "Known Monsters" }),
+      new MessageEmbed({ title: "Monsters seen in the area" }),
       ...(monsters.length > 0
         ? monsters
             .sort((a, b) => b.xp - a.xp)

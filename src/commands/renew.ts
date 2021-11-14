@@ -44,7 +44,7 @@ export const execute = async (
       content: `${interaction.user} renews ${target} for ${heal}`,
       embeds: [
         new MessageEmbed({
-          fields: [hpBarField(getUserCharacter(target))],
+          fields: [hpBarField(getUserCharacter(target), heal)],
           timestamp: new Date(new Date().valueOf() + tickRate),
         }),
       ],
