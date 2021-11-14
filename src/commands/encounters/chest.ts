@@ -187,7 +187,7 @@ const chestEmbed = (chest: Chest): MessageEmbed => {
     embed.addField("Inspected", "You inspected the chest.");
     chest.trapFound
       ? embed.addField("It's a Trap!", "The chest is trapped.")
-      : embed.addField("Trap", "You don't _believe_ the chest is trapped...");
+      : embed.addField("Trap?", "You don't _believe_ the chest is trapped...");
   }
 
   if (chest.trapDisarmAttempted)

@@ -20,9 +20,9 @@ type GameState = {
 export const gameState: GameState = {
   characters: new Map(),
   monsters: new Map(),
-  loots: new Map(),
   encounters: new Map(),
   cooldowns: defaultCooldowns,
+  loots: new Map(),
 };
 
 export const defaultProfile = "attachment://profile.png";
@@ -37,6 +37,7 @@ export const getDBJSON = (space = 2): string =>
       lastSave: new Date().toString(),
       characters: Array.from(gameState.characters.entries()),
       monsters: Array.from(gameState.monsters.entries()),
+      loots: Array.from(gameState.loots.entries()),
       encounters: Array.from(gameState.encounters.entries()),
       cooldowns: gameState.cooldowns,
     },
@@ -63,18 +64,21 @@ export const loadDB = async (): Promise<void> => {
 
 export const loadSerializedDB = (serialized: string): GameState => {
   const parsed = JSON.parse(serialized);
-  const characters = parsed.characters.map(
-    ([id, character]: [string, Character]) => [
+
+  gameState.characters = new Map<string, Character>(
+    parsed.characters.map(([id, character]: [string, Character]) => [
       id,
       {
         ...defaultCharacter,
         ...character,
         activeEncounters: character.activeEncounters ?? [],
       },
-    ]
+    ])
   );
-  const characterMap = new Map<string, Character>(characters);
-  gameState.characters = characterMap;
+  gameState.monsters = new Map(parsed.monsters);
+  gameState.encounters = new Map(parsed.encounters);
+  gameState.loots = new Map(parsed.loots);
+  gameState.cooldowns = parsed.cooldowns;
   console.log("Database loaded", gameState);
   return gameState;
 };

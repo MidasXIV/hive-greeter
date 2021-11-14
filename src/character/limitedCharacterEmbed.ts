@@ -9,4 +9,5 @@ export const limitedCharacterEmbed = (
   new MessageEmbed()
     .setTitle(character.name)
     .setThumbnail(character.profile)
+    .setDescription(character.id)
     .addFields(primaryStatFields({ character, adjustment }));

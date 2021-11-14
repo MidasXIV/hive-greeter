@@ -9,7 +9,7 @@ import hp from "./hp";
 import hpbartest from "../character/hpBar/hpbartest";
 import inspect from "./inspect";
 import inventory from "./inventory";
-import list from "./list";
+import list from "./list/list";
 import monster from "./monster";
 import quest from "./quest";
 import quests from "./quests";

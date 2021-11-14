@@ -5,4 +5,5 @@ export const monsterEmbed = (monster: Monster): MessageEmbed =>
   new MessageEmbed({
     title: monster.name,
     color: "RED",
+    description: monster.activeEncounters.toString(),
   }).setImage(monster.profile);

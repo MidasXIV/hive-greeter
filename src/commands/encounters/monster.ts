@@ -2,21 +2,23 @@ import { CommandInteraction, Message, MessageEmbed } from "discord.js";
 import { Character } from "../../character/Character";
 import { playerAttack } from "../../attack/playerAttack";
 import { attack } from "../../attack/attack";
+import { hpBar } from "../../character/hpBar/hpBar";
 import { attackFlavorText, attackRollText } from "../attack";
 import { chest } from "./chest";
 import { isUserQuestComplete } from "../../quest/isQuestComplete";
 import quests from "../quests";
 import { updateUserQuestProgess } from "../../quest/updateQuestProgess";
 import { questProgressField } from "../../quest/questProgressField";
+import { adjustGold } from "../../character/adjustGold";
+import { awardXP } from "../../character/awardXP";
+import { getCharacter } from "../../character/getCharacter";
 import { getUserCharacter } from "../../character/getUserCharacter";
+import { setGold } from "../../character/setGold";
 import { getRandomMonster } from "../../monster/getRandomMonster";
-import { getMonsterUpate } from "../../character/getMonsterUpdate";
 import { createEncounter } from "../../encounter/createEncounter";
-import { limitedCharacterEmbed } from "../../character/limitedCharacterEmbed";
-import { encounterCard } from "./encounterEmbed";
-import { loot } from "../../character/loot/loot";
-import { characterEmbed } from "../inspect";
-import { getCharacterUpdate } from "../../character/getCharacterUpdate";
+import { Monster } from "../../monster/Monster";
+import { encounterInProgressEmbed } from "./encounterInProgressEmbed";
+import { AttackResult } from "../../attack/AttackResult";
 
 export const monster = async (
   interaction: CommandInteraction
@@ -25,24 +27,20 @@ export const monster = async (
   let monster = getRandomMonster();
   let player = getUserCharacter(interaction.user);
   const encounter = createEncounter({ monster, player });
+  let round = 0;
+  let fled = false;
   let timeout = false;
+  const playerAttacks = [];
+  const monsterAttacks = [];
   const message = await interaction.reply({
-    embeds: [
-      monsterCard(monster),
-      limitedCharacterEmbed(player),
-      encounterCard(encounter),
-    ],
+    embeds: [encounterInProgressEmbed(encounter)],
     fetchReply: true,
   });
   if (!(message instanceof Message)) return;
 
-  while (
-    monster.hp > 0 &&
-    player.hp > 0 &&
-    encounter.status === "in progress" &&
-    !timeout
-  ) {
+  while (monster.hp > 0 && player.hp > 0 && !fled && !timeout) {
     encounter.rounds++;
+    round++;
     await message.react("⚔");
     await message.react("🏃‍♀️");
     const collected = await message
@@ -55,7 +53,6 @@ export const monster = async (
         errors: ["time"],
       })
       .catch(() => {
-        encounter.status = "retreat";
         timeout = true;
       });
     if (!collected || timeout) {
@@ -69,22 +66,21 @@ export const monster = async (
     }
 
     if (reaction.emoji.name === "🏃‍♀️") {
-      encounter.status = "retreat";
+      fled = true;
+      encounter.outcome = "player fled";
     }
 
-    let playerResult;
-    if (encounter.status === "in progress") {
-      playerResult = attack(player.id, monster.id);
-      playerResult && encounter.playerAttacks.push(playerResult);
-    }
+    const playerResult = fled ? undefined : attack(player.id, monster.id);
     const monsterResult = attack(monster.id, player.id);
+    playerResult && playerAttacks.push(playerResult);
+    monsterResult && monsterAttacks.push(monsterResult);
+    playerResult && encounter.playerAttacks.push(playerResult);
     monsterResult && encounter.monsterAttacks.push(monsterResult);
 
-    const updatedMonster = getMonsterUpate(monster);
-    const updatedPlayer = getCharacterUpdate(player);
-    // if (!updatedMonster || !updatedPlayer || !playerResult || !monsterResult)
-    //   return;
-    monster = updatedMonster;
+    const updatedMonster = getCharacter(monster.id);
+    const updatedPlayer = getCharacter(player.id);
+    if (!updatedMonster || !updatedPlayer || !monsterResult) return;
+    monster = updatedMonster as Monster; // todo: fixme
     player = updatedPlayer;
 
     const userReactions = message.reactions.cache.filter((reaction) =>
@@ -98,34 +94,27 @@ export const monster = async (
     } catch (error) {
       console.error("Failed to remove reactions.");
     }
-    const embeds = [
-      monsterCard(monster),
-      characterEmbed(player),
-      encounterCard(encounter),
-
-      new MessageEmbed({}).addField(...attackField(playerResult)),
-      new MessageEmbed({}).addField(...attackField(monsterResult)),
-      // .addField(...attackField(monsterResult))
-    ];
-    if (encounter.status === "in progress") {
-      playerResult = attack(player.id, monster.id);
-      playerResult && encounter.playerAttacks.push(playerResult);
-    }
-
+    const exchangeDetails = attackExchangeEmbed({
+      playerAttack: playerResult,
+      monsterAttack: monsterResult,
+    });
     message.edit({
-      embeds,
+      embeds: [encounterInProgressEmbed(encounter), exchangeDetails],
     });
   }
 
   const summary = new MessageEmbed().setDescription(`Fight summary`);
 
-  if (encounter.status === "retreat") {
+  if (fled) {
     summary.addField("Fled", `You escaped with your life!`);
+    encounter.outcome = "player fled";
   }
   if (monster.hp === 0 && player.hp > 0) {
+    encounter.outcome = "victory";
     summary.addField("Triumphant!", `You defeated the ${monster.name}! 🎉`);
-    loot({ targetId: monster.id, looterId: player.id });
+    awardXP(player.id, monster.xpValue);
     summary.addField("XP Gained", monster.xpValue.toString());
+    adjustGold(player.id, monster.gold);
     summary.addField("GP Gained", monster.gold.toString());
     if (player.quests.slayer) {
       const character = updateUserQuestProgess(interaction.user, "slayer", 1);
@@ -134,10 +123,13 @@ export const monster = async (
     }
   }
   if (player.hp === 0) {
-    summary.addField("😫 Unconscious", "You were knocked out!");
-    if (monster.hp > 0) {
-      loot({ looterId: monster.id, targetId: player.id });
+    summary.addField("Unconscious", "You were knocked out!");
+    if (monster.hp > 0 && player.gold > 0) {
+      encounter.outcome = "player fled";
+      setGold(player.id, 0);
       summary.addField("Looted", `You lost 💰${player.gold} gold!`);
+    } else {
+      encounter.outcome = "double ko";
     }
   }
 
@@ -147,13 +139,48 @@ export const monster = async (
     embeds: [summary],
   });
 
-  if (encounter.status === "victory" && player.hp > 0 && Math.random() <= 0.3)
+  if (!fled && player.hp > 0 && Math.random() <= 0.3)
     await chest(interaction, true);
   if (
     isUserQuestComplete(interaction.user, "slayer") ||
     isUserQuestComplete(interaction.user, "survivor")
   )
     await quests.execute(interaction, "followUp");
+
+  function attackExchangeEmbed(
+    {
+      playerAttack,
+      monsterAttack,
+    }: {
+      playerAttack: AttackResult | void;
+      monsterAttack: AttackResult | void;
+    } = { playerAttack: undefined, monsterAttack: undefined }
+  ): MessageEmbed {
+    const embed = new MessageEmbed()
+      .addField(
+        `${monster.name}'s HP`,
+        `${hpBar(
+          monster,
+          playerAttack && playerAttack.outcome === "hit"
+            ? -playerAttack.damage
+            : 0
+        )}`
+      )
+      .addField(
+        `${player.name}'s HP`,
+        `${hpBar(
+          player,
+          monsterAttack && monsterAttack.outcome === "hit"
+            ? -monsterAttack.damage
+            : 0
+        )}`
+      );
+    if (monsterAttack) embed.addField(...attackField(monsterAttack));
+    if (playerAttack) {
+      embed.addField(...attackField(playerAttack));
+    }
+    return embed;
+  }
 };
 
 const attackField = (
@@ -171,8 +198,9 @@ const attackField = (
     : "No result.",
 ];
 
-const monsterCard = (monster: Character) =>
-  new MessageEmbed({
-    title: monster.name,
-    color: "RED",
-  }).setImage(monster.profile);
+const monsterEmbed = (monster: Character) =>
+  new MessageEmbed()
+    .setTitle(monster.name)
+    .setDescription(monster.id)
+    .setColor("RED")
+    .setImage(monster.profile);
