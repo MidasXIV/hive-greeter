@@ -1,5 +1,5 @@
 import { MessageActionRow, MessageButton } from "discord.js";
-import { Item } from "../utils/equipment";
+import { Item } from "./equipment";
 
 export const equipItemRow = (item: Item): MessageActionRow =>
   new MessageActionRow().addComponents(

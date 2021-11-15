@@ -1,5 +1,8 @@
 import { CommandInteraction, MessageEmbed } from "discord.js";
-import { adjustHP, d6, awardXP, getUserCharacter } from "../../../gameState";
+import { adjustHP } from "../../../character/adjustHP";
+import { awardXP } from "../../../character/awardXP";
+import { d6 } from "../../../gameState";
+import { getUserCharacter } from "../../../character/getUserCharacter";
 import { questProgressField } from "../../../quest/questProgressField";
 import { updateUserQuestProgess } from "../../../quest/updateQuestProgess";
 
@@ -11,8 +14,8 @@ export async function barFight(interaction: CommandInteraction): Promise<void> {
     .setTitle("Bar Fight!")
     .setColor("RED")
     .setDescription("You get into a drunken brawl and are kicked out.")
-    .addField("HP Lost", damage.toString())
-    .addField("XP Gained", "1")
+    .addField("HP Lost", "🩸" + damage.toString())
+    .addField("XP Gained", "🧠 1")
     .setImage("https://i.imgur.com/yo1JymD.png");
   const character = getUserCharacter(interaction.user);
   if (character.hp > 0 && character.quests.survivor) {

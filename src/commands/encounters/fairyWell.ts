@@ -1,5 +1,6 @@
 import { CommandInteraction, MessageEmbed } from "discord.js";
-import { adjustHP, awardXP } from "../../gameState";
+import { adjustHP } from "../../character/adjustHP";
+import { awardXP } from "../../character/awardXP";
 // import { updateUserQuestProgess } from "../../quest/updateQuestProgess";
 
 export const fairyWell = async (

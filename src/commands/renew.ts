@@ -1,9 +1,10 @@
 import { SlashCommandBuilder } from "@discordjs/builders";
 import { CommandInteraction, Message, MessageEmbed } from "discord.js";
 import { isCharacterOnCooldown } from "../character/isCharacterOnCooldown";
-import { adjustHP, getUserCharacter } from "../gameState";
+import { getUserCharacter } from "../character/getUserCharacter";
 import { cooldownRemainingText } from "../utils";
 import { hpBarField } from "../character/hpBar/hpBarField";
+import { adjustHP } from "../character/adjustHP";
 
 export const command = new SlashCommandBuilder()
   .setName("renew")
@@ -43,7 +44,7 @@ export const execute = async (
       content: `${interaction.user} renews ${target} for ${heal}`,
       embeds: [
         new MessageEmbed({
-          fields: [hpBarField(getUserCharacter(target))],
+          fields: [hpBarField(getUserCharacter(target), heal)],
           timestamp: new Date(new Date().valueOf() + tickRate),
         }),
       ],

@@ -8,7 +8,8 @@ import {
   MessageSelectMenu,
 } from "discord.js";
 import { Character } from "../character/Character";
-import { adjustGold, getUserCharacter, updateCharacter } from "../gameState";
+import { adjustGold } from "../character/adjustGold";
+import { getUserCharacter } from "../character/getUserCharacter";
 import { grantCharacterItem } from "../equipment/grantCharacterItem";
 import {
   buckler,
@@ -23,7 +24,8 @@ import {
   mace,
   plateArmor,
   towerShield,
-} from "../utils/equipment";
+} from "../equipment/equipment";
+import { updateCharacter } from "../character/updateCharacter";
 
 export const command = new SlashCommandBuilder()
   .setName("shop")

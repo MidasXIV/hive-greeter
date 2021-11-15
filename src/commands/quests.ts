@@ -6,7 +6,7 @@ import {
   MessageButton,
   MessageEmbed,
 } from "discord.js";
-import { getUserCharacter } from "../gameState";
+import { getUserCharacter } from "../character/getUserCharacter";
 import { progressBar } from "../utils/progress-bar";
 import { getCompletedQuests } from "../quest/getCompletedQuests";
 import { Quest } from "../quest/Quest";

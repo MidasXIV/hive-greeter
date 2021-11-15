@@ -1,6 +1,7 @@
 import { SlashCommandBuilder } from "@discordjs/builders";
 import { CommandInteraction, MessageEmbed } from "discord.js";
-import { getUserCharacter, heal } from "../gameState";
+import { heal } from "../heal";
+import { getUserCharacter } from "../character/getUserCharacter";
 import { cooldownRemainingText } from "../utils";
 import { hpBarField } from "../character/hpBar/hpBarField";
 
@@ -38,7 +39,7 @@ export const execute = async (
         embeds: [
           new MessageEmbed()
             .setTitle(`Heal`)
-            .setDescription(`Healed ${target} for ${result.amount}!`)
+            .setDescription(`Healed ${target} for 🤍 ${result.amount}!`)
             .setImage("https://i.imgur.com/S32LDbM.png")
             .addFields([hpBarField(getUserCharacter(target), result.amount)]),
         ],

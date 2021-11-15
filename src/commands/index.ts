@@ -9,13 +9,14 @@ import hp from "./hp";
 import hpbartest from "../character/hpBar/hpbartest";
 import inspect from "./inspect";
 import inventory from "./inventory";
-import list from "./list";
+import list from "./list/list";
 import monster from "./monster";
 import quest from "./quest";
 import quests from "./quests";
 import renew from "./renew";
 import set from "./set";
 import shop from "./shop";
+import admin from "./admin";
 
 const commands = new Map();
 commands.set("adventure", adventure);
@@ -33,8 +34,9 @@ commands.set("quests", quests);
 commands.set("set", set);
 commands.set("shop", shop);
 
-if (process.env.ADMIN_COMMANDS === "true") {
-  console.warn("⚠ ADMIN COMMANDS LOADED ⚠");
+if (process.env.DEV_COMMANDS === "true") {
+  console.warn("⚠ DEV COMMANDS LOADED ⚠");
+  commands.set("admin", admin);
   commands.set("quest", quest);
   commands.set("hpbartest", hpbartest);
   commands.set("monster", monster);

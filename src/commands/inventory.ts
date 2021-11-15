@@ -1,7 +1,7 @@
 import { SlashCommandBuilder } from "@discordjs/builders";
 import { CommandInteraction } from "discord.js";
-import { getUserCharacter } from "../gameState";
-import { itemEmbed } from "../utils/equipment";
+import { getUserCharacter } from "../character/getUserCharacter";
+import { itemEmbed } from "../equipment/equipment";
 
 export const command = new SlashCommandBuilder()
   .setName("inventory")

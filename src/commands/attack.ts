@@ -1,6 +1,7 @@
 import { SlashCommandBuilder } from "@discordjs/builders";
 import { CommandInteraction, MessageEmbed } from "discord.js";
-import { adjustGold, getUserCharacter, setGold } from "../gameState";
+import { adjustGold } from "../character/adjustGold";
+import { getUserCharacter } from "../character/getUserCharacter";
 import { getCharacterStatModifier } from "../character/getCharacterStatModifier";
 import { getCharacterStatModified } from "../character/getCharacterStatModified";
 import { playerAttack } from "../attack/playerAttack";
@@ -8,6 +9,7 @@ import { cooldownRemainingText, sleep } from "../utils";
 import { mentionCharacter } from "../character/mentionCharacter";
 import { attack } from "../attack/attack";
 import { hpBarField } from "../character/hpBar/hpBarField";
+import { setGold } from "../character/setGold";
 
 export const command = new SlashCommandBuilder()
   .setName("attack")
@@ -57,7 +59,7 @@ export const execute = async (
     setGold(defender.id, 0);
     embed.addField(
       "Loot!",
-      `${mentionCharacter(attacker)} takes 💰${
+      `${mentionCharacter(attacker)} takes 💰 ${
         defender.gold
       } from  ${mentionCharacter(result.defender)}`
     );
@@ -75,7 +77,7 @@ export const execute = async (
       setGold(result.defender.id, 0);
       embed.addField(
         "Loot!",
-        `${mentionCharacter(result.attacker)} takes 💰${
+        `${mentionCharacter(result.attacker)} takes 💰 ${
           defender.gold
         } from  ${mentionCharacter(result.defender)}`
       );

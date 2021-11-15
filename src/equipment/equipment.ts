@@ -1,9 +1,10 @@
 import { CommandInteraction, Message, MessageEmbed } from "discord.js";
 import inspect from "../commands/inspect";
-import { equipItem } from "../equipItem";
-import { equipItemRow } from "../equipment/equipItemRow";
-import { getUserCharacter, updateCharacter } from "../gameState";
+import { equipItemRow } from "./equipItemRow";
+import { getUserCharacter } from "../character/getUserCharacter";
 import { StatModifier } from "../statusEffects/StatModifier";
+import { equipItem } from "../character/equipItem";
+import { updateCharacter } from "../character/updateCharacter";
 
 export type Item = {
   type: "weapon" | "armor" | "shield";
@@ -171,7 +172,7 @@ export const itemEmbed = (item: Item): MessageEmbed => {
   const embed = new MessageEmbed()
     .setTitle(item.name)
     .setDescription(item.description)
-    .setFooter("💰" + item.goldValue.toString());
+    .setFooter("💰 " + item.goldValue.toString());
 
   if (itemIsWeapon(item) && item.damageMax)
     embed.addField("Damage Max", item.damageMax.toString(), true);

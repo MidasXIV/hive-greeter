@@ -1,7 +1,9 @@
 import { Character } from "./Character";
-import { getCooldownRemaining } from "../gameState";
+import { getCooldownRemaining } from "../getCooldownRemaining";
 
 export const isCharacterOnCooldown = (
   characterId: string,
   type: keyof Character["cooldowns"]
-): boolean => (getCooldownRemaining(characterId, type) ?? 0) > 0;
+): boolean => {
+  return (getCooldownRemaining(characterId, type) ?? 0) > 0;
+};

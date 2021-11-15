@@ -1,12 +1,11 @@
 import { Character } from "../Character";
 import { getCharacterStatModified } from "../getCharacterStatModified";
 import { clamp, times } from "remeda";
-import { getCharacter } from "../../gameState";
+import { getCharacterUpdate } from "../getCharacterUpdate";
 
 export const hpBar = (c: Character, adjustment = 0): string => {
   const barLength = 10;
-  const character = getCharacter(c.id);
-  if (!character) return "";
+  const character = getCharacterUpdate(c);
 
   const maxHP = getCharacterStatModified(character, "maxHP");
   const fullPercent = character.hp / maxHP;

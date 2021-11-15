@@ -1,6 +1,6 @@
 import { CommandInteraction, MessageEmbed } from "discord.js";
 import inspect from "../../commands/inspect";
-import { getUserCharacter } from "../../gameState";
+import { getUserCharacter } from "../../character/getUserCharacter";
 import { updateStatusEffect } from "../../statusEffects/grantStatusEffect";
 import { StatusEffect } from "../../statusEffects/StatusEffect";
 import { Quest } from "../Quest";

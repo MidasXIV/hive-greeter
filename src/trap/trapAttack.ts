@@ -1,5 +1,8 @@
 import { getCharacterStatModified } from "../character/getCharacterStatModified";
-import { TrapResult, getCharacter, d20, d6, adjustHP } from "../gameState";
+import { d20, d6 } from "../gameState";
+import { TrapResult } from "../TrapResult";
+import { getCharacter } from "../character/getCharacter";
+import { adjustHP } from "../character/adjustHP";
 
 export const trapAttack = (
   characterId: string,

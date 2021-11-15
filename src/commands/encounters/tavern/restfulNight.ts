@@ -1,5 +1,7 @@
 import { CommandInteraction, MessageEmbed } from "discord.js";
-import { adjustHP, d6, awardXP } from "../../../gameState";
+import { adjustHP } from "../../../character/adjustHP";
+import { awardXP } from "../../../character/awardXP";
+import { d6 } from "../../../gameState";
 
 export async function restfulNight(
   interaction: CommandInteraction

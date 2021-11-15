@@ -4,14 +4,12 @@ import {
   MessageAttachment,
   MessageEmbed,
 } from "discord.js";
-import {
-  adjustHP,
-  adjustGold,
-  awardXP,
-  getUserCharacter,
-} from "../../gameState";
+import { adjustGold } from "../../character/adjustGold";
+import { adjustHP } from "../../character/adjustHP";
+import { awardXP } from "../../character/awardXP";
+import { getUserCharacter } from "../../character/getUserCharacter";
 import { updateStatusEffect } from "../../statusEffects/grantStatusEffect";
-import { trapAttack } from "../../trap/trap";
+import { trapAttack } from "../../trap/trapAttack";
 
 const chestImage = new MessageAttachment("./images/chest.jpg", "chest.jpg");
 
@@ -166,7 +164,7 @@ export const chest = async (
     adjustGold(interaction.user.id, gp);
     embed.addField(
       "Result",
-      `You loot 💰${gp} gold from the chest! You gain ${xp} xp.`
+      `You loot 💰 ${gp} gold from the chest! You gain 🧠 ${xp} xp.`
     );
   }
   if (getUserCharacter(interaction.user).hp === 0) {
@@ -189,7 +187,7 @@ const chestEmbed = (chest: Chest): MessageEmbed => {
     embed.addField("Inspected", "You inspected the chest.");
     chest.trapFound
       ? embed.addField("It's a Trap!", "The chest is trapped.")
-      : embed.addField("Trap", "You don't _believe_ the chest is trapped...");
+      : embed.addField("Trap?", "You don't _believe_ the chest is trapped...");
   }
 
   if (chest.trapDisarmAttempted)

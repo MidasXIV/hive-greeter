@@ -1,7 +1,7 @@
 import { CommandInteraction } from "discord.js";
 import moment from "moment";
 import { Character } from "./character/Character";
-import { getCooldownRemaining } from "./gameState";
+import { getCooldownRemaining } from "./getCooldownRemaining";
 
 export const sleep = (milliseconds: number): Promise<void> =>
   new Promise((resolve) => setTimeout(resolve, milliseconds));

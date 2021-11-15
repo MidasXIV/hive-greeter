@@ -1,5 +1,5 @@
 import { CommandInteraction, MessageEmbed } from "discord.js";
-import { grantDivineBlessing } from "../../gameState";
+import { grantDivineBlessing } from "../../grantDivineBlessing";
 
 export const divineBlessing = async (
   interaction: CommandInteraction

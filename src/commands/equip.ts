@@ -5,9 +5,10 @@ import {
   MessageActionRow,
   MessageSelectMenu,
 } from "discord.js";
-import { equipItem } from "../equipItem";
-import { getUserCharacter, updateCharacter } from "../gameState";
-import { Item, itemEmbed, itemIsEquippable } from "../utils/equipment";
+import { getUserCharacter } from "../character/getUserCharacter";
+import { Item, itemEmbed, itemIsEquippable } from "../equipment/equipment";
+import { equipItem } from "../character/equipItem";
+import { updateCharacter } from "../character/updateCharacter";
 
 export const command = new SlashCommandBuilder()
   .setName("equip")

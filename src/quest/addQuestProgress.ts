@@ -1,5 +1,5 @@
 import { Character } from "../character/Character";
-import { getCharacter } from "../gameState";
+import { getCharacter } from "../character/getCharacter";
 import { QuestId } from "./quests";
 
 export const addQuestProgress = (

@@ -1,6 +1,6 @@
 import { SlashCommandBuilder } from "@discordjs/builders";
 import { CommandInteraction } from "discord.js";
-import { setProfile } from "../gameState";
+import { setProfile } from "../setProfile";
 import { execute as inspect } from "./inspect";
 
 export const command = new SlashCommandBuilder()

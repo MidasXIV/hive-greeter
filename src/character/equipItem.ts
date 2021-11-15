@@ -1,5 +1,5 @@
-import { Character } from "./character/Character";
-import { Item } from "./utils/equipment";
+import { Item } from "../equipment/equipment";
+import { Character } from "./Character";
 
 export const equipItem = (character: Character, item: Item): Character => ({
   ...character,

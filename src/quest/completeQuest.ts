@@ -1,5 +1,6 @@
 import { User } from "discord.js";
-import { getUserCharacter, updateCharacter } from "../gameState";
+import { getUserCharacter } from "../character/getUserCharacter";
+import { updateCharacter } from "../character/updateCharacter";
 import { isQuestComplete } from "./isQuestComplete";
 
 export const purgeCompletedQuests = (user: User): void => {

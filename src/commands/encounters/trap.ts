@@ -1,8 +1,10 @@
 import { CommandInteraction, Message, MessageEmbed } from "discord.js";
-import { awardXP, getUserCharacter } from "../../gameState";
-import { trapAttack as trapAttack } from "../../trap/trap";
+import { getUserCharacter } from "../../character/getUserCharacter";
+import { trapAttack as trapAttack } from "../../trap/trapAttack";
 import { sleep } from "../../utils";
 import { updateUserQuestProgess } from "../../quest/updateQuestProgess";
+import { awardXP } from "../../character/awardXP";
+import { trapRollText } from "./trapRollText";
 
 export const trap = async (interaction: CommandInteraction): Promise<void> => {
   const message = await interaction.reply({
@@ -18,7 +20,7 @@ export const trap = async (interaction: CommandInteraction): Promise<void> => {
   if (!(message instanceof Message)) return;
   const result = trapAttack(interaction.user.id);
   if (!result)
-    return await interaction.reply("No result. This should not happen.");
+    return await interaction.reply("No result. This should not happen."); // TODO: then why have this?
   await sleep(2000);
   const character = getUserCharacter(interaction.user);
   switch (result.outcome) {
@@ -51,12 +53,3 @@ export const trap = async (interaction: CommandInteraction): Promise<void> => {
       break;
   }
 };
-
-const trapRollText = (result: ReturnType<typeof trapAttack>): string =>
-  result
-    ? `${result.attackRoll}+${result.attackBonus} (${
-        result.attackRoll + result.attackBonus
-      }) vs ${result.defender.ac} ac${
-        result.outcome === "hit" ? ` for ${result.damage} damage` : ""
-      }.`
-    : "No result";
