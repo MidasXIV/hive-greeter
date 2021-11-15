@@ -16,6 +16,7 @@ import {
   chainArmor,
   dagger,
   equipItemPrompt,
+  heavyCrown,
   Item,
   itemEmbed,
   kiteShield,
@@ -26,10 +27,34 @@ import {
   towerShield,
 } from "../equipment/equipment";
 import { updateCharacter } from "../character/updateCharacter";
+import { weightedRandom } from "./encounters/weightedRandom";
+import { flatMap, pipe, times, values } from "remeda";
 
 export const command = new SlashCommandBuilder()
   .setName("shop")
   .setDescription("If you have coin, game has wares.");
+
+const weights = new Map<Item, number>([
+  [dagger, 1],
+  [mace, 1],
+  [longsword, 1],
+  [leatherArmor, 1],
+  [chainArmor, 1],
+  [plateArmor, 1],
+  [buckler, 1],
+  [kiteShield, 1],
+  [towerShield, 1],
+  [heavyCrown, 1],
+]);
+
+const randomInventoryItem = () =>
+  Array.from(weights.keys())[weightedRandom(Array.from(weights.values()))];
+
+// console.log(times(3, randomInventoryItem));
+
+// const array = flatMap(weights, ([weapon, weight]) => weight);
+// weightedRandom(flatMap(weights, ([weapon, weight]) => weight));
+// debugger;
 
 export const execute = async (
   interaction: CommandInteraction
@@ -39,17 +64,10 @@ export const execute = async (
     "shop.png"
   );
   const player = getUserCharacter(interaction.user);
-  const inventory = [
-    dagger,
-    mace,
-    longsword,
-    leatherArmor,
-    chainArmor,
-    plateArmor,
-    buckler,
-    kiteShield,
-    towerShield,
-  ];
+  const inventory = times(3, randomInventoryItem);
+
+  // weightedRandom()
+  // weightedRandom(weights.map(x => x[1]))
 
   const message = await interaction.reply({
     files: [shopImage],

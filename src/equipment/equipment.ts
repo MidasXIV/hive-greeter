@@ -7,12 +7,13 @@ import { equipItem } from "../character/equipItem";
 import { updateCharacter } from "../character/updateCharacter";
 
 export type Item = {
-  type: "weapon" | "armor" | "shield";
+  type: "weapon" | "armor" | "shield" | "hat";
   name: string;
   description: string;
   goldValue: number;
   modifiers?: StatModifier;
   equippable: boolean;
+  lootable?: boolean;
 };
 export type Equippable = Item & { equippable: true };
 
@@ -42,6 +43,21 @@ export type Shield = Equippable & {
   type: "shield";
 };
 
+type Hat = Equippable & {
+  type: "hat";
+};
+
+export const heavyCrown: Hat = {
+  name: "heavy crown",
+  description: "Beset with jewels, in the daylight it commands the eye.",
+  equippable: true,
+  goldValue: 300,
+  type: "hat",
+  modifiers: {
+    maxHP: 4,
+  },
+};
+
 export const itemIsArmor = (item: Item): item is Armor => item.type === "armor";
 
 export const itemIsWeapon = (item: Item): item is Weapon =>
@@ -69,6 +85,7 @@ export const dagger: Weapon = {
   },
   equippable: true,
 };
+
 export const mace: Weapon = {
   type: "weapon",
   name: "mace",
@@ -86,6 +103,7 @@ export const mace: Weapon = {
   },
   equippable: true,
 };
+
 export const longsword: Weapon = {
   type: "weapon",
   name: "longsword",
