@@ -59,7 +59,7 @@ export const execute = async (
     setGold(defender.id, 0);
     embed.addField(
       "Loot!",
-      `${mentionCharacter(attacker)} takes 💰${
+      `${mentionCharacter(attacker)} takes 💰 ${
         defender.gold
       } from  ${mentionCharacter(result.defender)}`
     );
@@ -77,7 +77,7 @@ export const execute = async (
       setGold(result.defender.id, 0);
       embed.addField(
         "Loot!",
-        `${mentionCharacter(result.attacker)} takes 💰${
+        `${mentionCharacter(result.attacker)} takes 💰 ${
           defender.gold
         } from  ${mentionCharacter(result.defender)}`
       );
