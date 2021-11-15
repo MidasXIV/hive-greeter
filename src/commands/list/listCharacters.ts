@@ -9,6 +9,6 @@ export function listCharacters(interaction: CommandInteraction): void {
     embeds: getUserCharacters()
       .sort((a, b) => b.xp - a.xp)
       .slice(0, 10)
-      .map(limitedCharacterEmbed),
+      .map((character) => limitedCharacterEmbed(character)),
   });
 }
