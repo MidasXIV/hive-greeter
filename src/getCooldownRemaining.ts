@@ -13,7 +13,7 @@ export const getCooldownRemaining = (
     if (remaining < 0) return 0;
     return remaining;
   } catch (e) {
-    console.error(`failed to getCooldownRemaining for user ${characterId}`);
+    console.error(`failed to getCooldownRemaining for user ${characterId}`, e);
     return 0;
   }
 };

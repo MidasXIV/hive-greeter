@@ -78,7 +78,7 @@ export const loadSerializedDB = (serialized: string): GameState => {
   gameState.monsters = new Map(parsed.monsters);
   gameState.encounters = new Map(parsed.encounters);
   gameState.loots = new Map(parsed.loots);
-  gameState.cooldowns = parsed.cooldowns;
+  gameState.cooldowns = parsed.cooldowns || defaultCooldowns;
   console.log("Database loaded", gameState);
   return gameState;
 };
