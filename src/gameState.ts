@@ -7,6 +7,10 @@ import { LootResult } from "./character/loot/loot";
 import { Encounter } from "./monster/Encounter";
 import { Monster } from "./monster/Monster";
 
+import store from './store'
+
+console.log('WAT', store)
+
 export const DB_FILE = "./db.json";
 
 type GameState = {
@@ -79,7 +83,7 @@ export const loadSerializedDB = (serialized: string): GameState => {
   gameState.encounters = new Map(parsed.encounters);
   gameState.loots = new Map(parsed.loots);
   gameState.cooldowns = parsed.cooldowns || defaultCooldowns;
-  console.log("Database loaded", gameState);
+  console.log("Database loaded");
   return gameState;
 };
 
