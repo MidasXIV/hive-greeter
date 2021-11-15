@@ -9,6 +9,9 @@ export type LootResult = {
   targetId: string;
 };
 
+/**
+ * @TODO: refactor `../../commands/encounters/monster.ts` to use this
+ */
 export function loot({
   looterId,
   targetId,
