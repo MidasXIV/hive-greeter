@@ -28,7 +28,7 @@ import {
 } from "../equipment/equipment";
 import { updateCharacter } from "../character/updateCharacter";
 import { weightedRandom } from "./encounters/weightedRandom";
-import { flatMap, pipe, times, values } from "remeda";
+import { times } from "remeda";
 
 export const command = new SlashCommandBuilder()
   .setName("shop")
@@ -47,6 +47,7 @@ const weights = new Map<Item, number>([
   [heavyCrown, 1],
 ]);
 
+// TODO: add shop to encounters
 const randomInventoryItem = () =>
   Array.from(weights.keys())[weightedRandom(Array.from(weights.values()))];
 
