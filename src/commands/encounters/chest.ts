@@ -164,7 +164,7 @@ export const chest = async (
     adjustGold(interaction.user.id, gp);
     embed.addField(
       "Result",
-      `You loot 💰${gp} gold from the chest! You gain ${xp} xp.`
+      `You loot 💰 ${gp} gold from the chest! You gain 🧠 ${xp} xp.`
     );
   }
   if (getUserCharacter(interaction.user).hp === 0) {
