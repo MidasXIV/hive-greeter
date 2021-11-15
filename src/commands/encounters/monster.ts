@@ -29,17 +29,14 @@ export const monster = async (
   let monster = getRandomMonster();
   let player = getUserCharacter(interaction.user);
   const encounter = createEncounter({ monster, player });
-  let fled = false;
   let timeout = false;
-  const playerAttacks = [];
-  const monsterAttacks = [];
   const message = await interaction.reply({
     embeds: [encounterInProgressEmbed(encounter)],
     fetchReply: true,
   });
   if (!(message instanceof Message)) return;
 
-  while (monster.hp > 0 && player.hp > 0 && !fled && !timeout) {
+  while (encounter.outcome === "in progress") {
     encounter.rounds++;
     await message.react("⚔");
     await message.react("🏃‍♀️");
@@ -62,7 +59,6 @@ export const monster = async (
       !reaction ||
       (reaction && reaction.emoji.name === "🏃‍♀️")
     ) {
-      fled = true;
       encounter.outcome = "player fled";
     }
 
@@ -71,8 +67,6 @@ export const monster = async (
         ? undefined
         : attack(player.id, monster.id);
     const monsterResult = attack(monster.id, player.id);
-    playerResult && playerAttacks.push(playerResult);
-    monsterResult && monsterAttacks.push(monsterResult);
     playerResult && encounter.playerAttacks.push(playerResult);
     monsterResult && encounter.monsterAttacks.push(monsterResult);
 
@@ -93,6 +87,53 @@ export const monster = async (
     } catch (error) {
       console.error("Failed to remove reactions.");
     }
+    switch (true) {
+      case player.hp > 0 && monster.hp === 0:
+        encounter.outcome = "player victory";
+        awardXP(player.id, monster.xpValue);
+        adjustGold(player.id, monster.gold);
+        encounter.goldLooted = monster.gold;
+        if (player.quests.slayer) {
+          updateUserQuestProgess(interaction.user, "slayer", 1);
+        }
+        break;
+      case player.hp === 0 && monster.hp > 0:
+        encounter.outcome = "player defeated";
+        setGold(player.id, 0);
+        adjustGold(monster.id, player.gold);
+        encounter.goldLooted = player.gold;
+        awardXP(monster.id, player.xpValue);
+        adjustHP(monster.id, monster.maxHP - monster.hp); // TODO: heal over time instead of immediately
+        break;
+      case player.hp === 0 && monster.hp === 0:
+        encounter.outcome = "double ko";
+        break;
+      default:
+        // still in progress
+        break;
+    }
+    // if (monster.hp === 0 && player.hp > 0) {
+    //   encounter.outcome = "player victory";
+    //   awardXP(player.id, monster.xpValue);
+    //   adjustGold(player.id, monster.gold);
+    //   encounter.goldLooted = monster.gold;
+    //   if (player.quests.slayer) {
+    //     updateUserQuestProgess(interaction.user, "slayer", 1);
+    //   }
+    // }
+    // if (player.hp === 0) {
+    //   if (monster.hp > 0) {
+    //     encounter.outcome = "player defeated";
+    //     setGold(player.id, 0);
+    //     adjustGold(monster.id, player.gold);
+    //     encounter.goldLooted = player.gold;
+    //     awardXP(monster.id, player.xpValue);
+    //     adjustHP(monster.id, monster.maxHP - monster.hp); // TODO: heal over time instead of immediately
+    //   }
+    //   if (monster.hp === 0) {
+    //     encounter.outcome = "double ko";
+    //   }
+    // }
     message.edit({
       embeds: [
         encounterInProgressEmbed(encounter),
@@ -106,32 +147,10 @@ export const monster = async (
     });
   }
 
-  if (monster.hp === 0 && player.hp > 0) {
-    encounter.outcome = "player victory";
-    awardXP(player.id, monster.xpValue);
-    adjustGold(player.id, monster.gold);
-    if (player.quests.slayer) {
-      updateUserQuestProgess(interaction.user, "slayer", 1);
-    }
-  }
-  if (player.hp === 0) {
-    if (monster.hp > 0 && player.gold > 0) {
-      encounter.outcome = "player defeated";
-      setGold(player.id, 0);
-      adjustGold(monster.id, player.gold);
-      awardXP(monster.id, player.xpValue);
-      adjustHP(monster.id, monster.maxHP - monster.hp); // TODO: heal over time instead of immediately
-    } else {
-      encounter.outcome = "double ko";
-    }
-  }
-
-  const summary = encounterSummaryEmbed(encounter, monster, player);
-
   message.reactions.removeAll();
 
   await message.reply({
-    embeds: [summary],
+    embeds: [encounterSummaryEmbed(encounter, monster, player)],
   });
 
   if (encounter.outcome === "player victory" && Math.random() <= 0.3)
@@ -206,15 +225,15 @@ function encounterSummaryEmbed(
   }
   if (encounter.outcome === "player victory") {
     summary.addField("Triumphant!", `You defeated the ${monster.name}! 🎉`);
-    summary.addField("XP Gained", "🧠" + monster.xpValue.toString());
-    summary.addField("GP Gained", "💰" + monster.gold.toString());
+    summary.addField("XP Gained", "🧠 " + monster.xpValue.toString());
+    summary.addField("GP Gained", "💰 " + monster.gold.toString());
     if (character && character.quests.slayer)
       summary.addFields([questProgressField(character.quests.slayer)]);
   }
   if (encounter.outcome === "player defeated") {
     summary.addField("Unconscious", "You were knocked out!");
-    if (monster.hp > 0 && character.gold > 0) {
-      summary.addField("Looted", `You lost 💰${character.gold} gold!`);
+    if (encounter.goldLooted) {
+      summary.addField("Looted!", `💰 ${character.gold}`);
     }
   }
   return summary;
