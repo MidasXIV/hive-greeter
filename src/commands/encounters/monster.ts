@@ -218,23 +218,38 @@ function encounterSummaryEmbed(
   monster: Monster,
   character: Character
 ): MessageEmbed {
-  const summary = new MessageEmbed().setDescription(`Fight summary`);
+  const summary = new MessageEmbed({ title: "Encounter Summary" });
 
-  if (encounter.outcome == "player fled") {
-    summary.addField("Fled", `You escaped with your life!`);
+  switch (encounter.outcome) {
+    case "double ko":
+      summary.addField("Double KO!", `You knocked eachother out!`);
+      break;
+    case "in progress":
+      summary.addField("In Progress", "Encounter in progress.");
+      break;
+    case "monster fled":
+      summary.addField("Evaded!", `${monster.name} escaped!`);
+      break;
+    case "player defeated":
+      summary.addField("Unconscious", `${character.name} knocked out!`);
+      if (encounter.goldLooted) {
+        summary.addField("Looted!", `Lost 💰 ${encounter.goldLooted}!`);
+      }
+      break;
+    case "player fled":
+      summary.addField("Fled", `${character.name} escaped with their life!`);
+      break;
+    case "player victory":
+      summary.addField(
+        "Triumphant!",
+        `${character.name} defeated the ${monster.name}! 🎉`
+      );
+      summary.addField("XP Gained", "🧠 " + monster.xpValue.toString());
+      summary.addField("GP Gained", "💰 " + monster.gold.toString());
+      if (character && character.quests.slayer)
+        summary.addFields([questProgressField(character.quests.slayer)]);
+      break;
   }
-  if (encounter.outcome === "player victory") {
-    summary.addField("Triumphant!", `You defeated the ${monster.name}! 🎉`);
-    summary.addField("XP Gained", "🧠 " + monster.xpValue.toString());
-    summary.addField("GP Gained", "💰 " + monster.gold.toString());
-    if (character && character.quests.slayer)
-      summary.addFields([questProgressField(character.quests.slayer)]);
-  }
-  if (encounter.outcome === "player defeated") {
-    summary.addField("Unconscious", "You were knocked out!");
-    if (encounter.goldLooted) {
-      summary.addField("Looted!", `💰 ${character.gold}`);
-    }
-  }
+
   return summary;
 }

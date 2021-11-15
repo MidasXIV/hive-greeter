@@ -14,7 +14,7 @@ export const encounterEmbed = (encounter: Encounter): MessageEmbed => {
     return new MessageEmbed({
       title: `Monster ${encounter.monsterId} not found`,
     });
-  return new MessageEmbed({
+  const embed = new MessageEmbed({
     title: `Encounter: ${character.name} vs ${monster.name}`,
     fields: [
       {
@@ -44,4 +44,7 @@ export const encounterEmbed = (encounter: Encounter): MessageEmbed => {
     .setColor("RED")
     .setImage(monster.profile)
     .setThumbnail(character.profile);
+  if (encounter.goldLooted)
+    embed.addField("Gold Looted", "💰 " + encounter.goldLooted.toString());
+  return embed;
 };
