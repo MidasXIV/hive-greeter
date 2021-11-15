@@ -48,6 +48,7 @@ export const getDBJSON = (space = 2): string =>
 const isEmptyState = (state: GameState) =>
   state.characters.size === 0 &&
   state.monsters.size === 0 &&
+  state.encounters.size === 0 &&
   state.loots.size === 0;
 
 export const saveDB = async (file = DB_FILE): Promise<void> => {
