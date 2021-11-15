@@ -39,7 +39,7 @@ export const execute = async (
         embeds: [
           new MessageEmbed()
             .setTitle(`Heal`)
-            .setDescription(`Healed ${target} for 🤍${result.amount}!`)
+            .setDescription(`Healed ${target} for 🤍 ${result.amount}!`)
             .setImage("https://i.imgur.com/S32LDbM.png")
             .addFields([hpBarField(getUserCharacter(target), result.amount)]),
         ],
