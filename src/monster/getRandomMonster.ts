@@ -20,7 +20,7 @@ export const getRandomMonster = (): Monster => {
   const rand = Math.random();
   console.log("spawning new monster");
   switch (true) {
-    case rand > 0.75:
+    case rand > 0.9:
       return createMonster({
         name: "Green Slime Man",
         hp: 24,
@@ -33,14 +33,14 @@ export const getRandomMonster = (): Monster => {
         profile:
           "https://dl.airtable.com/.attachmentThumbnails/8f439faeedea2fd168357162ff38d8ec/bb288957",
       });
-    case rand > 0.5:
+    case rand > 0.6:
       return createMonster({
         name: "Orc",
         profile: "https://i.imgur.com/2cT3cLm.jpeg",
         gold: Math.floor(Math.random() * 6) + 2,
         isMonster: true,
       });
-    case rand > 0.25:
+    case rand > 0.3:
       return createMonster({
         hp: 8,
         maxHP: 8,
