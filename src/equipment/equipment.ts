@@ -172,7 +172,7 @@ export const itemEmbed = (item: Item): MessageEmbed => {
   const embed = new MessageEmbed()
     .setTitle(item.name)
     .setDescription(item.description)
-    .setFooter("💰" + item.goldValue.toString());
+    .setFooter("💰 " + item.goldValue.toString());
 
   if (itemIsWeapon(item) && item.damageMax)
     embed.addField("Damage Max", item.damageMax.toString(), true);

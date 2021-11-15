@@ -8,6 +8,7 @@ export type Encounter = {
   monsterAttacks: AttackResult[];
   rounds: number;
   date: string;
+  goldLooted: number;
   outcome:
     | "in progress"
     | "player victory"

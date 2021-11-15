@@ -19,6 +19,7 @@ export function createEncounter({
     playerAttacks: [],
     monsterAttacks: [],
     rounds: 1,
+    goldLooted: 0,
     outcome: "in progress",
   };
   setEncounter(encounter);
