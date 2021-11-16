@@ -36,17 +36,19 @@ export const execute = async (
   const character = getUserCharacter(user);
   const xpEmoji = newFunction(interaction);
   await interaction[responseType]({
+    embeds: Object.values(character.equipment)
+      .map(itemEmbed)
+      .concat(character.statusEffects?.map(statusEffectEmbed) ?? [])
+      .concat(questEmbed(character) ?? []),
+  });
+  await interaction.followUp({
     attachments:
       character.profile === defaultProfile ? [defaultProfileAttachment] : [],
     embeds: [
       characterEmbed(character, xpEmoji),
       statEmbed(character),
       actionEmbed(character),
-    ]
-      .concat(Object.values(character.equipment).map(itemEmbed))
-      .concat(character.statusEffects?.map(statusEffectEmbed) ?? [])
-      .concat(questEmbed(character) ?? []),
-    fetchReply: true,
+    ],
   });
 };
 
