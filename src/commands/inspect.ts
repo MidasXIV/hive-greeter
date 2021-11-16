@@ -34,20 +34,21 @@ export const execute = async (
     (interaction.options.data[0] && interaction.options.data[0].user) ||
     interaction.user;
   const character = getUserCharacter(user);
-  const xpEmoji = newFunction(interaction);
-  if (
+  const xpEmoji = getXPEmoji(interaction);
+  const extendedInfo =
     0 <
     Object.values(character.equipment).length +
       (character.statusEffects?.length ?? 0) +
-      Object.values(character.quests).length
-  )
+      Object.values(character.quests).length;
+
+  if (extendedInfo)
     await interaction[responseType]({
       embeds: Object.values(character.equipment)
         .map(itemEmbed)
         .concat(character.statusEffects?.map(statusEffectEmbed) ?? [])
         .concat(questEmbed(character) ?? []),
     });
-  await interaction.followUp({
+  await interaction[extendedInfo ? "followUp" : responseType]({
     attachments:
       character.profile === defaultProfile ? [defaultProfileAttachment] : [],
     embeds: [
@@ -91,7 +92,7 @@ const questEmbed = (character: Character) => {
   return embed;
 };
 
-function newFunction(interaction: CommandInteraction<CacheType>) {
+function getXPEmoji(interaction: CommandInteraction<CacheType>) {
   return interaction.guild?.emojis.cache.find((emoji) => emoji.name === "xp");
 }
 
