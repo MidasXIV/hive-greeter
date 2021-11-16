@@ -79,7 +79,7 @@ const autoSaveDbFile = "./db.autosave.json";
 setInterval(() => {
   console.error(`Auto saving to ${autoSaveDbFile}.`);
   saveDB(autoSaveDbFile);
-}, 30 * 60000);
+}, 5 * 60000);
 
 // ["beforeExit", "exit", "uncaughtException", "SIGINT"].map((command) => {
 //   process.on(command, (code) => {

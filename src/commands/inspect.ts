@@ -35,12 +35,18 @@ export const execute = async (
     interaction.user;
   const character = getUserCharacter(user);
   const xpEmoji = newFunction(interaction);
-  await interaction[responseType]({
-    embeds: Object.values(character.equipment)
-      .map(itemEmbed)
-      .concat(character.statusEffects?.map(statusEffectEmbed) ?? [])
-      .concat(questEmbed(character) ?? []),
-  });
+  if (
+    0 <
+    Object.values(character.equipment).length +
+      (character.statusEffects?.length ?? 0) +
+      Object.values(character.quests).length
+  )
+    await interaction[responseType]({
+      embeds: Object.values(character.equipment)
+        .map(itemEmbed)
+        .concat(character.statusEffects?.map(statusEffectEmbed) ?? [])
+        .concat(questEmbed(character) ?? []),
+    });
   await interaction.followUp({
     attachments:
       character.profile === defaultProfile ? [defaultProfileAttachment] : [],
