@@ -5,7 +5,7 @@ import { barFight } from "./barFight";
 import { chattyTavernkeepers } from "./chattyTavernkeepers";
 import { restfulNight } from "./restfulNight";
 
-const weights = { restfulNight: 1, barFight: 1, chattyTavernkeepers: 2 };
+const weights = { restfulNight: 1, barFight: 1, chattyTavernkeepers: 1 };
 const items: CommandHandler[] = [restfulNight, barFight, chattyTavernkeepers];
 
 const randomEncounter = (): CommandHandler =>
