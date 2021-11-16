@@ -1,5 +1,4 @@
-import { gameState } from "../gameState";
-import { Hat } from "./equipment";
+import { Hat } from "../equipment/equipment";
 
 export const heavyCrown: Hat = {
   name: "heavy crown",
@@ -15,5 +14,3 @@ export const heavyCrown: Hat = {
   },
   lootable: true,
 };
-
-export const isHeavyCrownInPlay = (): boolean => gameState.isHeavyCrownInPlay;

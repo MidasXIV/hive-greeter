@@ -1,4 +1,4 @@
-import { Character } from "./character/Character";
+import { Character } from "../character/Character";
 
 export type TrapResult =
   | {

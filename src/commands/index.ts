@@ -1,6 +1,7 @@
 import adventure from "./adventure";
 import attack from "./attack";
 import cooldowns from "./cooldowns";
+import crown from "./crown";
 import dance from "./dance";
 import db from "./db";
 import equip from "./equip";
@@ -42,6 +43,7 @@ if (process.env.DEV_COMMANDS === "true") {
   commands.set("hpbartest", hpbartest);
   commands.set("monster", monster);
   commands.set("renew", renew);
+  commands.set("crown", crown);
   commands.set("shop", shop);
 }
 

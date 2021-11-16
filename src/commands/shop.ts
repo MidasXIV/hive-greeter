@@ -30,7 +30,7 @@ import { updateCharacter } from "../character/updateCharacter";
 import { weightedRandom } from "./encounters/weightedRandom";
 import { times } from "remeda";
 import { gameState } from "../gameState";
-import { isHeavyCrownInPlay } from "../equipment/heavyCrown";
+import { isHeavyCrownInPlay } from "../heavyCrown/isHeavyCrownInPlay";
 
 export const command = new SlashCommandBuilder()
   .setName("shop")

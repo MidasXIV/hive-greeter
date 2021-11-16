@@ -1,6 +1,6 @@
-import { updateCharacter } from "./character/updateCharacter";
+import { updateCharacter } from "../character/updateCharacter";
 import { isStatusEffectExpired } from "./isStatusEffectExpired";
-import { gameState } from "./gameState";
+import { gameState } from "../gameState";
 
 export const purgeExpiredStatuses = (characterId: string): void => {
   const character = gameState.characters.get(characterId);
