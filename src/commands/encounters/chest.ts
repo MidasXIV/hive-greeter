@@ -9,7 +9,11 @@ import { adjustHP } from "../../character/adjustHP";
 import { awardXP } from "../../character/awardXP";
 import { getUserCharacter } from "../../character/getUserCharacter";
 import { updateCharacter } from "../../character/updateCharacter";
-import { heavyCrown, itemEmbed } from "../../equipment/equipment";
+import {
+  equipItemPrompt,
+  heavyCrown,
+  itemEmbed,
+} from "../../equipment/equipment";
 import { grantCharacterItem } from "../../equipment/grantCharacterItem";
 import { updateStatusEffect } from "../../statusEffects/grantStatusEffect";
 import { trapAttack } from "../../trap/trapAttack";
@@ -177,7 +181,8 @@ export const chest = async (
         "Heavy Crown",
         `You find a heavy crown. ${heavyCrown.description}`
       );
-      interaction.followUp({ embeds: [itemEmbed(heavyCrown)] });
+      await interaction.followUp({ embeds: [itemEmbed(heavyCrown)] });
+      await equipItemPrompt(interaction, heavyCrown);
     }
   }
   if (getUserCharacter(interaction.user).hp === 0) {

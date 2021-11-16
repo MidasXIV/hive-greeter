@@ -29,6 +29,8 @@ import {
 import { updateCharacter } from "../character/updateCharacter";
 import { weightedRandom } from "./encounters/weightedRandom";
 import { times } from "remeda";
+import { gameState } from "../gameState";
+import { isHeavyCrownInPlay } from "../equipment/heavyCrown";
 
 export const command = new SlashCommandBuilder()
   .setName("shop")
@@ -44,18 +46,10 @@ const weights = new Map<Item, number>([
   [buckler, 1],
   [kiteShield, 1],
   [towerShield, 1],
-  [heavyCrown, 1],
 ]);
 
-// TODO: add shop to encounters
 const randomInventoryItem = () =>
   Array.from(weights.keys())[weightedRandom(Array.from(weights.values()))];
-
-// console.log(times(3, randomInventoryItem));
-
-// const array = flatMap(weights, ([weapon, weight]) => weight);
-// weightedRandom(flatMap(weights, ([weapon, weight]) => weight));
-// debugger;
 
 export const execute = async (
   interaction: CommandInteraction
@@ -67,8 +61,9 @@ export const execute = async (
   const player = getUserCharacter(interaction.user);
   const inventory = times(3, randomInventoryItem);
 
-  // weightedRandom()
-  // weightedRandom(weights.map(x => x[1]))
+  if (!isHeavyCrownInPlay() && Math.random() <= 0.1) {
+    inventory.push(heavyCrown);
+  }
 
   const message = await interaction.reply({
     files: [shopImage],
@@ -125,7 +120,6 @@ const buyItem = async (
   }
   adjustGold(player.id, -item.goldValue);
   updateCharacter(grantCharacterItem(getUserCharacter(interaction.user), item));
-
   await equipItemPrompt(interaction, item);
 };
 
