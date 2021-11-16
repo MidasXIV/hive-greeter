@@ -3,7 +3,7 @@ import { createSlice, PayloadAction } from '@reduxjs/toolkit'
 
 const monstersById: Record<string, Monster> = {}
 
-const characterSlice = createSlice({
+const monstersSlice = createSlice({
   name: 'monsters',
   initialState: {
     monstersById,
@@ -14,12 +14,12 @@ const characterSlice = createSlice({
       state.monstersById[monster.id] = {
         ...monster,
       }
-    }
+    },
   },
 })
 
 export const {
   updateMonster,
-} = characterSlice.actions
+} = monstersSlice.actions
 
-export default characterSlice.reducer
+export default monstersSlice.reducer
