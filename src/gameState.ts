@@ -36,12 +36,12 @@ export const defaultProfileAttachment = new MessageAttachment(
 export const getDBJSON = (space = 2): string =>
   JSON.stringify(
     {
+      ...gameState,
       lastSave: new Date().toString(),
       characters: Array.from(gameState.characters.entries()),
       monsters: Array.from(gameState.monsters.entries()),
       loots: Array.from(gameState.loots.entries()),
       encounters: Array.from(gameState.encounters.entries()),
-      cooldowns: gameState.cooldowns,
     },
     null,
     space
