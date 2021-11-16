@@ -15,6 +15,7 @@ type GameState = {
   loots: Map<string, LootResult>;
   encounters: Map<string, Encounter>;
   cooldowns: typeof defaultCooldowns;
+  isHeavyCrownInPlay: boolean;
 };
 
 export const gameState: GameState = {
@@ -23,6 +24,7 @@ export const gameState: GameState = {
   encounters: new Map(),
   cooldowns: defaultCooldowns,
   loots: new Map(),
+  isHeavyCrownInPlay: false,
 };
 
 export const defaultProfile = "attachment://profile.png";

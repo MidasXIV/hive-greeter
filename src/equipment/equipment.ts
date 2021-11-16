@@ -43,7 +43,7 @@ export type Shield = Equippable & {
   type: "shield";
 };
 
-type Hat = Equippable & {
+export type Hat = Equippable & {
   type: "hat";
 };
 

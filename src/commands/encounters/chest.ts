@@ -9,7 +9,7 @@ import { adjustHP } from "../../character/adjustHP";
 import { awardXP } from "../../character/awardXP";
 import { getUserCharacter } from "../../character/getUserCharacter";
 import { updateCharacter } from "../../character/updateCharacter";
-import { heavyCrown } from "../../equipment/equipment";
+import { heavyCrown, itemEmbed } from "../../equipment/equipment";
 import { grantCharacterItem } from "../../equipment/grantCharacterItem";
 import { updateStatusEffect } from "../../statusEffects/grantStatusEffect";
 import { trapAttack } from "../../trap/trapAttack";
@@ -39,10 +39,8 @@ export const chest = async (
   let fled = false;
   let timeout = false;
 
-  // const hasTrap = Math.random() <= 0.7;
-  // const hasLock = Math.random() <= 0.7;
-  const hasTrap = false;
-  const hasLock = false;
+  const hasTrap = Math.random() <= 0.7;
+  const hasLock = Math.random() <= 0.7;
 
   const chest: Chest = {
     hasLock,
@@ -171,12 +169,16 @@ export const chest = async (
       "Result",
       `You loot 💰 ${gp} gold from the chest! You gain :xp: ${xp} xp.`
     );
-    // if (Math.random() < 0.1) {
-    updateCharacter(
-      grantCharacterItem(getUserCharacter(interaction.user), heavyCrown)
-    );
-    embed.addField("Heavy Crown", `${heavyCrown.description}`);
-    // }
+    if (Math.random() <= 0.01) {
+      updateCharacter(
+        grantCharacterItem(getUserCharacter(interaction.user), heavyCrown)
+      );
+      embed.addField(
+        "Heavy Crown",
+        `You find a heavy crown. ${heavyCrown.description}`
+      );
+      interaction.followUp({ embeds: [itemEmbed(heavyCrown)] });
+    }
   }
   if (getUserCharacter(interaction.user).hp === 0) {
     embed.addField("Result", `You have been defeated by a chest.`);
