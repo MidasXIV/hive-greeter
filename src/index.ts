@@ -54,7 +54,7 @@ app.use("/", (request: Request, response: Response) => {
 });
 
 client.on("ready", () => {
-  console.log("Zaxnyd bot lives!");
+  console.log("Adventures begin!");
 });
 client.on("interactionCreate", async (interaction) => {
   if (!interaction.isCommand()) return;
