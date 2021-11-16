@@ -54,7 +54,7 @@ export function loot({
 }
 
 /**
- * An equipment set, sans lootable gear.
+ * An equipment set, sans lootables.
  */
 const equipmentLooted = (equipment: Character["equipment"]) =>
   values(equipment)
