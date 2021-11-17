@@ -1,6 +1,5 @@
 import { SlashCommandBuilder } from "@discordjs/builders";
 import { CommandInteraction, MessageEmbed } from "discord.js";
-import { adjustGold } from "../character/adjustGold";
 import { getUserCharacter } from "../character/getUserCharacter";
 import { getCharacterStatModifier } from "../character/getCharacterStatModifier";
 import { getCharacterStatModified } from "../character/getCharacterStatModified";
@@ -9,7 +8,8 @@ import { cooldownRemainingText, sleep } from "../utils";
 import { mentionCharacter } from "../character/mentionCharacter";
 import { attack } from "../attack/attack";
 import { hpBarField } from "../character/hpBar/hpBarField";
-import { setGold } from "../character/setGold";
+import { loot } from "../character/loot/loot";
+import { lootResultEmbed } from "../character/loot/lootResultEmbed";
 
 export const command = new SlashCommandBuilder()
   .setName("attack")
@@ -30,6 +30,7 @@ export const execute = async (
 
   const attacker = getUserCharacter(initiator);
   const defender = getUserCharacter(target);
+  let lootResult;
   if (attacker.hp === 0) {
     await interaction.reply({
       embeds: [
@@ -51,40 +52,40 @@ export const execute = async (
         "attack"
       )}.`
     );
-  const embed = attackResultEmbed(result).setTitle(
-    `${attacker.name} attacks ${defender.name}!`
+  const embeds = [];
+  embeds.push(
+    attackResultEmbed(result).setTitle(
+      `${attacker.name} attacks ${defender.name}!`
+    )
   );
-  if (result.defender.hp === 0 && defender.gold) {
-    adjustGold(attacker.id, defender.gold);
-    setGold(defender.id, 0);
-    embed.addField(
-      "Loot!",
-      `${mentionCharacter(attacker)} takes 💰 ${
-        defender.gold
-      } from  ${mentionCharacter(result.defender)}`
-    );
+  if (result.defender.hp === 0) {
+    lootResult = loot({ looterId: attacker.id, targetId: defender.id });
+    if (lootResult) embeds.push(lootResultEmbed(lootResult));
   }
-  await interaction.reply({ embeds: [embed] });
+  await interaction.reply({
+    embeds,
+  });
   await sleep(2000);
+  const retaliationEmbeds: MessageEmbed[] = [];
   if (result.defender.hp > 0) {
     const result = attack(defender.id, attacker.id);
-    if (!result || result.outcome === "cooldown") return; // TODO: cooldown shouldn't be a possible outcome here
-    const embed = attackResultEmbed(result).setTitle(
-      `${defender.name} retaliates against ${attacker.name}!`
-    );
-    if (result.defender.hp === 0 && defender.gold) {
-      adjustGold(result.attacker.id, result.defender.gold);
-      setGold(result.defender.id, 0);
-      embed.addField(
-        "Loot!",
-        `${mentionCharacter(result.attacker)} takes 💰 ${
-          defender.gold
-        } from  ${mentionCharacter(result.defender)}`
+    if (!result || result.outcome === "cooldown")
+      // TODO: cooldown shouldn't be a possible outcome here
+      return await interaction.reply(
+        `No attack result or retaliation outcome is cooldown. This should not happen.`
       );
+    retaliationEmbeds.push(
+      attackResultEmbed(result).setTitle(
+        `${defender.name} retaliates against ${attacker.name}!`
+      )
+    );
+    if (result.defender.hp === 0) {
+      lootResult = loot({ looterId: defender.id, targetId: attacker.id });
+      if (lootResult) retaliationEmbeds.push(lootResultEmbed(lootResult));
     }
 
     await interaction.followUp({
-      embeds: [embed],
+      embeds: retaliationEmbeds,
     });
   }
 };
