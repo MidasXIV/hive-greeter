@@ -1,3 +1,4 @@
+console.time("ready");
 import dotenv from "dotenv";
 dotenv.config({ path: ".env" });
 
@@ -55,6 +56,7 @@ app.use("/", (request: Request, response: Response) => {
 });
 
 client.on("ready", () => {
+  console.timeEnd("ready");
   console.log("Adventures begin!");
 });
 client.on("interactionCreate", async (interaction) => {
