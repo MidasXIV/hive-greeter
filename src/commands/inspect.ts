@@ -116,6 +116,11 @@ export const statFields = (
     value: `🩸 ${statText(character, "damageBonus")}`,
     inline: true,
   },
+  {
+    name: "Max HP",
+    value: `🩸 ${statText(character, "maxHP")}`,
+    inline: true,
+  },
 ];
 export const statEmbed = (character: Character): MessageEmbed =>
   new MessageEmbed({
