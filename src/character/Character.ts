@@ -1,9 +1,12 @@
 import { User } from "discord.js";
-import { Item, Weapon } from "../equipment/equipment";
+import { Armor, Hat, Item, Shield, Weapon } from "../equipment/equipment";
 import { Quest } from "../quest/Quest";
 import { QuestId } from "../quest/quests";
 import { StatusEffect } from "../statusEffects/StatusEffect";
 import { Stats } from "./Stats";
+
+type x = Item["type"];
+type y = Map<Item["type"], Item>;
 
 export type Character = Stats & {
   id: string;
@@ -15,6 +18,9 @@ export type Character = Stats & {
   inventory: Item[];
   equipment: {
     weapon?: Weapon;
+    armor?: Armor;
+    shield?: Shield;
+    hat?: Hat;
   };
 
   cooldowns: {

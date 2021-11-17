@@ -1,7 +1,9 @@
 import adventure from "./adventure";
 import attack from "./attack";
 import cooldowns from "./cooldowns";
+import crown from "./crown";
 import dance from "./dance";
+import lootme from "./lootme";
 import db from "./db";
 import equip from "./equip";
 import heal from "./heal";
@@ -17,6 +19,8 @@ import renew from "./renew";
 import set from "./set";
 import shop from "./shop";
 import admin from "./admin";
+import chest from "./chest";
+import lootmonster from "./lootmonster";
 
 const commands = new Map();
 commands.set("adventure", adventure);
@@ -32,15 +36,19 @@ commands.set("inventory", inventory);
 commands.set("list", list);
 commands.set("quests", quests);
 commands.set("set", set);
-commands.set("shop", shop);
 
 if (process.env.DEV_COMMANDS === "true") {
   console.warn("⚠ DEV COMMANDS LOADED ⚠");
   commands.set("admin", admin);
   commands.set("quest", quest);
+  commands.set("chest", chest);
   commands.set("hpbartest", hpbartest);
   commands.set("monster", monster);
   commands.set("renew", renew);
+  commands.set("crown", crown);
+  commands.set("shop", shop);
+  commands.set("lootme", lootme);
+  commands.set("lootmonster", lootmonster);
 }
 
 export default commands;

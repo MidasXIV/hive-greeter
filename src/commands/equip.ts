@@ -6,7 +6,7 @@ import {
   MessageSelectMenu,
 } from "discord.js";
 import { getUserCharacter } from "../character/getUserCharacter";
-import { Item, itemEmbed, itemIsEquippable } from "../equipment/equipment";
+import { Item, itemEmbed, isEquippable } from "../equipment/equipment";
 import { equipItem } from "../character/equipItem";
 import { updateCharacter } from "../character/updateCharacter";
 
@@ -50,7 +50,7 @@ const equipOptions = (inventory: Item[]) =>
     .setCustomId("item")
     .setPlaceholder("What would you like to equip?")
     .addOptions(
-      inventory.filter(itemIsEquippable).map((item, i) => ({
+      inventory.filter(isEquippable).map((item, i) => ({
         label: item.name,
         description: item.description,
         value: i.toString(),

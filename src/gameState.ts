@@ -15,6 +15,7 @@ type GameState = {
   loots: Map<string, LootResult>;
   encounters: Map<string, Encounter>;
   cooldowns: typeof defaultCooldowns;
+  isHeavyCrownInPlay: boolean;
 };
 
 export const gameState: GameState = {
@@ -23,6 +24,7 @@ export const gameState: GameState = {
   encounters: new Map(),
   cooldowns: defaultCooldowns,
   loots: new Map(),
+  isHeavyCrownInPlay: false,
 };
 
 export const defaultProfile = "attachment://profile.png";
@@ -34,12 +36,12 @@ export const defaultProfileAttachment = new MessageAttachment(
 export const getDBJSON = (space = 2): string =>
   JSON.stringify(
     {
+      ...gameState,
       lastSave: new Date().toString(),
       characters: Array.from(gameState.characters.entries()),
       monsters: Array.from(gameState.monsters.entries()),
       loots: Array.from(gameState.loots.entries()),
       encounters: Array.from(gameState.encounters.entries()),
-      cooldowns: gameState.cooldowns,
     },
     null,
     space
@@ -52,15 +54,18 @@ const isEmptyState = (state: GameState) =>
   state.loots.size === 0;
 
 export const saveDB = async (file = DB_FILE): Promise<void> => {
-  console.log("saving db");
+  console.time("saveDB");
   if (isEmptyState(gameState)) return;
   const data = getDBJSON();
   await writeFile(file, data, { encoding: "utf-8" });
+  console.timeEnd("saveDB");
 };
 
 export const loadDB = async (): Promise<void> => {
+  console.time("loadDB");
   const data = await readFile(DB_FILE, { encoding: "utf-8" });
   loadSerializedDB(data.toString());
+  console.timeEnd("loadDB");
 };
 
 export const loadSerializedDB = (serialized: string): GameState => {

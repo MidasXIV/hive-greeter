@@ -1,22 +1,16 @@
 import { SlashCommandBuilder } from "@discordjs/builders";
-import {
-  CacheType,
-  CommandInteraction,
-  EmbedFieldData,
-  Emoji,
-  MessageEmbed,
-} from "discord.js";
+import { CacheType, CommandInteraction, MessageEmbed } from "discord.js";
 import { Character } from "../character/Character";
 import { defaultProfile, defaultProfileAttachment } from "../gameState";
 import { getUserCharacter } from "../character/getUserCharacter";
 import { getCharacterStatModifier } from "../character/getCharacterStatModifier";
 import { getCharacterStatModified } from "../character/getCharacterStatModified";
 import { cooldownRemainingText } from "../utils";
-import { hpBar } from "../character/hpBar/hpBar";
 import { Stat } from "../character/Stats";
-import { questProgressField } from "../quest/questProgressField";
 import { itemEmbed } from "../equipment/equipment";
 import { StatusEffect } from "../statusEffects/StatusEffect";
+import { characterEmbed } from "../character/characterEmbed";
+import { questEmbed } from "./questEmbed";
 
 export const command = new SlashCommandBuilder()
   .setName("inspect")
@@ -34,6 +28,7 @@ export const execute = async (
     (interaction.options.data[0] && interaction.options.data[0].user) ||
     interaction.user;
   const character = getUserCharacter(user);
+  console.log(`inspect ${character.name}`, character);
   const xpEmoji = getXPEmoji(interaction);
   const extendedInfo =
     0 <
@@ -68,62 +63,8 @@ export const statText = (character: Character, stat: Stat): string => {
   return `${modified}${modifier ? ` (${sign}${modifier})` : ""}`;
 };
 
-export const characterEmbed = (
-  character: Character,
-  xpEmoji?: Emoji
-): MessageEmbed => {
-  const embed = new MessageEmbed()
-    .setTitle(character.name)
-    .setImage(character.profile)
-    .addFields([
-      ...primaryStatFields({ character, xpEmoji }),
-      ...statFields(character),
-    ]);
-  return embed;
-};
-
-const questEmbed = (character: Character) => {
-  if (Object.keys(character.quests).length === 0) return;
-  const embed = new MessageEmbed();
-  embed.setTitle("Quests");
-  Object.values(character.quests).forEach((quest) => {
-    embed.addFields([questProgressField(quest)]);
-  });
-  return embed;
-};
-
 function getXPEmoji(interaction: CommandInteraction<CacheType>) {
   return interaction.guild?.emojis.cache.find((emoji) => emoji.name === "xp");
-}
-
-export function primaryStatFields({
-  character,
-  xpEmoji,
-  adjustment = 0,
-}: {
-  character: Character;
-  xpEmoji?: Emoji;
-  adjustment?: number;
-}): EmbedFieldData[] {
-  return [
-    {
-      name: "HP",
-      value: `${character.hp}/${getCharacterStatModified(
-        character,
-        "maxHP"
-      )}\n${hpBar(character, adjustment)}`,
-    },
-    {
-      name: "XP",
-      value: (xpEmoji?.toString() ?? "🧠") + " " + character.xp.toString(),
-      inline: true,
-    },
-    {
-      name: "GP",
-      value: "💰 " + character.gold.toString(),
-      inline: true,
-    },
-  ];
 }
 
 const actionEmbed = (character: Character) =>
@@ -173,6 +114,11 @@ export const statFields = (
   {
     name: "Damage Bonus",
     value: `🩸 ${statText(character, "damageBonus")}`,
+    inline: true,
+  },
+  {
+    name: "Max HP",
+    value: `🩸 ${statText(character, "maxHP")}`,
     inline: true,
   },
 ];

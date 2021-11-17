@@ -1,5 +1,5 @@
-import { Monster } from "./monster/Monster";
-import { gameState } from "./gameState";
+import { Monster } from "./Monster";
+import { gameState } from "../gameState";
 
 export const updateMonster = (monster: Monster): Monster => {
   console.log("update monster", monster);

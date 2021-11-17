@@ -8,6 +8,10 @@ import { adjustGold } from "../../character/adjustGold";
 import { adjustHP } from "../../character/adjustHP";
 import { awardXP } from "../../character/awardXP";
 import { getUserCharacter } from "../../character/getUserCharacter";
+import { updateCharacter } from "../../character/updateCharacter";
+import { equipItemPrompt, itemEmbed } from "../../equipment/equipment";
+import { grantCharacterItem } from "../../equipment/grantCharacterItem";
+import { heavyCrown } from "../../heavyCrown/heavyCrown";
 import { updateStatusEffect } from "../../statusEffects/grantStatusEffect";
 import { trapAttack } from "../../trap/trapAttack";
 
@@ -164,8 +168,19 @@ export const chest = async (
     adjustGold(interaction.user.id, gp);
     embed.addField(
       "Result",
-      `You loot 💰 ${gp} gold from the chest! You gain 🧠 ${xp} xp.`
+      `You loot 💰 ${gp} gold from the chest! You gain :xp: ${xp} xp.`
     );
+    if (Math.random() <= 0.01) {
+      updateCharacter(
+        grantCharacterItem(getUserCharacter(interaction.user), heavyCrown)
+      );
+      embed.addField(
+        "Heavy Crown",
+        `You find a heavy crown. ${heavyCrown.description}`
+      );
+      await interaction.followUp({ embeds: [itemEmbed(heavyCrown)] });
+      await equipItemPrompt(interaction, heavyCrown);
+    }
   }
   if (getUserCharacter(interaction.user).hp === 0) {
     embed.addField("Result", `You have been defeated by a chest.`);

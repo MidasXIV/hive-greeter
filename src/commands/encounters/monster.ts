@@ -8,11 +8,8 @@ import { isUserQuestComplete } from "../../quest/isQuestComplete";
 import quests from "../quests";
 import { updateUserQuestProgess } from "../../quest/updateQuestProgess";
 import { questProgressField } from "../../quest/questProgressField";
-import { adjustGold } from "../../character/adjustGold";
-import { awardXP } from "../../character/awardXP";
 import { getCharacter } from "../../character/getCharacter";
 import { getUserCharacter } from "../../character/getUserCharacter";
-import { setGold } from "../../character/setGold";
 import { getRandomMonster } from "../../monster/getRandomMonster";
 import { createEncounter } from "../../encounter/createEncounter";
 import { Monster } from "../../monster/Monster";
@@ -21,6 +18,8 @@ import { AttackResult } from "../../attack/AttackResult";
 import { Character } from "../../character/Character";
 import { Encounter } from "../../monster/Encounter";
 import { adjustHP } from "../../character/adjustHP";
+import { loot } from "../../character/loot/loot";
+import { lootResultEmbed } from "../../character/loot/lootResultEmbed";
 
 export const monster = async (
   interaction: CommandInteraction
@@ -28,6 +27,7 @@ export const monster = async (
   // TODO: explore do/while refactor
   let monster = getRandomMonster();
   let player = getUserCharacter(interaction.user);
+  console.log("monster encounter", monster, player);
   const encounter = createEncounter({ monster, player });
   let timeout = false;
   const message = await interaction.reply({
@@ -90,8 +90,11 @@ export const monster = async (
     switch (true) {
       case player.hp > 0 && monster.hp === 0:
         encounter.outcome = "player victory";
-        awardXP(player.id, monster.xpValue);
-        adjustGold(player.id, monster.gold);
+        encounter.lootResult =
+          loot({
+            looterId: monster.id,
+            targetId: player.id,
+          }) ?? undefined;
         encounter.goldLooted = monster.gold;
         if (player.quests.slayer) {
           updateUserQuestProgess(interaction.user, "slayer", 1);
@@ -99,41 +102,16 @@ export const monster = async (
         break;
       case player.hp === 0 && monster.hp > 0:
         encounter.outcome = "player defeated";
-        setGold(player.id, 0);
-        adjustGold(monster.id, player.gold);
         encounter.goldLooted = player.gold;
-        awardXP(monster.id, player.xpValue);
+        encounter.lootResult =
+          loot({ looterId: monster.id, targetId: player.id }) ?? undefined;
         adjustHP(monster.id, monster.maxHP - monster.hp); // TODO: heal over time instead of immediately
         break;
       case player.hp === 0 && monster.hp === 0:
         encounter.outcome = "double ko";
         break;
-      default:
-        // still in progress
-        break;
     }
-    // if (monster.hp === 0 && player.hp > 0) {
-    //   encounter.outcome = "player victory";
-    //   awardXP(player.id, monster.xpValue);
-    //   adjustGold(player.id, monster.gold);
-    //   encounter.goldLooted = monster.gold;
-    //   if (player.quests.slayer) {
-    //     updateUserQuestProgess(interaction.user, "slayer", 1);
-    //   }
-    // }
-    // if (player.hp === 0) {
-    //   if (monster.hp > 0) {
-    //     encounter.outcome = "player defeated";
-    //     setGold(player.id, 0);
-    //     adjustGold(monster.id, player.gold);
-    //     encounter.goldLooted = player.gold;
-    //     awardXP(monster.id, player.xpValue);
-    //     adjustHP(monster.id, monster.maxHP - monster.hp); // TODO: heal over time instead of immediately
-    //   }
-    //   if (monster.hp === 0) {
-    //     encounter.outcome = "double ko";
-    //   }
-    // }
+
     message.edit({
       embeds: [
         encounterInProgressEmbed(encounter),
@@ -150,7 +128,9 @@ export const monster = async (
   message.reactions.removeAll();
 
   await message.reply({
-    embeds: [encounterSummaryEmbed(encounter, monster, player)],
+    embeds: [encounterSummaryEmbed(encounter, monster, player)].concat(
+      encounter.lootResult ? lootResultEmbed(encounter.lootResult) : []
+    ),
   });
 
   if (encounter.outcome === "player victory" && Math.random() <= 0.3)
@@ -161,6 +141,7 @@ export const monster = async (
   )
     await quests.execute(interaction, "followUp");
 };
+
 function attackExchangeEmbed({
   monster,
   player,

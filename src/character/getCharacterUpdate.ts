@@ -1,13 +1,13 @@
 import { Character } from "./Character";
 import { gameState } from "../gameState";
-import { purgeExpiredStatuses } from "../purgeExpiredStatuses";
+import { purgeExpiredStatuses } from "../statusEffects/purgeExpiredStatuses";
+import { Monster } from "../monster/Monster";
 
 export const getCharacterUpdate = (character: Character): Character => {
   purgeExpiredStatuses(character.id);
-  if (!gameState.characters.get(character.id)) {
-    console.log(
-      `could not get ${character.id} ${character.name} from gameState.characters`
-    );
-  }
   return gameState.characters.get(character.id) ?? character;
+};
+export const getMonsterUpdate = (monster: Monster): Monster => {
+  purgeExpiredStatuses(monster.id);
+  return gameState.monsters.get(monster.id) ?? monster;
 };

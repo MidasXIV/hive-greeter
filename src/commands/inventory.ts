@@ -12,6 +12,7 @@ export const execute = async (
   responseType: "followUp" | "reply" = "reply"
 ): Promise<void> => {
   const player = getUserCharacter(interaction.user);
+  console.log(`${player.name}'s inventory`, player.inventory);
   if (!player.inventory.length) {
     await interaction[responseType]("Your inventory is empty.");
     return;

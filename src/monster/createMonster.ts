@@ -1,6 +1,6 @@
 import { randomUUID } from "crypto";
 import { defaultCharacter } from "../character/defaultCharacter";
-import { updateMonster } from "../updateMonster";
+import { updateMonster } from "./updateMonster";
 import { Monster } from "./Monster";
 
 export const createMonster = (
