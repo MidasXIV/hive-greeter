@@ -2,16 +2,22 @@ import { SlashCommandBuilder } from "@discordjs/builders";
 import { CommandInteraction } from "discord.js";
 import { listCharacters } from "./listCharacters";
 import { listEncounters } from "./listEncounters";
+import { listLootResults } from "./listLootResults";
 import { listMonsters } from "./listMonsters";
 
 export const command = new SlashCommandBuilder()
   .setName("list")
   .setDescription("List something")
   .addSubcommand((option) =>
-    option.setName("characters").setDescription("List all characters")
+    option.setName("characters").setDescription("List all characters.")
   )
   .addSubcommand((option) =>
-    option.setName("monsters").setDescription("Previously encountered monsters")
+    option
+      .setName("monsters")
+      .setDescription("Previously encountered monsters.")
+  )
+  .addSubcommand((option) =>
+    option.setName("loots").setDescription("History of loot results.")
   )
   .addSubcommand((option) =>
     option.setName("encounters").setDescription("Encounter history")
@@ -29,6 +35,9 @@ export const execute = async (
       break;
     case "encounters":
       listEncounters(interaction);
+      break;
+    case "loots":
+      listLootResults(interaction);
       break;
   }
 };

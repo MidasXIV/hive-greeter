@@ -22,6 +22,7 @@ const rest = new REST({ version: "9" }).setToken(process.env.token);
       command.toJSON()
     );
     console.log("Updating commands", body);
+    console.time("updating commands");
     await rest.put(
       Routes.applicationGuildCommands(
         process.env.CLIENT_ID,
@@ -31,7 +32,7 @@ const rest = new REST({ version: "9" }).setToken(process.env.token);
         body,
       }
     );
-    console.log("Updating commands complete");
+    console.timeEnd("updating commands");
   } catch (error) {
     console.log(error);
   }

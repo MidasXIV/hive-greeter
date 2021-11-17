@@ -9,12 +9,9 @@ import { adjustHP } from "../../character/adjustHP";
 import { awardXP } from "../../character/awardXP";
 import { getUserCharacter } from "../../character/getUserCharacter";
 import { updateCharacter } from "../../character/updateCharacter";
-import {
-  equipItemPrompt,
-  heavyCrown,
-  itemEmbed,
-} from "../../equipment/equipment";
+import { equipItemPrompt, itemEmbed } from "../../equipment/equipment";
 import { grantCharacterItem } from "../../equipment/grantCharacterItem";
+import { heavyCrown } from "../../heavyCrown/heavyCrown";
 import { updateStatusEffect } from "../../statusEffects/grantStatusEffect";
 import { trapAttack } from "../../trap/trapAttack";
 

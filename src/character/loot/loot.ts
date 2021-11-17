@@ -1,5 +1,5 @@
 import { randomUUID } from "crypto";
-import { prop, values } from "remeda";
+import { values } from "remeda";
 import { Item } from "../../equipment/equipment";
 import { gameState } from "../../gameState";
 import { Character } from "../Character";
@@ -12,7 +12,11 @@ export type LootResult = {
   goldTaken: number;
   looterId: string;
   targetId: string;
+  timestamp: string;
 };
+
+const isLootable = (item: Item): boolean => item.lootable ?? false;
+const isNotLootable = (item: Item): boolean => !isLootable(item);
 
 export function loot({
   looterId,
@@ -28,19 +32,21 @@ export function loot({
     return;
   }
   const goldTaken = target.gold;
-  const equipment = Object.values(target.equipment);
-  const itemsTaken = equipment.filter((item) => item.lootable);
+  const itemsTaken = target.inventory.filter(isLootable);
+
   updateCharacter({
     ...looter,
     gold: looter.gold + goldTaken,
+    // TODO: equip taken items
+    equipment: autoEquip(looter.equipment), // TODO: add itemsTaken
     xp: looter.xp + target.xpValue,
     inventory: [...looter.inventory, ...itemsTaken],
   });
   updateCharacter({
     ...target,
     gold: 0,
-    equipment: equipmentLooted(target.equipment),
-    inventory: target.inventory.filter(prop("lootable")),
+    equipment: equipmentFilter(target.equipment, isNotLootable),
+    inventory: target.inventory.filter(isNotLootable),
   });
   const loot: LootResult = {
     id: randomUUID(),
@@ -48,17 +54,29 @@ export function loot({
     itemsTaken,
     looterId: looter.id,
     targetId: target.id,
+    timestamp: new Date().toString(),
   };
+  console.log(`${looter.name} loots ${target.name}`, loot);
   gameState.loots.set(loot.id, loot);
   return loot;
 }
 
+const autoEquip = (
+  equipment: Character["equipment"]
+  // items: Item[] // TODO: implement this
+): Character["equipment"] => {
+  return equipment;
+};
+
 /**
- * An equipment set, sans lootables.
+ * Equipment minus lootables.
  */
-const equipmentLooted = (equipment: Character["equipment"]) =>
+const equipmentFilter = (
+  equipment: Character["equipment"],
+  predicate: (item: Item) => boolean
+) =>
   values(equipment)
-    .filter((x) => x.lootable)
+    .filter(predicate)
     .reduce(
       (equipment, item) => ({
         ...equipment,

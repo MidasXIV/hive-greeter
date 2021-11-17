@@ -1,4 +1,5 @@
 import { AttackResult } from "../attack/AttackResult";
+import { LootResult } from "../character/loot/loot";
 
 export type Encounter = {
   id: string;
@@ -9,6 +10,7 @@ export type Encounter = {
   rounds: number;
   date: string;
   goldLooted: number;
+  lootResult?: LootResult;
   outcome:
     | "in progress"
     | "player victory"

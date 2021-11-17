@@ -54,15 +54,18 @@ const isEmptyState = (state: GameState) =>
   state.loots.size === 0;
 
 export const saveDB = async (file = DB_FILE): Promise<void> => {
-  console.log("saving db");
+  console.time("saveDB");
   if (isEmptyState(gameState)) return;
   const data = getDBJSON();
   await writeFile(file, data, { encoding: "utf-8" });
+  console.timeEnd("saveDB");
 };
 
 export const loadDB = async (): Promise<void> => {
+  console.time("loadDB");
   const data = await readFile(DB_FILE, { encoding: "utf-8" });
   loadSerializedDB(data.toString());
+  console.timeEnd("loadDB");
 };
 
 export const loadSerializedDB = (serialized: string): GameState => {

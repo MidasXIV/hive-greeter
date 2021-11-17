@@ -47,24 +47,11 @@ export type Hat = Equippable & {
   type: "hat";
 };
 
-export const heavyCrown: Hat = {
-  name: "heavy crown",
-  description: "Beset with jewels, in the daylight it commands the eye.",
-  equippable: true,
-  goldValue: 300,
-  type: "hat",
-  modifiers: {
-    maxHP: 4,
-  },
-};
-
-export const itemIsArmor = (item: Item): item is Armor => item.type === "armor";
-
-export const itemIsWeapon = (item: Item): item is Weapon =>
-  item.type === "weapon";
-
-export const itemIsEquippable = (item: Item): item is Equippable =>
-  item.equippable;
+export const isHat = (item: Item): item is Hat => item.type === "hat";
+export const isArmor = (item: Item): item is Armor => item.type === "armor";
+export const isShield = (item: Item): item is Shield => item.type === "shield";
+export const isWeapon = (item: Item): item is Weapon => item.type === "weapon";
+export const isEquippable = (item: Item): item is Equippable => item.equippable;
 
 export const dagger: Weapon = {
   type: "weapon",
@@ -192,7 +179,7 @@ export const itemEmbed = (item: Item): MessageEmbed => {
     .setDescription(item.description)
     .setFooter("💰 " + item.goldValue.toString());
 
-  if (itemIsWeapon(item) && item.damageMax)
+  if (isWeapon(item) && item.damageMax)
     embed.addField("Damage Max", item.damageMax.toString(), true);
 
   if (item.modifiers?.attackBonus)
@@ -203,11 +190,13 @@ export const itemEmbed = (item: Item): MessageEmbed => {
 
   if (item.modifiers?.ac)
     embed.addField("AC Bonus", item.modifiers?.ac.toString());
+
   if (item.modifiers?.monsterDamageMax)
     embed.addField(
       "Monster Damage Max",
       item.modifiers?.monsterDamageMax.toString()
     );
+  embed.addField("Lootable?", item.lootable ? "Yes" : "No");
 
   return embed;
 };

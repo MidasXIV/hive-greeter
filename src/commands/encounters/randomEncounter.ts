@@ -10,6 +10,7 @@ import { travel } from "./travel";
 import { chest } from "./chest";
 import { vigorShrine } from "./shrine/vigor";
 import { weightedRandom } from "./weightedRandom";
+import { shop } from "./shop";
 
 type CommandHandler = (interaction: CommandInteraction) => Promise<void>;
 type EncounterId =
@@ -19,6 +20,7 @@ type EncounterId =
   | "divineBlessing"
   | "fairyWell"
   | "monster"
+  | "shop"
   | "tavern"
   | "trap"
   | "travel"
@@ -33,14 +35,16 @@ const encounterWeights = {
   armorShrine: 1,
   attackShrine: 1,
   chest: 2,
-  divineBlessing: 0.01,
+  divineBlessing: 0.05,
   fairyWell: 1,
   monster: 2,
-  tavern: 2,
+  shop: 1,
+  tavern: 1,
   trap: 1,
   travel: 1,
   vigorShrine: 1,
 };
+
 const encounters: CommandHandler[] = [
   armorShrine,
   attackShrine,
@@ -48,6 +52,7 @@ const encounters: CommandHandler[] = [
   divineBlessing,
   fairyWell,
   monster,
+  shop,
   tavern,
   trap,
   travel,

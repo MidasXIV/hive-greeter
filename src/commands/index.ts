@@ -20,6 +20,7 @@ import set from "./set";
 import shop from "./shop";
 import admin from "./admin";
 import chest from "./chest";
+import lootmonster from "./lootmonster";
 
 const commands = new Map();
 commands.set("adventure", adventure);
@@ -47,6 +48,7 @@ if (process.env.DEV_COMMANDS === "true") {
   commands.set("crown", crown);
   commands.set("shop", shop);
   commands.set("lootme", lootme);
+  commands.set("lootmonster", lootmonster);
 }
 
 export default commands;
