@@ -9,6 +9,11 @@ export function listLootResults(interaction: CommandInteraction): void {
     embeds:
       loots.size > 0
         ? Array.from(loots.values())
+            .sort(
+              (a, b) =>
+                new Date(a.timestamp).valueOf() -
+                new Date(b.timestamp).valueOf()
+            )
             .map((lootResult) => lootResultEmbed(lootResult))
             .slice(0, 10)
         : [
