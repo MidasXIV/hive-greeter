@@ -3,10 +3,9 @@ import { getCharacter } from "../getCharacter";
 import { LootResult } from "./loot";
 
 export const lootResultEmbed = (lootResult: LootResult): MessageEmbed => {
-  const embed = new MessageEmbed({}).addField(
-    "Gold",
-    `💰 ${lootResult.goldTaken}`
-  );
+  const embed = new MessageEmbed({
+    timestamp: lootResult.timestamp,
+  }).addField("Gold", `💰 ${lootResult.goldTaken}`);
   const looter = getCharacter(lootResult.looterId);
   const lootee = getCharacter(lootResult.targetId);
   if (looter && lootee) {
