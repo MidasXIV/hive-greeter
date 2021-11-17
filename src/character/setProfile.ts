@@ -1,6 +1,6 @@
-import { Character } from "./character/Character";
-import { getCharacter } from "./character/getCharacter";
-import { updateCharacter } from "./character/updateCharacter";
+import { Character } from "./Character";
+import { getCharacter } from "./getCharacter";
+import { updateCharacter } from "./updateCharacter";
 
 export const setProfile = (id: string, url: string): Character | void => {
   const character = getCharacter(id);

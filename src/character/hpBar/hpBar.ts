@@ -28,11 +28,11 @@ export const hpBar = (c: Character, adjustment = 0): string => {
     min: 0,
   });
 
-  console.log("hpBar", { full, damage, heal, empty });
-  if (full < 0) return `full ${full}`;
-  if (damage < 0) return `damage ${damage}`;
-  if (heal < 0) return `heal ${heal}`;
-  if (empty < 0) return `empty ${empty}`;
+  console.log("hpBar", { full, damage, heal, empty }, character, adjustment);
+  if (full < 0) return `bug: full ${full}`;
+  if (damage < 0) return `bug: damage ${damage}`;
+  if (heal < 0) return `bug: heal ${heal}`;
+  if (empty < 0) return `bug: empty ${empty}`;
   try {
     return (
       repeat("💚", full) +

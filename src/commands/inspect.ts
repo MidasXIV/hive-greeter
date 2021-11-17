@@ -8,9 +8,9 @@ import { getCharacterStatModified } from "../character/getCharacterStatModified"
 import { cooldownRemainingText } from "../utils";
 import { Stat } from "../character/Stats";
 import { itemEmbed } from "../equipment/equipment";
-import { StatusEffect } from "../statusEffects/StatusEffect";
 import { characterEmbed } from "../character/characterEmbed";
 import { questEmbed } from "./questEmbed";
+import { statusEffectEmbed } from "./statusEffectEmbed";
 
 export const command = new SlashCommandBuilder()
   .setName("inspect")
@@ -148,14 +148,3 @@ export const statEmbed = (character: Character): MessageEmbed =>
       },
     ],
   });
-
-function statusEffectEmbed(effect: StatusEffect) {
-  return new MessageEmbed({
-    title: effect.name,
-    fields: Object.entries(effect.modifiers).map(([name, value]) => ({
-      name,
-      value: value.toString(),
-    })),
-    timestamp: new Date(new Date(effect.started).valueOf() + effect.duration),
-  });
-}

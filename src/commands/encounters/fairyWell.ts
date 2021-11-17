@@ -1,6 +1,9 @@
 import { CommandInteraction, MessageEmbed } from "discord.js";
 import { adjustHP } from "../../character/adjustHP";
 import { awardXP } from "../../character/awardXP";
+import { getUserCharacter } from "../../character/getUserCharacter";
+import { hpBarField } from "../../character/hpBar/hpBarField";
+import { xpGainField } from "../../character/xpGainField";
 // import { updateUserQuestProgess } from "../../quest/updateQuestProgess";
 
 export const fairyWell = async (
@@ -10,6 +13,7 @@ export const fairyWell = async (
   adjustHP(interaction.user.id, healAmount);
   awardXP(interaction.user.id, 1);
   // updateUserQuestProgess(interaction.user, "healer", healAmount);
+
   await interaction.reply({
     embeds: [
       new MessageEmbed()
@@ -18,7 +22,10 @@ export const fairyWell = async (
         .setDescription(
           `You drink from a fairy's well, it heals you for ${healAmount}!`
         )
-        .addField("XP Gained", "1")
+        .addFields([
+          xpGainField(interaction, 1),
+          hpBarField(getUserCharacter(interaction.user), healAmount),
+        ])
         .setImage("https://imgur.com/bgq63v9.png"),
     ],
   });

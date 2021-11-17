@@ -16,9 +16,6 @@ type GameState = {
   encounters: Map<string, Encounter>;
   cooldowns: typeof defaultCooldowns;
   isHeavyCrownInPlay: boolean;
-  emojis: {
-    [k in "xp" | "gold"]: string;
-  };
 };
 
 export const gameState: GameState = {
@@ -28,10 +25,6 @@ export const gameState: GameState = {
   cooldowns: defaultCooldowns,
   loots: new Map(),
   isHeavyCrownInPlay: false,
-  emojis: {
-    xp: "🧠",
-    gold: "💰",
-  },
 };
 
 export const defaultProfile = "attachment://profile.png";

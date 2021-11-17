@@ -34,6 +34,7 @@ type randomEncounter = CommandHandler;
 const encounterWeights = {
   armorShrine: 1,
   attackShrine: 1,
+  vigorShrine: 1,
   chest: 2,
   divineBlessing: 0.05,
   fairyWell: 1,
@@ -42,12 +43,12 @@ const encounterWeights = {
   tavern: 1,
   trap: 1,
   travel: 1,
-  vigorShrine: 1,
 };
 
 const encounters: CommandHandler[] = [
   armorShrine,
   attackShrine,
+  vigorShrine,
   chest,
   divineBlessing,
   fairyWell,
@@ -56,7 +57,6 @@ const encounters: CommandHandler[] = [
   tavern,
   trap,
   travel,
-  vigorShrine,
 ];
 
 export const randomEncounter = (): CommandHandler =>

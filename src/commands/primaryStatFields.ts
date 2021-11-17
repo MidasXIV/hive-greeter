@@ -22,7 +22,7 @@ export function primaryStatFields({
     },
     {
       name: "XP",
-      value: (xpEmoji?.toString() ?? "🧠") + " " + character.xp.toString(),
+      value: (xpEmoji?.toString() ?? "🧠") + " " + character.xp.toString(), // TODO: refactor to use Emoji
       inline: true,
     },
     {

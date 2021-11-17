@@ -1,8 +1,8 @@
-import { isCharacterOnCooldown } from "./character/isCharacterOnCooldown";
-import { getCharacter } from "./character/getCharacter";
-import { adjustHP } from "./character/adjustHP";
-import { setCharacterCooldown } from "./character/setCharacterCooldown";
-import { d6 } from "./gameState";
+import { isCharacterOnCooldown } from "../character/isCharacterOnCooldown";
+import { getCharacter } from "../character/getCharacter";
+import { adjustHP } from "../character/adjustHP";
+import { setCharacterCooldown } from "../character/setCharacterCooldown";
+import { d6 } from "../gameState";
 import { HealResult } from "./HealResult";
 
 export const heal = (

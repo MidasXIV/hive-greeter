@@ -1,7 +1,6 @@
 import { CommandInteraction, Message, MessageEmbed } from "discord.js";
 import { playerAttack } from "../../attack/playerAttack";
 import { attack } from "../../attack/attack";
-import { hpBar } from "../../character/hpBar/hpBar";
 import { attackFlavorText, attackRollText } from "../attack";
 import { chest } from "./chest";
 import { isUserQuestComplete } from "../../quest/isQuestComplete";
@@ -20,6 +19,8 @@ import { Encounter } from "../../monster/Encounter";
 import { adjustHP } from "../../character/adjustHP";
 import { loot } from "../../character/loot/loot";
 import { lootResultEmbed } from "../../character/loot/lootResultEmbed";
+import { xpGainField } from "../../character/xpGainField";
+import { hpBarField } from "../../character/hpBar/hpBarField";
 
 export const monster = async (
   interaction: CommandInteraction
@@ -92,8 +93,8 @@ export const monster = async (
         encounter.outcome = "player victory";
         encounter.lootResult =
           loot({
-            looterId: monster.id,
-            targetId: player.id,
+            looterId: player.id,
+            targetId: monster.id,
           }) ?? undefined;
         encounter.goldLooted = monster.gold;
         if (player.quests.slayer) {
@@ -128,9 +129,14 @@ export const monster = async (
   message.reactions.removeAll();
 
   await message.reply({
-    embeds: [encounterSummaryEmbed(encounter, monster, player)].concat(
-      encounter.lootResult ? lootResultEmbed(encounter.lootResult) : []
-    ),
+    embeds: [
+      encounterSummaryEmbed({
+        encounter,
+        monster,
+        character: player,
+        interaction,
+      }),
+    ].concat(encounter.lootResult ? lootResultEmbed(encounter.lootResult) : []),
   });
 
   if (encounter.outcome === "player victory" && Math.random() <= 0.3)
@@ -153,25 +159,19 @@ function attackExchangeEmbed({
   playerAttack: AttackResult | void;
   monsterAttack: AttackResult | void;
 }): MessageEmbed {
-  const embed = new MessageEmbed()
-    .addField(
-      `${monster.name}'s HP`,
-      `${hpBar(
-        monster,
-        playerAttack && playerAttack.outcome === "hit"
-          ? -playerAttack.damage
-          : 0
-      )}`
-    )
-    .addField(
-      `${player.name}'s HP`,
-      `${hpBar(
-        player,
-        monsterAttack && monsterAttack.outcome === "hit"
-          ? -monsterAttack.damage
-          : 0
-      )}`
-    );
+  const playerDamage =
+    playerAttack && playerAttack.outcome === "hit" ? -playerAttack.damage : 0;
+  const monsterDamage =
+    monsterAttack && monsterAttack.outcome === "hit"
+      ? -monsterAttack.damage
+      : 0;
+  const embed = new MessageEmbed({
+    fields: [
+      hpBarField(monster, playerDamage, true),
+      hpBarField(player, monsterDamage, true),
+    ],
+  });
+
   if (monsterAttack) embed.addField(...attackField(monsterAttack));
   if (playerAttack) {
     embed.addField(...attackField(playerAttack));
@@ -194,11 +194,17 @@ const attackField = (
     : "No result.",
 ];
 
-function encounterSummaryEmbed(
-  encounter: Encounter,
-  monster: Monster,
-  character: Character
-): MessageEmbed {
+function encounterSummaryEmbed({
+  encounter,
+  monster,
+  character,
+  interaction,
+}: {
+  encounter: Encounter;
+  monster: Monster;
+  character: Character;
+  interaction: CommandInteraction;
+}): MessageEmbed {
   const summary = new MessageEmbed({ title: "Encounter Summary" });
 
   switch (encounter.outcome) {
@@ -225,7 +231,8 @@ function encounterSummaryEmbed(
         "Triumphant!",
         `${character.name} defeated the ${monster.name}! 🎉`
       );
-      summary.addField("XP Gained", "🧠 " + monster.xpValue.toString());
+      // summary.addField("XP Gained", "🧠 " + monster.xpValue.toString());
+      summary.addFields([xpGainField(interaction)]);
       summary.addField("GP Gained", "💰 " + monster.gold.toString());
       if (character && character.quests.slayer)
         summary.addFields([questProgressField(character.quests.slayer)]);
