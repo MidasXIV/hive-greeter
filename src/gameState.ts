@@ -9,8 +9,6 @@ import { Monster } from "./monster/Monster";
 
 import store from './store'
 
-console.log('WAT', store)
-
 export const DB_FILE = "./db.json";
 
 type GameState = {
