@@ -1,26 +1,26 @@
 import { CommandInteraction, Message, MessageEmbed } from "discord.js";
-import { playerAttack } from "../../attack/playerAttack";
-import { attack } from "../../attack/attack";
-import { attackFlavorText, attackRollText } from "../attack";
+import { playerAttack } from "../attack/playerAttack";
+import { attack } from "../attack/attack";
+import { attackFlavorText, attackRollText } from "../commands/attack";
 import { chest } from "./chest";
-import { isUserQuestComplete } from "../../quest/isQuestComplete";
-import quests from "../quests";
-import { updateUserQuestProgess } from "../../quest/updateQuestProgess";
-import { questProgressField } from "../../quest/questProgressField";
-import { getCharacter } from "../../character/getCharacter";
-import { getUserCharacter } from "../../character/getUserCharacter";
-import { getRandomMonster } from "../../monster/getRandomMonster";
-import { createEncounter } from "../../encounter/createEncounter";
-import { Monster } from "../../monster/Monster";
+import { isUserQuestComplete } from "../quest/isQuestComplete";
+import quests from "../commands/quests";
+import { updateUserQuestProgess } from "../quest/updateQuestProgess";
+import { questProgressField } from "../quest/questProgressField";
+import { getCharacter } from "../character/getCharacter";
+import { getUserCharacter } from "../character/getUserCharacter";
+import { getRandomMonster } from "../monster/getRandomMonster";
+import { createEncounter } from "../encounter/createEncounter";
+import { Monster } from "../monster/Monster";
 import { encounterInProgressEmbed } from "./encounterInProgressEmbed";
-import { AttackResult } from "../../attack/AttackResult";
-import { Character } from "../../character/Character";
-import { Encounter } from "../../monster/Encounter";
-import { adjustHP } from "../../character/adjustHP";
-import { loot } from "../../character/loot/loot";
-import { lootResultEmbed } from "../../character/loot/lootResultEmbed";
-import { xpGainField } from "../../character/xpGainField";
-import { hpBarField } from "../../character/hpBar/hpBarField";
+import { AttackResult } from "../attack/AttackResult";
+import { Character } from "../character/Character";
+import { Encounter } from "../monster/Encounter";
+import { adjustHP } from "../character/adjustHP";
+import { loot } from "../character/loot/loot";
+import { lootResultEmbed } from "../character/loot/lootResultEmbed";
+import { xpGainField } from "../character/xpGainField";
+import { hpBarField } from "../character/hpBar/hpBarField";
 
 export const monster = async (
   interaction: CommandInteraction

@@ -1,5 +1,5 @@
-import { getCharacterStatModified } from "../../character/getCharacterStatModified";
-import { trapAttack as trapAttack } from "../../trap/trapAttack";
+import { getCharacterStatModified } from "../character/getCharacterStatModified";
+import { trapAttack as trapAttack } from "../trap/trapAttack";
 
 export const trapRollText = (result: ReturnType<typeof trapAttack>): string =>
   result

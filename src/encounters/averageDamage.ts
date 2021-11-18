@@ -1,4 +1,4 @@
-import { AttackResult } from "../../attack/AttackResult";
+import { AttackResult } from "../attack/AttackResult";
 
 export const averageDamage = (attacks: AttackResult[]): number =>
   attacks.reduce(

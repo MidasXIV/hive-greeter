@@ -1,8 +1,8 @@
 import { MessageEmbed } from "discord.js";
-import { getCharacter } from "../../character/getCharacter";
-import { Encounter } from "../../monster/Encounter";
-import { getMonster } from "../../character/getMonster";
-import { decoratedName } from "../../character/decoratedName";
+import { getCharacter } from "../character/getCharacter";
+import { Encounter } from "../monster/Encounter";
+import { getMonster } from "../character/getMonster";
+import { decoratedName } from "../character/decoratedName";
 import { accuracyText } from "./accuracyText";
 
 export const encounterEmbed = (encounter: Encounter): MessageEmbed => {

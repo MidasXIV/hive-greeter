@@ -1,5 +1,5 @@
 import { SlashCommandBuilder } from "@discordjs/builders";
-import { shop } from "./encounters/shop";
+import { shop } from "../encounters/shop";
 
 export const command = new SlashCommandBuilder()
   .setName("shop")

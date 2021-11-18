@@ -1,5 +1,5 @@
-import { AttackResult } from "../../attack/AttackResult";
-import { Character } from "../../character/Character";
+import { AttackResult } from "../attack/AttackResult";
+import { Character } from "../character/Character";
 import { hitChanceText } from "./hitChanceText";
 import { accuracyBar } from "./accuracyBar";
 

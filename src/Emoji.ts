@@ -7,7 +7,7 @@ const defaultEmojis: {
 } = {
   xp: "🧠",
   gold: "💰",
-  damage: "🩸",
+  damage: "💔",
 };
 
 export function Emoji(interaction: Interaction, name: Emojis): string {

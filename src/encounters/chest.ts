@@ -4,16 +4,17 @@ import {
   MessageAttachment,
   MessageEmbed,
 } from "discord.js";
-import { adjustGold } from "../../character/adjustGold";
-import { adjustHP } from "../../character/adjustHP";
-import { awardXP } from "../../character/awardXP";
-import { getUserCharacter } from "../../character/getUserCharacter";
-import { updateCharacter } from "../../character/updateCharacter";
-import { equipItemPrompt, itemEmbed } from "../../equipment/equipment";
-import { grantCharacterItem } from "../../equipment/grantCharacterItem";
-import { heavyCrown } from "../../heavyCrown/heavyCrown";
-import { updateStatusEffect } from "../../statusEffects/grantStatusEffect";
-import { trapAttack } from "../../trap/trapAttack";
+import { adjustGold } from "../character/adjustGold";
+import { adjustHP } from "../character/adjustHP";
+import { awardXP } from "../character/awardXP";
+import { getUserCharacter } from "../character/getUserCharacter";
+import { updateCharacter } from "../character/updateCharacter";
+import { Emoji } from "../Emoji";
+import { equipItemPrompt, itemEmbed } from "../equipment/equipment";
+import { grantCharacterItem } from "../equipment/grantCharacterItem";
+import { heavyCrown } from "../heavyCrown/heavyCrown";
+import { updateStatusEffect } from "../statusEffects/grantStatusEffect";
+import { trapAttack } from "../trap/trapAttack";
 
 const chestImage = new MessageAttachment("./images/chest.jpg", "chest.jpg");
 
@@ -168,7 +169,13 @@ export const chest = async (
     adjustGold(interaction.user.id, gp);
     embed.addField(
       "Result",
-      `You loot 💰 ${gp} gold from the chest! You gain :xp: ${xp} xp.`
+      `You loot ${Emoji(
+        interaction,
+        "gold"
+      )} ${gp} gold from the chest! You gain ${Emoji(
+        interaction,
+        "xp"
+      )} ${xp} xp.`
     );
     if (Math.random() <= 0.01) {
       updateCharacter(

@@ -1,9 +1,9 @@
 import { CommandInteraction, Message, MessageEmbed } from "discord.js";
-import { getUserCharacter } from "../../character/getUserCharacter";
-import { trapAttack as trapAttack } from "../../trap/trapAttack";
-import { sleep } from "../../utils";
-import { updateUserQuestProgess } from "../../quest/updateQuestProgess";
-import { awardXP } from "../../character/awardXP";
+import { getUserCharacter } from "../character/getUserCharacter";
+import { trapAttack as trapAttack } from "../trap/trapAttack";
+import { sleep } from "../utils";
+import { updateUserQuestProgess } from "../quest/updateQuestProgess";
+import { awardXP } from "../character/awardXP";
 import { trapRollText } from "./trapRollText";
 
 export const trap = async (interaction: CommandInteraction): Promise<void> => {

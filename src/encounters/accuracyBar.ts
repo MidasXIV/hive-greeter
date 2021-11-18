@@ -1,5 +1,5 @@
-import { progressBar } from "../../utils/progress-bar";
-import { AttackResult } from "../../attack/AttackResult";
+import { progressBar } from "../utils/progress-bar";
+import { AttackResult } from "../attack/AttackResult";
 import { averageRoll } from "./averageRoll";
 
 export const accuracyBar = (attacks: AttackResult[]): string => `${progressBar(

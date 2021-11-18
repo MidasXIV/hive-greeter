@@ -1,18 +1,18 @@
 import { CommandInteraction, MessageEmbed } from "discord.js";
-import { StatusEffect } from "../../../statusEffects/StatusEffect";
+import { StatusEffect } from "../../statusEffects/StatusEffect";
 import { shrine } from "./shrine";
 
-export const vigorShrine = async (
+export const armorShrine = async (
   interaction: CommandInteraction
 ): Promise<void> => {
   const effect: StatusEffect = {
-    name: "Shrine of Vigor",
-    buff: true,
-    debuff: false,
+    name: "Shrine of Protection",
     modifiers: {
-      maxHP: 3,
+      ac: 2,
     },
     duration: 30 * 60000,
+    buff: true,
+    debuff: false,
     started: new Date().toString(),
   };
   shrine(
@@ -20,9 +20,7 @@ export const vigorShrine = async (
     effect,
     new MessageEmbed()
       .setColor("GREEN")
-      .setDescription(`The shrine grants you +${effect.modifiers.maxHP} maxHP!`)
-      .setImage(
-        "https://i.pinimg.com/originals/c1/4e/f0/c14ef0766793f8c967f6d685f29d52d6.jpg"
-      )
+      .setDescription(`The shrine grants you +${effect.modifiers.ac} ac!`)
+      .setImage("https://i.imgur.com/mfDAYcQ.png")
   );
 };
