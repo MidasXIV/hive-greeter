@@ -1,7 +1,4 @@
-import { gameState } from "../gameState";
-import { Character } from "./Character";
+import store from '@adventure-bot/store'
+import { getAllCharacters } from "@adventure-bot/store/selectors";
 
-export const getUserCharacters = (): Character[] =>
-  Array.from(gameState.characters.values()).filter(
-    (character) => character.user
-  );
+export const getUserCharacters = () => getAllCharacters(store.getState())

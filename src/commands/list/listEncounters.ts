@@ -7,8 +7,8 @@ export function listEncounters(interaction: CommandInteraction): void {
   const encounters = getEncounters();
   interaction.reply({
     embeds:
-      encounters.size > 0
-        ? Array.from(encounters.values())
+      encounters.length > 0
+        ? encounters
             .map((encounter) => encounterEmbed(encounter))
             .slice(0, 10)
         : [

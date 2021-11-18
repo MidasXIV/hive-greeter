@@ -10,14 +10,24 @@ export const getCharacterById = createSelector(
   (character) => character
 )
 
+export const getAllCharacters = createSelector(
+  (state: ReduxState) => state.characters.charactersById,
+  (charactersById) => Object.values(charactersById)
+)
+
 export const getMonsterById = createSelector(
   (state: ReduxState, id: string) => state.monsters.monstersById[id],
   (monster) => monster
 )
 
+export const getRoamingMonsters = createSelector(
+  (state: ReduxState) => state.monsters.monstersById,
+  (monstersById) => Object.values(monstersById).filter((monster) => monster.hp > 0)
+)
+
 export const getAllEncounters = createSelector(
   (state: ReduxState) => state.encounters.encountersById,
-  (encountersById) => encountersById
+  (encountersById) => Object.values(encountersById)
 )
 
 export const getEncounterById = createSelector(
