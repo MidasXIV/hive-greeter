@@ -1,6 +1,7 @@
 import { Encounter } from "../monster/Encounter";
-import { gameState } from "../gameState";
+import store from '@adventure-bot/store'
+import { getAllEncounters } from "@adventure-bot/store/selectors";
 
-export function getEncounters(): Map<string, Encounter> {
-  return gameState.encounters;
+export function getEncounters(): Record<string, Encounter> {
+  return getAllEncounters(store.getState())
 }

@@ -1,12 +1,9 @@
 import { getCharacter } from "./character/getCharacter";
-import { updateCharacter } from "./character/updateCharacter";
+import store from "@adventure-bot/store"
+import { grantDivineBlessing as doGrantDivineBlessing } from "./store/slices/characters";
 
 export const grantDivineBlessing = (characterId: string): void => {
   const character = getCharacter(characterId);
   if (!character) return;
-  updateCharacter({
-    ...character,
-    maxHP: character.maxHP + 1,
-    hp: character.hp + 1,
-  });
+  store.dispatch(doGrantDivineBlessing(character))
 };

@@ -7,18 +7,18 @@ import { Character } from "@adventure-bot/character/Character";
 
 
 const getCharacterById = createSelector(
-  (state: ReduxState, id: string) => state.characters.charactersById[id],
+  (state: ReduxState, characterId: string) => state.characters.charactersById[characterId],
   (char) => char
 )
 
 const getMonsterById = createSelector(
-  (state: ReduxState, id: string) => state.monsters.monstersById[id],
+  (state: ReduxState, characterId: string) => state.monsters.monstersById[characterId],
   (monst) => monst
 )
 
-export const getCharacter = (id: string): Character | void => {
-  purgeExpiredStatuses(id);
+export const getCharacter = (characterId: string): Character | void => {
+  purgeExpiredStatuses(characterId);
   const state = store.getState()
-  const character = getCharacterById(state, id)
-  return character ?? getMonsterById(state, id);
+  const character = getCharacterById(state, characterId)
+  return character ?? getMonsterById(state, characterId);
 };

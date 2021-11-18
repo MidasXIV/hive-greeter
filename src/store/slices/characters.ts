@@ -2,7 +2,9 @@ import { Character } from "@adventure-bot/character/Character";
 import { StatusEffect } from "@adventure-bot/statusEffects/StatusEffect";
 import { createSlice, PayloadAction } from '@reduxjs/toolkit'
 import { QuestId } from "@adventure-bot/quest/quests";
-// import { updateCharacter } from 'character/updateCharacter';
+import { getCharacterStatModified } from '../../character/getCharacterStatModified';
+
+import { Item } from "@adventure-bot/equipment/equipment";
 
 export const isStatusEffectExpired = (effect: StatusEffect): boolean =>
   Date.now() > new Date(effect.started).valueOf() + effect.duration;
@@ -86,6 +88,42 @@ const characterSlice = createSlice({
         gold,
       }
     },
+
+    grantDivineBlessing(state, action: PayloadAction<Character>) {
+      const character = action.payload
+      state.charactersById[character.id] = {
+        ...character,
+        maxHP: character.maxHP + 1,
+        hp: character.hp + 1,
+      }
+    },
+
+    adjustCharacterHP(state, action: PayloadAction<{
+      character: Character
+      amount: number
+    }>) {
+      const { character, amount } = action.payload
+      const maxHP = getCharacterStatModified(character, "maxHP");
+      let newHp = character.hp + amount;
+      if (newHp < 0) newHp = 0;
+      if (newHp > maxHP) newHp = maxHP;
+
+      state.charactersById[character.id] = {
+        ...character,
+        hp: newHp,
+      }
+    },
+
+    addItemToInventory(state, action: PayloadAction<{
+      character: Character
+      item: Item
+    }>) {
+      const { character, item } = action.payload
+      state.charactersById[character.id] = {
+        ...character,
+        inventory: [...character.inventory, item],
+      }
+    }
   },
 })
 
@@ -96,6 +134,9 @@ export const {
   updateGold,
   addCharacterStatusEffect,
   addCharacterQuestProgress,
+  grantDivineBlessing,
+  adjustCharacterHP,
+  addItemToInventory,
 } = characterSlice.actions
 
 export default characterSlice.reducer

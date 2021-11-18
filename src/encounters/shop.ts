@@ -5,14 +5,15 @@ import {
   MessageAttachment,
   MessageEmbed,
 } from "discord.js";
-import { getUserCharacter } from "../character/getUserCharacter";
-import { itemEmbed } from "../equipment/equipment";
+import { getUserCharacter } from "@adventure-bot/character/getUserCharacter";
+import { itemEmbed } from "@adventure-bot/equipment/equipment";
 import { times } from "remeda";
-import { isHeavyCrownInPlay } from "../heavyCrown/isHeavyCrownInPlay";
-import { heavyCrown } from "../heavyCrown/heavyCrown";
-import { buyItem } from "../commands/buyItem";
-import { randomInventoryItem } from "../commands/randomInventoryItem";
-import { inventorySelector } from "../commands/inventorySelector";
+import { heavyCrown } from "@adventure-bot/heavyCrown/heavyCrown";
+import { buyItem } from "@adventure-bot/commands/buyItem";
+import { randomInventoryItem } from "@adventure-bot/commands/randomInventoryItem";
+import { inventorySelector } from "@adventure-bot/commands/inventorySelector";
+import { hasItemNameInInventory } from '@adventure-bot/store/selectors/index';
+import store from "@adventure-bot/store";
 
 export const shop = async (interaction: CommandInteraction): Promise<void> => {
   const shopImage = new MessageAttachment(
@@ -22,7 +23,9 @@ export const shop = async (interaction: CommandInteraction): Promise<void> => {
   const player = getUserCharacter(interaction.user);
   const inventory = times(3, randomInventoryItem);
 
-  if (!isHeavyCrownInPlay() && Math.random() <= 0.1) {
+  const hasHeavyCrown = hasItemNameInInventory(store.getState(), player, 'heavy crown')
+
+  if (!hasHeavyCrown && Math.random() <= 0.1) {
     inventory.push(heavyCrown);
   }
 
