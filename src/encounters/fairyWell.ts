@@ -1,9 +1,9 @@
 import { CommandInteraction, MessageEmbed } from "discord.js";
-import { adjustHP } from "../../character/adjustHP";
-import { awardXP } from "../../character/awardXP";
-import { getUserCharacter } from "../../character/getUserCharacter";
-import { hpBarField } from "../../character/hpBar/hpBarField";
-import { xpGainField } from "../../character/xpGainField";
+import { adjustHP } from "../character/adjustHP";
+import { awardXP } from "../character/awardXP";
+import { getUserCharacter } from "../character/getUserCharacter";
+import { hpBarField } from "../character/hpBar/hpBarField";
+import { xpGainField } from "../character/xpGainField";
 // import { updateUserQuestProgess } from "../../quest/updateQuestProgess";
 
 export const fairyWell = async (

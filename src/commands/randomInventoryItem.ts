@@ -1,4 +1,4 @@
-import { weightedRandom } from "./encounters/weightedRandom";
+import { weightedRandom } from "../encounters/weightedRandom";
 import {
   buckler,
   chainArmor,

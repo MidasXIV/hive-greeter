@@ -1,6 +1,6 @@
 import { CommandInteraction, MessageEmbed } from "discord.js";
 import { getEncounters } from "../../encounter/getEncounters";
-import { encounterEmbed } from "../encounters/encounterEmbed";
+import { encounterEmbed } from "../../encounters/encounterEmbed";
 
 // TODO: shows incorrect HP current/total
 export function listEncounters(interaction: CommandInteraction): void {

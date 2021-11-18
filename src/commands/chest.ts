@@ -1,6 +1,6 @@
 import { SlashCommandBuilder } from "@discordjs/builders";
 import { CommandInteraction } from "discord.js";
-import { chest } from "./encounters/chest";
+import { chest } from "../encounters/chest";
 
 export const command = new SlashCommandBuilder()
   .setName("chest")

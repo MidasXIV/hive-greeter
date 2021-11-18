@@ -1,5 +1,5 @@
 import { CommandInteraction, Message, MessageEmbed } from "discord.js";
-import { CommandHandler, sleep } from "../../../utils";
+import { CommandHandler, sleep } from "../../utils";
 import { weightedRandom } from "../weightedRandom";
 import { barFight } from "./barFight";
 import { chattyTavernkeepers } from "./chattyTavernkeepers";

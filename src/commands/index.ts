@@ -21,7 +21,7 @@ import shop from "./shop";
 import admin from "./admin";
 import chest from "./chest";
 import lootmonster from "./lootmonster";
-import { barFight } from "./encounters/tavern/barFight";
+import barFight from "./barFight";
 
 const commands = new Map();
 commands.set("adventure", adventure);
@@ -50,7 +50,7 @@ if (process.env.DEV_COMMANDS === "true") {
   commands.set("shop", shop);
   commands.set("lootme", lootme);
   commands.set("lootmonster", lootmonster);
-  commands.set("barFight", barFight);
+  commands.set("bar_fight", barFight);
 }
 
 export default commands;

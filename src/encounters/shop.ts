@@ -5,14 +5,14 @@ import {
   MessageAttachment,
   MessageEmbed,
 } from "discord.js";
-import { getUserCharacter } from "../../character/getUserCharacter";
-import { itemEmbed } from "../../equipment/equipment";
+import { getUserCharacter } from "../character/getUserCharacter";
+import { itemEmbed } from "../equipment/equipment";
 import { times } from "remeda";
-import { isHeavyCrownInPlay } from "../../heavyCrown/isHeavyCrownInPlay";
-import { heavyCrown } from "../../heavyCrown/heavyCrown";
-import { buyItem } from "../buyItem";
-import { randomInventoryItem } from "../randomInventoryItem";
-import { inventorySelector } from "../inventorySelector";
+import { isHeavyCrownInPlay } from "../heavyCrown/isHeavyCrownInPlay";
+import { heavyCrown } from "../heavyCrown/heavyCrown";
+import { buyItem } from "../commands/buyItem";
+import { randomInventoryItem } from "../commands/randomInventoryItem";
+import { inventorySelector } from "../commands/inventorySelector";
 
 export const shop = async (interaction: CommandInteraction): Promise<void> => {
   const shopImage = new MessageAttachment(

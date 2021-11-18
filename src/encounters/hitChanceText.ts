@@ -1,5 +1,5 @@
-import { getCharacterStatModified } from "../../character/getCharacterStatModified";
-import { Character } from "../../character/Character";
+import { getCharacterStatModified } from "../character/getCharacterStatModified";
+import { Character } from "../character/Character";
 import { chanceToHit } from "./chanceToHit";
 
 export function hitChanceText(

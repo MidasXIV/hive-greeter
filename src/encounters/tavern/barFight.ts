@@ -1,15 +1,18 @@
 import { CommandInteraction, MessageEmbed } from "discord.js";
-import { adjustHP } from "../../../character/adjustHP";
-import { awardXP } from "../../../character/awardXP";
-import { d6 } from "../../../gameState";
-import { getUserCharacter } from "../../../character/getUserCharacter";
-import { questProgressField } from "../../../quest/questProgressField";
-import { updateUserQuestProgess } from "../../../quest/updateQuestProgess";
-import { hpBarField } from "../../../character/hpBar/hpBarField";
-import { xpGainField } from "../../../character/xpGainField";
-import { damgeTakenField } from "../../../character/damgeTakenField";
+import { adjustHP } from "../../character/adjustHP";
+import { awardXP } from "../../character/awardXP";
+import { d6 } from "../../gameState";
+import { getUserCharacter } from "../../character/getUserCharacter";
+import { questProgressField } from "../../quest/questProgressField";
+import { updateUserQuestProgess } from "../../quest/updateQuestProgess";
+import { hpBarField } from "../../character/hpBar/hpBarField";
+import { xpGainField } from "../../character/xpGainField";
+import { damgeTakenField } from "../../character/damgeTakenField";
 
-export async function barFight(interaction: CommandInteraction): Promise<void> {
+export async function barFight(
+  interaction: CommandInteraction,
+  followUp = true
+): Promise<void> {
   const damage = d6();
   awardXP(interaction.user.id, 1);
   adjustHP(interaction.user.id, -damage);
@@ -34,7 +37,7 @@ export async function barFight(interaction: CommandInteraction): Promise<void> {
       embed.addFields([questProgressField(updated.quests.survivor)]);
   }
 
-  await interaction.followUp({
+  await interaction[followUp ? "followUp" : "reply"]({
     embeds: [embed],
   });
 }
