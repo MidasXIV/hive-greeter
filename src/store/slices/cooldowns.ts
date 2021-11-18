@@ -1,21 +1,24 @@
-import { defaultCooldowns } from "../../character/defaultCooldowns";
+import { defaultCooldowns } from "@adventure-bot/character/defaultCooldowns";
 import { createSlice, PayloadAction } from '@reduxjs/toolkit'
 
 const cooldownsSlice = createSlice({
   name: 'cooldowns',
   initialState: {
-    defaultCooldowns,
+    ...defaultCooldowns,
   },
   reducers: {
-    updateDefaultCooldowns(state, action: PayloadAction<typeof defaultCooldowns>) {
-      const cooldown = action.payload
-      state.defaultCooldowns = cooldown
+    updateCooldowns(state, action: PayloadAction<typeof defaultCooldowns>) {
+      const cooldowns = action.payload
+      state = {
+        ...state,
+        ...cooldowns,
+      }
     },
   },
 })
 
 export const {
-  updateDefaultCooldowns,
+  updateCooldowns,
 } = cooldownsSlice.actions
 
 export default cooldownsSlice.reducer

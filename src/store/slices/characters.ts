@@ -1,7 +1,11 @@
-import { Character } from "../../character/Character";
+import { Character } from "@adventure-bot/character/Character";
+import { StatusEffect } from "@adventure-bot/statusEffects/StatusEffect";
 import { createSlice, PayloadAction } from '@reduxjs/toolkit'
-import { isStatusEffectExpired } from "../../isStatusEffectExpired";
-// import { updateCharacter } from '../../character/updateCharacter';
+import { QuestId } from "@adventure-bot/quest/quests";
+// import { updateCharacter } from 'character/updateCharacter';
+
+export const isStatusEffectExpired = (effect: StatusEffect): boolean =>
+  Date.now() > new Date(effect.started).valueOf() + effect.duration;
 
 const charactersById: Record<string, Character> = {}
 
@@ -29,6 +33,17 @@ const characterSlice = createSlice({
       }
     },
 
+    addCharacterStatusEffect(state, action: PayloadAction<{
+      character: Character,
+      effect: StatusEffect
+    }>) {
+      const { character, effect } = action.payload
+      state.charactersById[character.id] = {
+        ...character,
+        statusEffects: [...(character.statusEffects || []), effect],
+      }
+    },
+
     purgeExpiredStatuses(state, action: PayloadAction<Character>) {
       const character = action.payload
 
@@ -36,6 +51,29 @@ const characterSlice = createSlice({
         character.statusEffects?.filter(
           (effect) => !isStatusEffectExpired(effect)
         ) ?? []
+    },
+
+    addCharacterQuestProgress(state, action: PayloadAction<{
+      character: Character,
+      questId: QuestId,
+      amount: number
+    }>) {
+      const { character, questId, amount } = action.payload
+      const quest = character.quests[questId];
+      
+      if (quest) {
+        state.charactersById[character.id] = {
+          ...character,
+          quests: {
+            ...character.quests,
+            [questId]: {
+              ...quest,
+              progress: quest.progress + amount,
+            },
+          },
+        }
+      }
+
     },
 
     updateGold(state, action: PayloadAction<{
@@ -56,6 +94,8 @@ export const {
   updateCharacterCooldowns,
   purgeExpiredStatuses,
   updateGold,
+  addCharacterStatusEffect,
+  addCharacterQuestProgress,
 } = characterSlice.actions
 
 export default characterSlice.reducer

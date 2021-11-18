@@ -2,9 +2,14 @@ import { configureStore, Dispatch, createSelector } from '@reduxjs/toolkit'
 import reduxDevTools from '@redux-devtools/cli'
 import remoteDevTools from '@redux-devtools/remote'
 
-import rootReducer from './reducers'
+import rootReducer from '@adventure-bot/store/reducers'
 
-const devToolsOptions = { suppressConnectErrors: false, realtime: true, hostname: 'localhost', port: 8000 }
+const devToolsOptions = { 
+  suppressConnectErrors: false, 
+  realtime: true, 
+  hostname: 'localhost', 
+  port: 8000 
+}
 
 reduxDevTools(devToolsOptions)
 

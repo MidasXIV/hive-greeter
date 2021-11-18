@@ -1,7 +1,7 @@
-import { Character } from "./Character";
-import { getCharacter } from "./getCharacter";
-import { getCharacterStatModified } from "./getCharacterStatModified";
-import { updateCharacter } from "./updateCharacter";
+import { Character } from "@adventure-bot/character/Character";
+import { getCharacter } from "@adventure-bot/character/getCharacter";
+import { getCharacterStatModified } from "@adventure-bot/character/getCharacterStatModified";
+import { updateCharacter } from "@adventure-bot/character/updateCharacter";
 
 export const adjustHP = (
   characterId: string,

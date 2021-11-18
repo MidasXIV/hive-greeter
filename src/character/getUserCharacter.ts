@@ -2,10 +2,11 @@ import { User } from "discord.js";
 import { Character } from "./Character";
 import { createCharacter } from "./createCharacter";
 import { defaultProfile } from "../gameState";
+
 import { purgeExpiredStatuses } from "../statusEffects/purgeExpiredStatuses";
 
-import store from 'store'
-import { getCharacterById } from "store/selectors";
+import store from '@adventure-bot/store'
+import { getCharacterById } from "@adventure-bot/store/selectors";
 
 export const getUserCharacter = (user: User): Character => {
   purgeExpiredStatuses(user.id);
