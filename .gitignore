@@ -5,6 +5,8 @@
 node_modules
 
 # Ignore built ts files
+.build
+build
 build/**/*
 
 db*.json
