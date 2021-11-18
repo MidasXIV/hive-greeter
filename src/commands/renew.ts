@@ -25,32 +25,45 @@ export const execute = async (
     await interaction.reply(`You must specify a target @player`);
     return;
   }
-  let heal = 6;
+  let healAmount = 3;
   const tickRate = 1000;
   // const tickRate = 5 * 60000;
   const message = await interaction.reply({
     fetchReply: true,
-    content: `${interaction.user} renews ${target} for ${heal}`,
+    content: `${interaction.user} renews ${target} for ${healAmount}`,
     embeds: [
       new MessageEmbed({
-        fields: [hpBarField(getUserCharacter(target), heal)],
+        fields: [hpBarField(getUserCharacter(target), healAmount)],
         timestamp: new Date(new Date().valueOf() + tickRate),
       }),
     ],
   });
   if (!(message instanceof Message)) return;
+  const fields = [hpBarField(getUserCharacter(target), healAmount)];
+  const embeds = [
+    new MessageEmbed({
+      fields: [hpBarField(getUserCharacter(target), healAmount)],
+      timestamp: new Date(),
+    }),
+  ];
   const timer = setInterval(() => {
+    console.log("renew timer", fields);
+    embeds.push(
+      new MessageEmbed({
+        fields: [hpBarField(getUserCharacter(target), healAmount)],
+        timestamp: new Date(),
+      })
+    );
+    fields.push(hpBarField(getUserCharacter(target), healAmount));
     message.edit({
-      content: `${interaction.user} renews ${target} for ${heal}`,
-      embeds: [
-        new MessageEmbed({
-          fields: [hpBarField(getUserCharacter(target), heal)],
-          timestamp: new Date(new Date().valueOf() + tickRate),
-        }),
-      ],
+      content: `${interaction.user} renews ${target} for ${healAmount}`,
+      embeds,
     });
-    adjustHP(target.id, heal--);
-    if (!heal) clearTimeout(timer);
+    adjustHP(target.id, healAmount--);
+    if (!healAmount) {
+      clearTimeout(timer);
+      message.reply("Renew finished.");
+    }
   }, tickRate);
 };
 

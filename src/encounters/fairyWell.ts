@@ -4,7 +4,7 @@ import { awardXP } from "../character/awardXP";
 import { getUserCharacter } from "../character/getUserCharacter";
 import { hpBarField } from "../character/hpBar/hpBarField";
 import { xpGainField } from "../character/xpGainField";
-// import { updateUserQuestProgess } from "../../quest/updateQuestProgess";
+import { updateUserQuestProgess } from "../quest/updateQuestProgess";
 
 export const fairyWell = async (
   interaction: CommandInteraction
@@ -12,7 +12,7 @@ export const fairyWell = async (
   const healAmount = Math.ceil(Math.random() * 6);
   adjustHP(interaction.user.id, healAmount);
   awardXP(interaction.user.id, 1);
-  // updateUserQuestProgess(interaction.user, "healer", healAmount);
+  updateUserQuestProgess(interaction.user, "healer", healAmount);
 
   await interaction.reply({
     embeds: [

@@ -6,7 +6,7 @@ const questIds = [
   "blessed",
   // "afflicted",
   // "traveler",
-  // "healer",
+  "healer",
   // "rogue",
 ] as const;
 
@@ -66,15 +66,16 @@ export const quests: {
     repeatable: false,
     victoryText: "#blessed is the shrine seeker.",
   },
-  // healer: {
-  //   id: "healer",
-  //   title: "Healer",
-  //   progress: 0,
-  //   totalRequired: 50,
-  //   objective: "Heal 50 hp",
-  //   reward: "??",
-  //   repeatable: false,
-  // },
+  healer: {
+    id: "healer",
+    title: "Healer",
+    progress: 0,
+    totalRequired: 50,
+    objective: "Heal 50 hp",
+    reward: "Heal also heals over time.",
+    repeatable: false,
+    victoryText: "Flesh rended and renewed. The cycle of life.",
+  },
   // rogue: {
   //   id: "rogue",
   //   title: 'Rogue',

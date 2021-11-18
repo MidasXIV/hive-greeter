@@ -10,11 +10,11 @@ export const execute = async (
 ): Promise<void> => {
   interaction.reply({
     embeds: [
-      new MessageEmbed()
-        .setTitle("Dance!")
-        .setImage(
-          "http://www.gamergeoff.com/images/dancing/halfling%20dance2%20male.gif"
-        ),
+      new MessageEmbed({
+        title: "Dance!",
+      }).setImage(
+        "http://www.gamergeoff.com/images/dancing/halfling%20dance2%20male.gif"
+      ),
     ],
   });
 };
