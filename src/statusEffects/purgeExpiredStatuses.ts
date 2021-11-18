@@ -1,16 +1,10 @@
-import { updateCharacter } from "../character/updateCharacter";
-import { isStatusEffectExpired } from "./isStatusEffectExpired";
-import { gameState } from "../gameState";
+import store from '@adventure-bot/store'
+import { purgeExpiredStatuses as doPurgeExpiredStatuses } from '@adventure-bot/store/slices/characters'
+import { gameState } from "@adventure-bot/gameState";
 
 export const purgeExpiredStatuses = (characterId: string): void => {
   const character = gameState.characters.get(characterId);
   if (!character) return;
-  updateCharacter({
-    ...character,
-    statusEffects:
-      character.statusEffects?.filter(
-        (effect) => !isStatusEffectExpired(effect)
-      ) ?? [],
-  });
+  store.dispatch(doPurgeExpiredStatuses(character))
   console.log(`${characterId} status effects purged`);
 };

@@ -1,6 +1,7 @@
 import { Character } from "./Character";
 import { getCharacter } from "./getCharacter";
-import { updateCharacter } from "./updateCharacter";
+import store from '../store'
+import { updateCharacterCooldowns } from "../store/slices/characters";
 
 export const setCharacterCooldown = (
   characterId: string,
@@ -8,10 +9,9 @@ export const setCharacterCooldown = (
 ): Character | void => {
   const character = getCharacter(characterId);
   if (!character) return;
-  const updatedCharacter = {
-    ...character,
+  store.dispatch(updateCharacterCooldowns({ 
+    character,
     cooldowns: { ...character.cooldowns, [type]: new Date().toString() },
-  };
-  updateCharacter(updatedCharacter);
+  }))
   return getCharacter(characterId);
 };
