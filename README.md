@@ -4,8 +4,11 @@ Slay monsters, earn gold, evade traps, travel, gear up, complete quests, and sta
 
 Adventure Bot is the DM in your friend's Discord roleplaying game.
 
-![](./images/inspect-example.png)
+![example character 2](./images/inspect-example-2.png)
 
+![example character](./images/inspect-example.png)
+
+![example heal](./images/heal.png)
 
 <img src="https://user-images.githubusercontent.com/24829816/87224966-7c89b180-c39a-11ea-93c9-5be0c46b96da.png" alt="hive-greeter-logo">
 
