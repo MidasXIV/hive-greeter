@@ -4,6 +4,8 @@ Slay monsters, earn gold, evade traps, travel, gear up, complete quests, and sta
 
 Adventure Bot is the DM in your friend's Discord roleplaying game.
 
+![death by chest](./images/defeated-by-chest.png)
+
 ![example character 2](./images/inspect-example-2.png)
 
 ![example character](./images/inspect-example.png)
