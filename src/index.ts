@@ -58,6 +58,9 @@ app.use("/", (request: Request, response: Response) => {
 client.on("ready", async () => {
   console.timeEnd("ready");
   console.log("Adventures begin!");
+  if (process.env.COOLDOWNS_DISABLED === "true") {
+    console.warn("Cooldowns are OFF");
+  }
   // TODO:
   // const x = await client.guilds.cache.get("903706143560454144")?.roles.create({
   //   name: "Healer",
