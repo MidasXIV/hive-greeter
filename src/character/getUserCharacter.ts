@@ -5,7 +5,7 @@ import { defaultProfile } from "../gameState";
 
 import { purgeExpiredStatuses } from "../statusEffects/purgeExpiredStatuses";
 
-import store from '@adventure-bot/store'
+import store from "@adventure-bot/store";
 import { getCharacterById } from "@adventure-bot/store/selectors";
 
 export const getUserCharacter = (user: User): Character => {
@@ -16,7 +16,6 @@ export const getUserCharacter = (user: User): Character => {
       id: user.id,
       name: user.username,
       profile: user.avatarURL() || defaultProfile,
-      user,
     });
   }
   return character;

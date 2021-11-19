@@ -12,7 +12,6 @@ export type Character = Stats & {
   id: string;
   name: string;
   profile: string;
-  user?: Pick<User, 'id'>;
   hp: number;
 
   inventory: Item[];
