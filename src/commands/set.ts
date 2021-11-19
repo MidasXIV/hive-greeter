@@ -13,10 +13,6 @@ export const command = new SlashCommandBuilder()
       .setRequired(true)
   );
 
-if (process.env.DEV_COMMANDS === "true") {
-  command.addStringOption((i) => i.setName("hp").setDescription("Set hp"));
-  command.addIntegerOption((i) => i.addChoice("Choice", 1));
-}
 export const execute = async (
   interaction: CommandInteraction
 ): Promise<void> => {
