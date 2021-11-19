@@ -16,7 +16,7 @@ export const hpBarField = (
   adjustment = 0,
   showName = false
 ): EmbedFieldData => ({
-  name: (showName ? character.name + "s " : "") + "HP",
+  name: (showName ? character.name + "'s " : "") + "HP",
   value: `${getCharacterUpdate(character).hp}/${getCharacterStatModified(
     character,
     "maxHP"
