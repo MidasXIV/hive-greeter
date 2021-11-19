@@ -1,10 +1,10 @@
 import { CommandInteraction } from "discord.js";
-import { Character } from "../character/Character";
-import { adjustGold } from "../character/adjustGold";
-import { getUserCharacter } from "../character/getUserCharacter";
-import { grantCharacterItem } from "../equipment/grantCharacterItem";
-import { equipItemPrompt, Item } from "../equipment/equipment";
-import { updateCharacter } from "../character/updateCharacter";
+import { Character } from "@adventure-bot/character/Character";
+import { adjustGold } from "@adventure-bot/character/adjustGold";
+import { getUserCharacter } from "@adventure-bot/character/getUserCharacter";
+import { equipItemPrompt, Item } from "@adventure-bot/equipment/equipment";
+import { addItemToInventory } from '@adventure-bot/store/slices/characters';
+import store from '@adventure-bot/store'
 
 export const buyItem = async (
   interaction: CommandInteraction,
@@ -18,6 +18,9 @@ export const buyItem = async (
     return;
   }
   adjustGold(player.id, -item.goldValue);
-  updateCharacter(grantCharacterItem(getUserCharacter(interaction.user), item));
+  store.dispatch(addItemToInventory({
+    character: getUserCharacter(interaction.user),
+    item,
+  }))
   await equipItemPrompt(interaction, item);
 };

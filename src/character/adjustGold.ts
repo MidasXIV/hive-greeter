@@ -1,6 +1,7 @@
 import { Character } from "./Character";
 import { getCharacter } from "./getCharacter";
-import { updateCharacter } from "./updateCharacter";
+import store from '@adventure-bot/store'
+import { updateGold } from "@adventure-bot/store/slices/characters";
 
 export const adjustGold = (
   characterId: string,
@@ -8,9 +9,9 @@ export const adjustGold = (
 ): Character | void => {
   const character = getCharacter(characterId);
   if (!character) return;
-  updateCharacter({
-    ...character,
+  store.dispatch(updateGold({
+    character,
     gold: character.gold + amount,
-  });
+  }));
   return getCharacter(characterId);
 };

@@ -28,7 +28,9 @@ export const monster = async (
   // TODO: explore do/while refactor
   let monster = getRandomMonster();
   let player = getUserCharacter(interaction.user);
+  
   console.log("monster encounter", monster, player);
+  console.log(1);
   const encounter = createEncounter({ monster, player });
   let timeout = false;
   const message = await interaction.reply({
@@ -36,7 +38,7 @@ export const monster = async (
     fetchReply: true,
   });
   if (!(message instanceof Message)) return;
-
+  
   while (encounter.outcome === "in progress") {
     encounter.rounds++;
     await message.react("⚔");
@@ -68,9 +70,10 @@ export const monster = async (
         ? undefined
         : attack(player.id, monster.id);
     const monsterResult = attack(monster.id, player.id);
+
+    debugger;
     playerResult && encounter.playerAttacks.push(playerResult);
     monsterResult && encounter.monsterAttacks.push(monsterResult);
-
     const updatedMonster = getCharacter(monster.id);
     const updatedPlayer = getCharacter(player.id);
     if (!updatedMonster || !updatedPlayer || !monsterResult) return;

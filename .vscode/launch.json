@@ -9,8 +9,16 @@
       "type": "node",
       "request": "launch",
       "cwd": "${workspaceFolder}",
-      "runtimeExecutable": "npm",
-      "runtimeArgs": ["run", "start:dev"]
+      "runtimeExecutable": "yarn",
+      "runtimeArgs": ["start:dev"]
+    }, {
+      "name": "start",
+      "type": "node",
+      "request": "launch",
+      "cwd": "${workspaceFolder}",
+      "runtimeExecutable": "yarn",
+      "runtimeArgs": ["start"],
+      "console": "integratedTerminal"
     }
   ]
 }

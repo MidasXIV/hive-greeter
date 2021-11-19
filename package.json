@@ -7,7 +7,7 @@
     "lint": "eslint . --ext .ts",
     "lint-and-fix": "eslint . --ext .ts --fix",
     "prestart:dev": "npm run build",
-    "start:dev": "nodemon build/index.js",
+    "start:dev": "nodemon .build/index.js",
     "prebuild": "rimraf ./.build",
     "build": "tsc && tscpaths -p tsconfig.json -s ./src -o ./.build",
     "prestart": "npm run build",
