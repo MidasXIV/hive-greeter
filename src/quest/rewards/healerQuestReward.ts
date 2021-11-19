@@ -16,7 +16,7 @@ export const healerQuestReward = async (
     name: "Healer",
     buff: true,
     debuff: false,
-    duration: 4 * 60 * 60000,
+    duration: 24 * 60 * 60000,
     modifiers: {},
     started: new Date().toString(),
   });
