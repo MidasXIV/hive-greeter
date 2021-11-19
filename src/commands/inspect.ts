@@ -5,7 +5,7 @@ import { defaultProfile, defaultProfileAttachment } from "../gameState";
 import { getUserCharacter } from "../character/getUserCharacter";
 import { getCharacterStatModifier } from "../character/getCharacterStatModifier";
 import { getCharacterStatModified } from "../character/getCharacterStatModified";
-import { cooldownRemainingText } from "../utils";
+import { cooldownRemainingText } from "../character/cooldownRemainingText";
 import { Stat } from "../character/Stats";
 import { itemEmbed } from "../equipment/equipment";
 import { characterEmbed } from "../character/characterEmbed";
