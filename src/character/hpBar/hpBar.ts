@@ -10,18 +10,20 @@ export const hpBar = (c: Character, adjustment = 0): string => {
   const maxHP = getCharacterStatModified(character, "maxHP");
   const fullPercent = character.hp / maxHP;
   const adjustPercent = adjustment / maxHP;
+  const healPercent = clamp(adjustPercent, { max: 1, min: 0 });
+  const damagePercent = clamp(-adjustPercent, { max: 1, min: 0 });
 
-  const damage = clamp(Math.floor(-adjustPercent * barLength), {
+  const damage = clamp(Math.floor(damagePercent * barLength), {
     max: maxHP,
     min: 0,
   });
 
-  const heal = clamp(Math.floor(adjustPercent * barLength), {
+  const heal = clamp(Math.floor(healPercent * barLength), {
     max: maxHP,
     min: 0,
   });
 
-  const full = Math.ceil(fullPercent * barLength) - heal;
+  const full = Math.ceil((fullPercent - healPercent) * barLength);
 
   const empty = clamp(barLength - full - damage - heal, {
     max: maxHP,
