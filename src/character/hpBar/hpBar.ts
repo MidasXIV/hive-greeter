@@ -27,7 +27,6 @@ export const hpBar = (c: Character, adjustment = 0): string => {
     max: maxHP,
     min: 0,
   });
-
   console.log(
     "hpBar",
     { full, damage, heal, empty },

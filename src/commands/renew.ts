@@ -25,42 +25,42 @@ export const execute = async (
     await interaction.reply(`You must specify a target @player`);
     return;
   }
-  let healAmount = 3;
-  const tickRate = 1000;
-  // const tickRate = 5 * 60000;
-  const message = await interaction.reply({
-    fetchReply: true,
-    content: `${interaction.user} renews ${target} for ${healAmount}`,
-    embeds: [
-      new MessageEmbed({
-        fields: [hpBarField(getUserCharacter(target), healAmount)],
-        timestamp: new Date(new Date().valueOf() + tickRate),
-      }),
-    ],
-  });
-  if (!(message instanceof Message)) return;
-  const fields = [hpBarField(getUserCharacter(target), healAmount)];
+  const healAmount = 3;
+  let totalTicks = 5;
+  const tickRate = 5 * 30000;
+  adjustHP(target.id, healAmount);
+  totalTicks--;
   const embeds = [
     new MessageEmbed({
-      fields: [hpBarField(getUserCharacter(target), healAmount)],
-      timestamp: new Date(),
-    }),
+      title: "Renew",
+    }).setImage(
+      "https://i.pinimg.com/originals/5e/b0/58/5eb0582353f354d03188da68be6865fd.jpg"
+    ),
   ];
+  embeds.push(
+    new MessageEmbed({
+      fields: [hpBarField(getUserCharacter(target), healAmount, true)],
+      timestamp: new Date(),
+    })
+  );
+  const message = await interaction.reply({
+    fetchReply: true,
+    embeds,
+  });
+  if (!(message instanceof Message)) return;
+  console.log("renew", { healAmount, hp: getUserCharacter(target).hp });
   const timer = setInterval(() => {
-    console.log("renew timer", fields);
+    adjustHP(target.id, healAmount);
     embeds.push(
       new MessageEmbed({
-        fields: [hpBarField(getUserCharacter(target), healAmount)],
+        fields: [hpBarField(getUserCharacter(target), healAmount, true)],
         timestamp: new Date(),
       })
     );
-    fields.push(hpBarField(getUserCharacter(target), healAmount));
     message.edit({
-      content: `${interaction.user} renews ${target} for ${healAmount}`,
       embeds,
     });
-    adjustHP(target.id, healAmount--);
-    if (!healAmount) {
+    if (--totalTicks === 0) {
       clearTimeout(timer);
       message.reply("Renew finished.");
     }
