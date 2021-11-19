@@ -6,6 +6,7 @@ import { cooldownRemainingText } from "../utils";
 import { hpBarField } from "../character/hpBar/hpBarField";
 import { adjustHP } from "../character/adjustHP";
 import { Character } from "../character/Character";
+import { setCharacterCooldown } from "../character/setCharacterCooldown";
 
 export const command = new SlashCommandBuilder()
   .setName("renew")
@@ -37,6 +38,7 @@ export const execute = async (
     await interaction.reply(`You must specify a target @player`);
     return;
   }
+  setCharacterCooldown(character.id, "renew");
   const healAmount = 3;
   let totalTicks = 5;
   const tickRate = 5 * 30000;
