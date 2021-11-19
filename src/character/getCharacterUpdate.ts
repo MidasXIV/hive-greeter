@@ -1,13 +1,15 @@
 import { Character } from "./Character";
-import { gameState } from "../gameState";
 import { purgeExpiredStatuses } from "../statusEffects/purgeExpiredStatuses";
 import { Monster } from "../monster/Monster";
+import { getCharacter } from "./getCharacter";
+import { getMonsterById } from "@adventure-bot/store/selectors";
+import store from "@adventure-bot/store";
 
 export const getCharacterUpdate = (character: Character): Character => {
   purgeExpiredStatuses(character.id);
-  return gameState.characters.get(character.id) ?? character;
+  return getCharacter(character.id) ?? character;
 };
 export const getMonsterUpdate = (monster: Monster): Monster => {
   purgeExpiredStatuses(monster.id);
-  return gameState.monsters.get(monster.id) ?? monster;
+  return getMonsterById(store.getState(), monster.id) ?? monster;
 };
