@@ -5,6 +5,7 @@ import { getUserCharacter } from "../character/getUserCharacter";
 import { cooldownRemainingText } from "../utils";
 import { hpBarField } from "../character/hpBar/hpBarField";
 import { adjustHP } from "../character/adjustHP";
+import { Character } from "../character/Character";
 
 export const command = new SlashCommandBuilder()
   .setName("renew")
@@ -13,9 +14,20 @@ export const command = new SlashCommandBuilder()
     option.setName("target").setDescription("Whom to heal").setRequired(true)
   );
 
+const isHealer = (character: Character) =>
+  character.statusEffects?.filter((effect) => effect.name === "Healer")
+    .length ?? 0 > 0;
+
 export const execute = async (
   interaction: CommandInteraction
 ): Promise<void> => {
+  const character = getUserCharacter(interaction.user);
+
+  if (!isHealer(character)) {
+    interaction.reply("You must seek the divine agents.");
+    return;
+  }
+
   if (isCharacterOnCooldown(interaction.user.id, "renew")) {
     interaction.reply(`${cooldownRemainingText(interaction.user.id, "renew")}`);
     return;
