@@ -30,7 +30,12 @@ export const execute = async (
   }
 
   if (isCharacterOnCooldown(interaction.user.id, "renew")) {
-    interaction.reply(`${cooldownRemainingText(interaction.user.id, "renew")}`);
+    interaction.reply(
+      `You can use this again ${cooldownRemainingText(
+        interaction.user.id,
+        "renew"
+      )}`
+    );
     return;
   }
   const target = interaction.options.data[0].user;
