@@ -12,6 +12,7 @@ export const setCharacterCooldown = (
     ...character,
     cooldowns: { ...character.cooldowns, [type]: new Date().toString() },
   };
+  console.log("setCharcterCooldown", updatedCharacter.cooldowns);
   updateCharacter(updatedCharacter);
   return getCharacter(characterId);
 };
