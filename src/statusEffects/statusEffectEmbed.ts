@@ -1,5 +1,5 @@
 import { MessageEmbed } from "discord.js";
-import { StatusEffect } from "../statusEffects/StatusEffect";
+import { StatusEffect } from "./StatusEffect";
 
 export function statusEffectEmbed(effect: StatusEffect): MessageEmbed {
   return new MessageEmbed({

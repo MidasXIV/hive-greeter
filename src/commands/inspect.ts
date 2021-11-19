@@ -10,7 +10,7 @@ import { Stat } from "../character/Stats";
 import { itemEmbed } from "../equipment/equipment";
 import { characterEmbed } from "../character/characterEmbed";
 import { questEmbed } from "./questEmbed";
-import { statusEffectEmbed } from "./statusEffectEmbed";
+import { statusEffectEmbed } from "../statusEffects/statusEffectEmbed";
 
 export const command = new SlashCommandBuilder()
   .setName("inspect")

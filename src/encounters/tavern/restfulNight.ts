@@ -6,7 +6,7 @@ import { hpBarField } from "../../character/hpBar/hpBarField";
 import { d6 } from "../../gameState";
 import { updateStatusEffect } from "../../statusEffects/grantStatusEffect";
 import { StatusEffect } from "../../statusEffects/StatusEffect";
-import { statusEffectEmbed } from "../../commands/statusEffectEmbed";
+import { statusEffectEmbed } from "../../statusEffects/statusEffectEmbed";
 import { xpGainField } from "../../character/xpGainField";
 
 export async function restfulNight(
