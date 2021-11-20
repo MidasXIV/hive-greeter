@@ -45,6 +45,7 @@ const encounterWeights = {
   travel: 1,
 };
 
+// TODO: refactor to Map<EncounterId, weight> to prevent mis-alignment bugs
 const encounters: CommandHandler[] = [
   armorShrine,
   attackShrine,
