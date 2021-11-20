@@ -12,6 +12,8 @@ import { updateUserQuestProgess } from "../../quest/updateQuestProgess";
 import { clamp } from "remeda";
 import { getCharacterStatModified } from "../../character/getCharacterStatModified";
 import { questProgressField } from "../../quest/questProgressField";
+import { isUserQuestComplete } from "../../quest/isQuestComplete";
+import quests from "../../commands/quests";
 
 export async function restfulNight(
   interaction: CommandInteraction
@@ -58,4 +60,7 @@ export async function restfulNight(
       statusEffectEmbed(buff),
     ],
   });
+
+  if (isUserQuestComplete(interaction.user, "healer"))
+    await quests.execute(interaction, "followUp");
 }

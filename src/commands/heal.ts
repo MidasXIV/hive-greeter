@@ -1,5 +1,5 @@
 import { SlashCommandBuilder } from "@discordjs/builders";
-import { CommandInteraction, Message, MessageEmbed } from "discord.js";
+import { CommandInteraction, MessageEmbed } from "discord.js";
 import { heal } from "../heal/heal";
 import { getUserCharacter } from "../character/getUserCharacter";
 import { cooldownRemainingText } from "../character/cooldownRemainingText";
@@ -7,6 +7,8 @@ import { hpBarField } from "../character/hpBar/hpBarField";
 import { Emoji } from "../Emoji";
 import { updateUserQuestProgess } from "../quest/updateQuestProgess";
 import { questProgressField } from "../quest/questProgressField";
+import { isUserQuestComplete } from "../quest/isQuestComplete";
+import quests from "./quests";
 
 export const command = new SlashCommandBuilder()
   .setName("heal")
@@ -19,7 +21,7 @@ export const execute = async (
   interaction: CommandInteraction
 ): Promise<void> => {
   const target = interaction.options.data[0].user;
-  const initiator = interaction.user;
+  const healer = interaction.user;
   if (!target) {
     await interaction.reply(`You must specify a target @player`);
     return;
@@ -27,20 +29,16 @@ export const execute = async (
 
   // TODO: a better way?
   getUserCharacter(target); // ensure character exists for proper interactions
-  const result = heal(initiator.id, target.id);
+  const result = heal(healer.id, target.id);
   if (!result) return interaction.reply("No result. This should not happen.");
   if (result.outcome === "cooldown") {
     await interaction.reply(
-      `You can heal again in ${cooldownRemainingText(initiator.id, "heal")}.`
+      `You can heal again in ${cooldownRemainingText(healer.id, "heal")}.`
     );
     // TODO: setTimeout to edit this when cooldown is available
     return;
   }
-  const character = updateUserQuestProgess(
-    interaction.user,
-    "healer",
-    result.amount
-  );
+  const character = updateUserQuestProgess(healer, "healer", result.amount);
 
   await interaction.reply({
     embeds: [
@@ -57,6 +55,8 @@ export const execute = async (
       }).setImage("https://i.imgur.com/S32LDbM.png"),
     ].concat(),
   });
+  if (isUserQuestComplete(healer, "healer"))
+    await quests.execute(interaction, "followUp");
 };
 
 export default { command, execute };

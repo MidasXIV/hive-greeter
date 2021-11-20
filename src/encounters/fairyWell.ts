@@ -5,6 +5,8 @@ import { getUserCharacter } from "../character/getUserCharacter";
 import { hpBarField } from "../character/hpBar/hpBarField";
 import { questProgressField } from "../character/hpBar/hpField";
 import { xpGainField } from "../character/xpGainField";
+import quests from "../commands/quests";
+import { isUserQuestComplete } from "../quest/isQuestComplete";
 import { updateUserQuestProgess } from "../quest/updateQuestProgess";
 
 export const fairyWell = async (
@@ -33,4 +35,6 @@ export const fairyWell = async (
       }).setImage("https://imgur.com/bgq63v9.png"),
     ],
   });
+  if (isUserQuestComplete(interaction.user, "healer"))
+    await quests.execute(interaction, "followUp");
 };
