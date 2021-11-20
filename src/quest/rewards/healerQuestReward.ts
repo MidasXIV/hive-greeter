@@ -1,4 +1,5 @@
 import { CommandInteraction, MessageEmbed } from "discord.js";
+import { getUserCharacter } from "../../character/getUserCharacter";
 import inspect from "../../commands/inspect";
 import { updateStatusEffect } from "../../statusEffects/grantStatusEffect";
 import { removeQuest } from "./removeQuest";
@@ -6,10 +7,19 @@ import { removeQuest } from "./removeQuest";
 export const healerQuestReward = async (
   interaction: CommandInteraction
 ): Promise<void> => {
+  const character = getUserCharacter(interaction.user);
+  const quest = character.quests.healer;
+  if (!quest) {
+    console.error(`healerQuestReward with no quest`);
+    await interaction.followUp(
+      `ERROR: healerQuestReward with no quest for ${character.name} (${character.id})`
+    );
+    return;
+  }
   const embeds = [
     new MessageEmbed({
-      title: `Healer Quest Complete!`,
-      description: "Your prowess is unmatched!",
+      title: `${quest.title} Quest Complete!`,
+      description: quest.victoryText,
     }),
   ];
   updateStatusEffect(interaction.user.id, {
