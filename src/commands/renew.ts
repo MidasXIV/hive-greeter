@@ -25,7 +25,7 @@ export const execute = async (
   const character = getUserCharacter(interaction.user);
 
   if (!isHealer(character)) {
-    interaction.reply("You must seek the divine agents.");
+    interaction.reply("You must seek the boon of the divine to use this.");
     return;
   }
 
@@ -46,7 +46,7 @@ export const execute = async (
   setCharacterCooldown(character.id, "renew");
   const healAmount = 3;
   let totalTicks = 5;
-  const tickRate = 5 * 30000;
+  const tickRate = 5 * 60000;
   adjustHP(target.id, healAmount);
   totalTicks--;
   const embeds = [
