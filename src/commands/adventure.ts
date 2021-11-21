@@ -3,7 +3,7 @@ import { CommandInteraction, MessageEmbed } from "discord.js";
 import { getUserCharacter } from "../character/getUserCharacter";
 import { isCharacterOnCooldown } from "../character/isCharacterOnCooldown";
 import { setCharacterCooldown } from "../character/setCharacterCooldown";
-import { cooldownRemainingText } from "../utils";
+import { cooldownRemainingText } from "../character/cooldownRemainingText";
 import { randomEncounter } from "../encounters/randomEncounter";
 
 export const command = new SlashCommandBuilder()

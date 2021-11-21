@@ -9,8 +9,9 @@ export const updateUserQuestProgess = (
   user: User,
   questId: QuestId,
   change: number
-): Character | void =>
-  updateCharacterQuestProgess(getUserCharacter(user), questId, change);
+): Character =>
+  updateCharacterQuestProgess(getUserCharacter(user), questId, change) ??
+  getUserCharacter(user);
 
 export const updateCharacterQuestProgess = (
   character: Character,

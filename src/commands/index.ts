@@ -1,3 +1,4 @@
+import angels from "./angels";
 import adventure from "./adventure";
 import attack from "./attack";
 import cooldowns from "./cooldowns";
@@ -51,6 +52,7 @@ if (process.env.DEV_COMMANDS === "true") {
   commands.set("lootme", lootme);
   commands.set("lootmonster", lootmonster);
   commands.set("bar_fight", barFight);
+  commands.set("angels", angels);
 }
 
 export default commands;

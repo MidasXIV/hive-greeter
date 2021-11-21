@@ -55,9 +55,18 @@ app.use("/", (request: Request, response: Response) => {
   response.sendStatus(200);
 });
 
-client.on("ready", () => {
+client.on("ready", async () => {
   console.timeEnd("ready");
   console.log("Adventures begin!");
+  if (process.env.COOLDOWNS_DISABLED === "true") {
+    console.warn("Cooldowns are OFF");
+  }
+  // TODO:
+  // const x = await client.guilds.cache.get("903706143560454144")?.roles.create({
+  //   name: "Healer",
+  //   color: "GREEN",
+  //   mentionable: true,
+  // });
 });
 client.on("interactionCreate", async (interaction) => {
   if (!interaction.isCommand()) return;
