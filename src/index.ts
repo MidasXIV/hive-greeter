@@ -9,6 +9,8 @@ import { exit } from "process";
 import { Routes } from "discord-api-types/v9";
 import commands from "./commands";
 import { loadDB, saveDB } from "./gameState";
+import OpenAI from "openai-api";
+import { Interaction } from "discord.js";
 
 if (!process.env.token) exit(1);
 
@@ -16,6 +18,26 @@ loadDB().then(() => console.log("database loaded"));
 
 const rest = new REST({ version: "9" }).setToken(process.env.token);
 (async () => {
+  if (typeof process.env.OPEN_AI_KEY !== "string") return;
+  const openai = new OpenAI(process.env.OPEN_AI_KEY);
+  setInterval(async () => {
+    const gptResponse = await openai.complete({
+      engine: "davinci",
+      prompt:
+        "The following is a sentence that describes an orc striking Brian with a longsword and wounding him severely.",
+      maxTokens: 20,
+      temperature: 0.9,
+      topP: 1,
+      presencePenalty: 0,
+      frequencyPenalty: 0,
+      bestOf: 1,
+      n: 1,
+      stream: false,
+    });
+
+    console.log(gptResponse.data.choices.map((x) => x.text)[0].split(".")[0]);
+  }, 2000);
+
   if (!process.env.token || !process.env.CLIENT_ID || !process.env.GUILD_ID)
     return;
   try {
