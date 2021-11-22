@@ -10,11 +10,11 @@ import { xpGainField } from "../character/xpGainField";
 export const trap = async (interaction: CommandInteraction): Promise<void> => {
   const message = await interaction.reply({
     embeds: [
-      new MessageEmbed()
-        .setTitle("Trap!")
-        .setColor("RED")
-        .setDescription(`It's a trap!`)
-        .setImage("https://imgur.com/TDMLxyE.png"),
+      new MessageEmbed({
+        title: "Trap!",
+        color: "RED",
+        description: `It's a trap!`,
+      }).setImage("https://imgur.com/TDMLxyE.png"),
     ],
     fetchReply: true,
   });
@@ -45,10 +45,11 @@ export const trap = async (interaction: CommandInteraction): Promise<void> => {
       awardXP(interaction.user.id, 2);
       await interaction.followUp({
         embeds: [
-          new MessageEmbed()
-            .setDescription(`You deftly evade!`)
+          new MessageEmbed({
+            description: `You deftly evade!`,
+          })
             .addField("Roll", trapRollText(result))
-            .addField("XP Gained", "2")
+            .addFields([xpGainField(interaction, 2)])
             .setImage("https://imgur.com/gSgcrnN.png"),
         ],
       });
