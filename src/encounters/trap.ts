@@ -5,6 +5,7 @@ import { sleep } from "../utils";
 import { updateUserQuestProgess } from "../quest/updateQuestProgess";
 import { awardXP } from "../character/awardXP";
 import { trapRollText } from "./trapRollText";
+import { xpGainField } from "../character/xpGainField";
 
 export const trap = async (interaction: CommandInteraction): Promise<void> => {
   const message = await interaction.reply({
@@ -30,11 +31,12 @@ export const trap = async (interaction: CommandInteraction): Promise<void> => {
         updateUserQuestProgess(interaction.user, "survivor", result.damage);
       await interaction.followUp({
         embeds: [
-          new MessageEmbed()
-            .setColor("RED")
-            .setDescription(`You're hit! You take ${result.damage} damage!`)
+          new MessageEmbed({
+            color: "RED",
+            description: `You're hit! You take ${result.damage} damage!`,
+            fields: [xpGainField(interaction, 1)],
+          })
             .addField("Roll", trapRollText(result))
-            .addField("XP Gained", "1")
             .setImage("https://imgur.com/28oehQm.png"),
         ],
       });
