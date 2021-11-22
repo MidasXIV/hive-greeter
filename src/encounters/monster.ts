@@ -26,7 +26,7 @@ export const monster = async (
   interaction: CommandInteraction
 ): Promise<void> => {
   // TODO: explore do/while refactor
-  let monster = getRandomMonster();
+  let monster = await getRandomMonster();
   let player = getUserCharacter(interaction.user);
   console.log("monster encounter", monster, player);
   const encounter = createEncounter({ monster, player });
