@@ -1,5 +1,6 @@
 import { CommandInteraction, MessageEmbed } from "discord.js";
 import { awardXP } from "../character/awardXP";
+import { xpGainField } from "../character/xpGainField";
 
 export const travel = async (
   interaction: CommandInteraction
@@ -7,12 +8,12 @@ export const travel = async (
   awardXP(interaction.user.id, 1);
   await interaction.reply({
     embeds: [
-      new MessageEmbed()
-        .setTitle("Travel")
-        .setColor("GREEN")
-        .setDescription(`You travel the lands.`)
-        .addField("XP Gained", "1")
-        .setImage("https://imgur.com/WCVVyh6.png"),
+      new MessageEmbed({
+        title: "Travel",
+        color: "GREEN",
+        fields: [xpGainField(interaction, 1)],
+        description: `You travel the lands.`,
+      }).setImage("https://imgur.com/WCVVyh6.png"),
     ],
   });
 };

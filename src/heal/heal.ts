@@ -4,6 +4,8 @@ import { adjustHP } from "../character/adjustHP";
 import { setCharacterCooldown } from "../character/setCharacterCooldown";
 import { d6 } from "../gameState";
 import { HealResult } from "./HealResult";
+import { getCharacterStatModified } from "../character/getCharacterStatModified";
+import { clamp } from "remeda";
 
 export const heal = (
   initiatorId: string,
@@ -15,9 +17,14 @@ export const heal = (
   getCharacter(targetId);
   if (!healer) return;
   setCharacterCooldown(healer.id, "heal");
-  const amount = d6();
-  adjustHP(targetId, amount);
+  const rawHeal = d6();
+  const targetBeforeHeal = getCharacter(targetId);
+  if (!targetBeforeHeal) return;
+  const missingHealth =
+    getCharacterStatModified(targetBeforeHeal, "maxHP") - targetBeforeHeal.hp;
+  const actualHeal = clamp(rawHeal, { max: missingHealth });
+  adjustHP(targetId, rawHeal);
   const target = getCharacter(targetId);
   if (!target) return;
-  return { outcome: "healed", amount, target };
+  return { outcome: "healed", amount: actualHeal, rawHeal, target };
 };

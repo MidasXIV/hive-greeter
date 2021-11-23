@@ -2,8 +2,13 @@ import { SlashCommandBuilder } from "@discordjs/builders";
 import { CommandInteraction, MessageEmbed } from "discord.js";
 import { heal } from "../heal/heal";
 import { getUserCharacter } from "../character/getUserCharacter";
-import { cooldownRemainingText } from "../utils";
+import { cooldownRemainingText } from "../character/cooldownRemainingText";
 import { hpBarField } from "../character/hpBar/hpBarField";
+import { Emoji } from "../Emoji";
+import { updateUserQuestProgess } from "../quest/updateQuestProgess";
+import { questProgressField } from "../quest/questProgressField";
+import { isUserQuestComplete } from "../quest/isQuestComplete";
+import quests from "./quests";
 
 export const command = new SlashCommandBuilder()
   .setName("heal")
@@ -16,36 +21,42 @@ export const execute = async (
   interaction: CommandInteraction
 ): Promise<void> => {
   const target = interaction.options.data[0].user;
-  const initiator = interaction.user;
+  const healer = interaction.user;
   if (!target) {
     await interaction.reply(`You must specify a target @player`);
     return;
   }
 
-  // ensure characters exist
   // TODO: a better way?
-  getUserCharacter(initiator);
-  getUserCharacter(target);
-  const result = heal(initiator.id, target.id);
+  getUserCharacter(target); // ensure character exists for proper interactions
+  const result = heal(healer.id, target.id);
   if (!result) return interaction.reply("No result. This should not happen.");
-  switch (result.outcome) {
-    case "cooldown":
-      await interaction.reply(
-        `You can heal again in ${cooldownRemainingText(initiator.id, "heal")}.`
-      );
-      break;
-    case "healed":
-      await interaction.reply({
-        embeds: [
-          new MessageEmbed()
-            .setTitle(`Heal`)
-            .setDescription(`Healed ${target} for 🤍 ${result.amount}!`)
-            .setImage("https://i.imgur.com/S32LDbM.png")
-            .addFields([hpBarField(getUserCharacter(target), result.amount)]),
-        ],
-      });
-      break;
+  if (result.outcome === "cooldown") {
+    await interaction.reply(
+      `You can heal again in ${cooldownRemainingText(healer.id, "heal")}.`
+    );
+    // TODO: setTimeout to edit this when cooldown is available
+    return;
   }
+  const character = updateUserQuestProgess(healer, "healer", result.amount);
+
+  await interaction.reply({
+    embeds: [
+      new MessageEmbed({
+        title: "Heal",
+        description: `Healed ${target} for ${Emoji(interaction, "heal")} ${
+          result.amount
+        }!`,
+        fields: [hpBarField(getUserCharacter(target), result.amount)].concat(
+          character.quests.healer
+            ? questProgressField(character.quests.healer)
+            : []
+        ),
+      }).setImage("https://i.imgur.com/S32LDbM.png"),
+    ].concat(),
+  });
+  if (isUserQuestComplete(healer, "healer"))
+    await quests.execute(interaction, "followUp");
 };
 
 export default { command, execute };

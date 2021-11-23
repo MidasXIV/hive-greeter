@@ -2,9 +2,11 @@ import { SlashCommandBuilder } from "@discordjs/builders";
 import { CommandInteraction, Message, MessageEmbed } from "discord.js";
 import { isCharacterOnCooldown } from "../character/isCharacterOnCooldown";
 import { getUserCharacter } from "../character/getUserCharacter";
-import { cooldownRemainingText } from "../utils";
+import { cooldownRemainingText } from "../character/cooldownRemainingText";
 import { hpBarField } from "../character/hpBar/hpBarField";
 import { adjustHP } from "../character/adjustHP";
+import { Character } from "../character/Character";
+import { setCharacterCooldown } from "../character/setCharacterCooldown";
 
 export const command = new SlashCommandBuilder()
   .setName("renew")
@@ -13,11 +15,27 @@ export const command = new SlashCommandBuilder()
     option.setName("target").setDescription("Whom to heal").setRequired(true)
   );
 
+const isHealer = (character: Character) =>
+  character.statusEffects?.filter((effect) => effect.name === "Healer")
+    .length ?? 0 > 0;
+
 export const execute = async (
   interaction: CommandInteraction
 ): Promise<void> => {
+  const character = getUserCharacter(interaction.user);
+
+  if (!isHealer(character)) {
+    interaction.reply("You must seek the boon of the divine to use this.");
+    return;
+  }
+
   if (isCharacterOnCooldown(interaction.user.id, "renew")) {
-    interaction.reply(`${cooldownRemainingText(interaction.user.id, "renew")}`);
+    interaction.reply(
+      `You can use this again ${cooldownRemainingText(
+        interaction.user.id,
+        "renew"
+      )}`
+    );
     return;
   }
   const target = interaction.options.data[0].user;
@@ -25,32 +43,46 @@ export const execute = async (
     await interaction.reply(`You must specify a target @player`);
     return;
   }
-  let heal = 6;
-  const tickRate = 1000;
-  // const tickRate = 5 * 60000;
+  setCharacterCooldown(character.id, "renew");
+  const healAmount = 3;
+  let totalTicks = 5;
+  const tickRate = 5 * 60000;
+  adjustHP(target.id, healAmount);
+  totalTicks--;
+  const embeds = [
+    new MessageEmbed({
+      title: "Renew",
+    }).setImage(
+      "https://i.pinimg.com/originals/5e/b0/58/5eb0582353f354d03188da68be6865fd.jpg"
+    ),
+  ];
+  embeds.push(
+    new MessageEmbed({
+      fields: [hpBarField(getUserCharacter(target), healAmount, true)],
+      timestamp: new Date(),
+    })
+  );
   const message = await interaction.reply({
     fetchReply: true,
-    content: `${interaction.user} renews ${target} for ${heal}`,
-    embeds: [
-      new MessageEmbed({
-        fields: [hpBarField(getUserCharacter(target), heal)],
-        timestamp: new Date(new Date().valueOf() + tickRate),
-      }),
-    ],
+    embeds,
   });
   if (!(message instanceof Message)) return;
+  console.log("renew", { healAmount, hp: getUserCharacter(target).hp });
   const timer = setInterval(() => {
+    adjustHP(target.id, healAmount);
+    embeds.push(
+      new MessageEmbed({
+        fields: [hpBarField(getUserCharacter(target), healAmount, true)],
+        timestamp: new Date(),
+      })
+    );
     message.edit({
-      content: `${interaction.user} renews ${target} for ${heal}`,
-      embeds: [
-        new MessageEmbed({
-          fields: [hpBarField(getUserCharacter(target), heal)],
-          timestamp: new Date(new Date().valueOf() + tickRate),
-        }),
-      ],
+      embeds,
     });
-    adjustHP(target.id, heal--);
-    if (!heal) clearTimeout(timer);
+    if (--totalTicks === 0) {
+      clearTimeout(timer);
+      message.reply("Renew finished.");
+    }
   }, tickRate);
 };
 

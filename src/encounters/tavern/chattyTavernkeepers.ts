@@ -12,6 +12,7 @@ import { isQuestId, quests } from "../../quest/quests";
 import questsCommand from "../../commands/quests";
 import { awardXP } from "../../character/awardXP";
 import { updateCharacter } from "../../character/updateCharacter";
+import { xpGainField } from "../../character/xpGainField";
 
 // TODO: omit quests the user already has
 export const chattyTavernkeepers = async (
@@ -23,27 +24,26 @@ export const chattyTavernkeepers = async (
     fetchReply: true,
     files: [new MessageAttachment("./images/Tavernkeepers.jpg")],
     embeds: [
-      new MessageEmbed()
-        .setTitle("Chatty Tavernkeepers!")
-        .setImage("attachment://Tavernkeepers.jpg")
-        .setDescription(
-          "Turns out they know someone's got a thing needs doing.\n\nCompensation? Of course!"
-        )
-        .addField("XP Gained", "1"),
+      new MessageEmbed({
+        title: "Chatty Tavernkeepers!",
+        description:
+          "Turns out they know someone's got a thing needs doing.\n\nCompensation? Of course!",
+        fields: [xpGainField(interaction, 1)],
+      }).setImage("attachment://Tavernkeepers.jpg"),
     ],
     components: [
       new MessageActionRow({
         components: [
-          new MessageSelectMenu()
-            .setCustomId("quest")
-            .setPlaceholder("So... you in or what?")
-            .addOptions(
-              Object.values(quests).map((quest) => ({
-                label: quest.title,
-                value: quest.id,
-                description: `${quest.objective}: ${quest.reward}`,
-              }))
-            ),
+          new MessageSelectMenu({
+            customId: "quest",
+            placeholder: "So... you in or what?",
+          }).addOptions(
+            Object.values(quests).map((quest) => ({
+              label: quest.title,
+              value: quest.id,
+              description: `${quest.objective}: ${quest.reward}`,
+            }))
+          ),
         ],
       }),
     ],

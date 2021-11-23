@@ -1,7 +1,7 @@
 {
-  "name": "zaxnyd-bot",
+  "name": "adventure-bot",
   "version": "1.0.0",
-  "description": "My little discord bot.",
+  "description": "Slay a monster! Stab your friends! Adventure bot!",
   "main": "index.js",
   "scripts": {
     "lint": "eslint . --ext .ts",
@@ -15,7 +15,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/brian-gates/zaxnyd-bot.git"
+    "url": "git+https://github.com/brian-gates/adventure-bot.git"
   },
   "keywords": [
     "discord",
@@ -25,9 +25,9 @@
   "author": "Brian Gates (brian.g.gates@gmail.com)",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/brian-gates/zaxnyd-bot/issues"
+    "url": "https://github.com/brian-gates/adventure-bot/issues"
   },
-  "homepage": "https://github.com/brian-gates/zaxnyd-bot#readme",
+  "homepage": "https://github.com/brian-gates/adventure-bot#readme",
   "devDependencies": {
     "@redux-devtools/cli": "^1.0.0-10",
     "@redux-devtools/remote": "^0.6.0",

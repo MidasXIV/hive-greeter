@@ -11,9 +11,10 @@ import { progressBar } from "../utils/progress-bar";
 import { getCompletedQuests } from "../quest/getCompletedQuests";
 import { Quest } from "../quest/Quest";
 import { isQuestId, QuestId } from "../quest/quests";
-import { slayerBuffQuestReward } from "../quest/rewards/slayerBuffQuest";
+import { slayerBuffQuestReward } from "../quest/rewards/slayerBuffQuestReward";
 import { survivorBuffQuestReward } from "../quest/rewards/survivorBuffQuest";
 import { blessedBuffQuestReward } from "../quest/rewards/blessedBuffQuest";
+import { healerQuestReward } from "../quest/rewards/healerQuestReward";
 
 export const command = new SlashCommandBuilder()
   .setName("quests")
@@ -88,5 +89,7 @@ const completeQuest = async (
       return await survivorBuffQuestReward(interaction);
     case "blessed":
       return await blessedBuffQuestReward(interaction);
+    case "healer":
+      return await healerQuestReward(interaction);
   }
 };

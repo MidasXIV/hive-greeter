@@ -2,7 +2,7 @@ import { SlashCommandBuilder } from "@discordjs/builders";
 import { CommandInteraction, MessageEmbed } from "discord.js";
 import { Character } from "../character/Character";
 import { getUserCharacter } from "../character/getUserCharacter";
-import { cooldownRemainingText } from "../utils";
+import { cooldownRemainingText } from "../character/cooldownRemainingText";
 
 export const command = new SlashCommandBuilder()
   .setName("cooldowns")
