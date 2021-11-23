@@ -34,16 +34,16 @@ export const chattyTavernkeepers = async (
     components: [
       new MessageActionRow({
         components: [
-          new MessageSelectMenu()
-            .setCustomId("quest")
-            .setPlaceholder("So... you in or what?")
-            .addOptions(
-              Object.values(quests).map((quest) => ({
-                label: quest.title,
-                value: quest.id,
-                description: `${quest.objective}: ${quest.reward}`,
-              }))
-            ),
+          new MessageSelectMenu({
+            customId: "quest",
+            placeholder: "So... you in or what?",
+          }).addOptions(
+            Object.values(quests).map((quest) => ({
+              label: quest.title,
+              value: quest.id,
+              description: `${quest.objective}: ${quest.reward}`,
+            }))
+          ),
         ],
       }),
     ],
