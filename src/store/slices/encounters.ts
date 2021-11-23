@@ -1,9 +1,9 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit'
 import { randomUUID } from "crypto";
 
-import { Encounter } from "@adventure-bot/monster/Encounter";
-import { Monster } from "@adventure-bot/monster/Monster";
-import { Character } from "@adventure-bot/character/Character";
+import { Encounter } from "../../monster/Encounter";
+import { Monster } from "../../monster/Monster";
+import { Character } from "../../character/Character";
 
 const encountersById: Record<string, Encounter> = {}
 

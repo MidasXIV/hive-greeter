@@ -1,7 +1,7 @@
 import { Monster } from "./Monster";
-import { updateMonster as doUpdateMonster } from "@adventure-bot/store/slices/monsters";
-import store from "@adventure-bot/store";
-import { getMonsterById } from "@adventure-bot/store/selectors";
+import { updateMonster as doUpdateMonster } from "../store/slices/monsters";
+import store from "../store";
+import { getMonsterById } from "../store/selectors";
 
 export const updateMonster = (monster: Monster): Monster => {
   console.log("update monster", monster);

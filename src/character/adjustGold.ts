@@ -1,7 +1,7 @@
 import { Character } from "./Character";
 import { getCharacter } from "./getCharacter";
-import store from '@adventure-bot/store'
-import { updateGold } from "@adventure-bot/store/slices/characters";
+import store from '../store'
+import { updateGold } from "../store/slices/characters";
 
 export const adjustGold = (
   characterId: string,

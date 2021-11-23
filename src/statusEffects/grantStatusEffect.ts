@@ -1,8 +1,8 @@
 import { Character } from "../character/Character";
 import { StatusEffect } from "./StatusEffect";
 import { getCharacter } from "../character/getCharacter";
-import store from '@adventure-bot/store'
-import { addCharacterStatusEffect } from '@adventure-bot/store/slices/characters'
+import store from '../store'
+import { addCharacterStatusEffect } from '../store/slices/characters'
 
 export const updateStatusEffect = (
   characterId: string,

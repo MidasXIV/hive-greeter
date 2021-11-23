@@ -14,10 +14,6 @@
     "strict": true,
     "noImplicitAny": true,
     "esModuleInterop": true,
-    "paths": {
-      "*": ["node_modules/*"],
-      "@adventure-bot/*": ["*"]
-    },
     "resolveJsonModule": true,
     "skipLibCheck": true,
     "forceConsistentCasingInFileNames": true

@@ -1,8 +1,8 @@
-import { getCharacterStatModified } from "@adventure-bot/character/getCharacterStatModified";
-import { d20, d6 } from "@adventure-bot/gameState";
+import { getCharacterStatModified } from "../character/getCharacterStatModified";
+import { d20, d6 } from "../gameState";
 import { TrapResult } from "./TrapResult";
-import { getCharacter } from "@adventure-bot/character/getCharacter";
-import { adjustHP } from "@adventure-bot/character/adjustHP";
+import { getCharacter } from "../character/getCharacter";
+import { adjustHP } from "../character/adjustHP";
 
 export const trapAttack = (
   characterId: string,

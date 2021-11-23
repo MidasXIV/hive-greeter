@@ -5,8 +5,8 @@ import { defaultProfile } from "../gameState";
 
 import { purgeExpiredStatuses } from "../statusEffects/purgeExpiredStatuses";
 
-import store from "@adventure-bot/store";
-import { getCharacterById } from "@adventure-bot/store/selectors";
+import store from "../store";
+import { getCharacterById } from "../store/selectors";
 
 export const getUserCharacter = (user: User): Character => {
   purgeExpiredStatuses(user.id);

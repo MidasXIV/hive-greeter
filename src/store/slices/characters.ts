@@ -1,10 +1,10 @@
-import { Character } from "@adventure-bot/character/Character";
-import { StatusEffect } from "@adventure-bot/statusEffects/StatusEffect";
+import { Character } from "../../character/Character";
+import { StatusEffect } from "../../statusEffects/StatusEffect";
 import { createSlice, PayloadAction } from '@reduxjs/toolkit'
-import { QuestId } from "@adventure-bot/quest/quests";
+import { QuestId } from "../../quest/quests";
 import { getCharacterStatModified } from '../../character/getCharacterStatModified';
 
-import { Item } from "@adventure-bot/equipment/equipment";
+import { Item } from "../../equipment/equipment";
 
 export const isStatusEffectExpired = (effect: StatusEffect): boolean =>
   Date.now() > new Date(effect.started).valueOf() + effect.duration;

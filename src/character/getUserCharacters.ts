@@ -1,4 +1,4 @@
-import store from '@adventure-bot/store'
-import { getAllCharacters } from "@adventure-bot/store/selectors";
+import store from '../store'
+import { getAllCharacters } from "../store/selectors";
 
 export const getUserCharacters = () => getAllCharacters(store.getState())

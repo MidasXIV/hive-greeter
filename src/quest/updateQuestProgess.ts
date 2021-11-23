@@ -2,9 +2,9 @@ import { User } from "discord.js";
 import { Character } from "../character/Character";
 import { getUserCharacter } from "../character/getUserCharacter";
 import { QuestId } from "./quests";
-import store from '@adventure-bot/store'
-import { addCharacterQuestProgress } from '@adventure-bot/store/slices/characters'
-import { getCharacterById } from '@adventure-bot/store/selectors';
+import store from '../store'
+import { addCharacterQuestProgress } from '../store/slices/characters'
+import { getCharacterById } from '../store/selectors';
 
 export const updateUserQuestProgess = (
   user: User,

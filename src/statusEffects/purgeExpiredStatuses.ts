@@ -1,6 +1,6 @@
-import store from '@adventure-bot/store'
-import { purgeExpiredStatuses as doPurgeExpiredStatuses } from '@adventure-bot/store/slices/characters'
-import { getCharacterById } from '@adventure-bot/store/selectors';
+import store from '../store'
+import { purgeExpiredStatuses as doPurgeExpiredStatuses } from '../store/slices/characters'
+import { getCharacterById } from '../store/selectors';
 
 export const purgeExpiredStatuses = (characterId: string): void => {
   const character = getCharacterById(store.getState(), characterId);

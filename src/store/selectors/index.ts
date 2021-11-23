@@ -1,7 +1,7 @@
 import { createSelector } from '@reduxjs/toolkit'
-import { Character } from "@adventure-bot/character/Character";
+import { Character } from "../../character/Character";
 // import { purgeExpiredStatuses } from "../purgeExpiredStatuses";
-import store, { ReduxState } from '@adventure-bot/store'
+import store, { ReduxState } from '../../store'
 
 
 

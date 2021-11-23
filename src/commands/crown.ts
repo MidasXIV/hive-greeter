@@ -5,8 +5,8 @@ import { getUserCharacter } from "../character/getUserCharacter";
 import { grantCharacterItem } from "../equipment/grantCharacterItem";
 import { heavyCrown } from "../heavyCrown/heavyCrown";
 import { execute as inspect } from "./inspect";
-import store from '@adventure-bot/store'
-import { addItemToInventory } from '@adventure-bot/store/slices/characters';
+import store from '../store'
+import { addItemToInventory } from '../store/slices/characters';
 
 export const command = new SlashCommandBuilder()
   .setName("crown")

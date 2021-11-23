@@ -1,7 +1,7 @@
-import { Character } from "@adventure-bot/character/Character";
-import { getCharacter } from "@adventure-bot/character/getCharacter";
-import store from '@adventure-bot/store'
-import { adjustCharacterHP } from "@adventure-bot/store/slices/characters";
+import { Character } from "../character/Character";
+import { getCharacter } from "../character/getCharacter";
+import store from '../store'
+import { adjustCharacterHP } from "../store/slices/characters";
 
 export const adjustHP = (
   characterId: string,

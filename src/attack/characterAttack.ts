@@ -1,10 +1,10 @@
-import { Character } from "@adventure-bot/character/Character";
-import { d20 } from "@adventure-bot/gameState";
+import { Character } from "../character/Character";
+import { d20 } from "../gameState";
 import { AttackResult } from "./AttackResult";
-import { getCharacterStatModified } from "@adventure-bot/character/getCharacterStatModified";
-import { updateCharacterQuestProgess } from "@adventure-bot/quest/updateQuestProgess";
-import { adjustHP } from "@adventure-bot/character/adjustHP";
-import { getCharacterUpdate } from "@adventure-bot/character/getCharacterUpdate";
+import { getCharacterStatModified } from "../character/getCharacterStatModified";
+import { updateCharacterQuestProgess } from "../quest/updateQuestProgess";
+import { adjustHP } from "../character/adjustHP";
+import { getCharacterUpdate } from "../character/getCharacterUpdate";
 
 export const characterAttack = (
   attacker: Character,

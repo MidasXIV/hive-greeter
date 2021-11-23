@@ -9,7 +9,7 @@
     "prestart:dev": "npm run build",
     "start:dev": "nodemon .build/index.js",
     "prebuild": "rimraf ./.build",
-    "build": "tsc && tscpaths -p tsconfig.json -s ./src -o ./.build",
+    "build": "tsc",
     "prestart": "npm run build",
     "start": "node .build/index.js"
   },

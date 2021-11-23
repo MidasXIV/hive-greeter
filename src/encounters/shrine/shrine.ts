@@ -1,15 +1,15 @@
 import { CommandInteraction, MessageEmbed } from "discord.js";
 import moment from "moment";
 
-import { getUserCharacter } from "@adventure-bot/character/getUserCharacter";
-import { isUserQuestComplete } from "@adventure-bot/quest/isQuestComplete";
-import { questProgressField } from "@adventure-bot/quest/questProgressField";
-import { updateUserQuestProgess } from "@adventure-bot/quest/updateQuestProgess";
+import { getUserCharacter } from "../../character/getUserCharacter";
+import { isUserQuestComplete } from "../../quest/isQuestComplete";
+import { questProgressField } from "../../quest/questProgressField";
+import { updateUserQuestProgess } from "../../quest/updateQuestProgess";
 import {
   hasStatusEffect,
   updateStatusEffect,
-} from "@adventure-bot/statusEffects/grantStatusEffect";
-import { StatusEffect } from "@adventure-bot/statusEffects/StatusEffect";
+} from "../../statusEffects/grantStatusEffect";
+import { StatusEffect } from "../../statusEffects/StatusEffect";
 import quests from "../../commands/quests";
 
 export const shrine = async (

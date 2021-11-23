@@ -1,6 +1,6 @@
-import { Encounter } from "@adventure-bot/monster/Encounter";
-import { updateEncounter } from "@adventure-bot/store/slices/encounters";
-import store from '@adventure-bot/store'
+import { Encounter } from "../monster/Encounter";
+import { updateEncounter } from "../store/slices/encounters";
+import store from '../store'
 
 export const setEncounter = (encounter: Encounter) => {
   store.dispatch(updateEncounter(encounter))

@@ -2,7 +2,7 @@ import { configureStore, Dispatch, createSelector } from '@reduxjs/toolkit'
 import reduxDevTools from '@redux-devtools/cli'
 import remoteDevTools from '@redux-devtools/remote'
 
-import rootReducer from '@adventure-bot/store/reducers'
+import rootReducer from '../store/reducers'
 
 const devToolsOptions = { 
   suppressConnectErrors: false, 

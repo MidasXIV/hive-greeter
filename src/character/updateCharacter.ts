@@ -1,10 +1,10 @@
-import { Monster } from "@adventure-bot/monster/Monster";
-import { Character } from "@adventure-bot/character/Character";
+import { Monster } from "../monster/Monster";
+import { Character } from "../character/Character";
 
-import store from '@adventure-bot/store'
-import { updateCharacter as doUpdateCharacter } from "@adventure-bot/store/slices/characters";
-import { updateMonster as doUpdateMonster } from "@adventure-bot/store/slices/monsters";
-import { getCharacterById, getMonsterById } from "@adventure-bot/store/selectors";
+import store from '../store'
+import { updateCharacter as doUpdateCharacter } from "../store/slices/characters";
+import { updateMonster as doUpdateMonster } from "../store/slices/monsters";
+import { getCharacterById, getMonsterById } from "../store/selectors";
 const isMonster = (character: Character): character is Monster =>
   character.isMonster ?? false;
 

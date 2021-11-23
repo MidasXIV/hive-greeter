@@ -2,8 +2,8 @@ import { Character } from "./Character";
 import { purgeExpiredStatuses } from "../statusEffects/purgeExpiredStatuses";
 import { Monster } from "../monster/Monster";
 
-import store from "@adventure-bot/store";
-import { getCharacterById, getMonsterById } from "@adventure-bot/store/selectors";
+import store from "../store";
+import { getCharacterById, getMonsterById } from "../store/selectors";
 
 export const getCharacterUpdate = (character: Character): Character => {
   purgeExpiredStatuses(character.id)

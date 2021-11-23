@@ -1,5 +1,5 @@
-import store from '@adventure-bot/store'
-import { getAllEncounters } from "@adventure-bot/store/selectors";
+import store from '../store'
+import { getAllEncounters } from "../store/selectors";
 
 export function getEncounters() {
   return getAllEncounters(store.getState())
