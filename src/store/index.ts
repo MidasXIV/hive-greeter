@@ -2,11 +2,14 @@ import { configureStore, Dispatch } from "@reduxjs/toolkit";
 import remoteReduxEnhancer from "@redux-devtools/remote";
 
 import rootReducer from "../store/reducers";
-import { devToolsOptions } from "./start-devtools";
 const enhancers = [];
 
-if (process.env.REDUX_DEVTOOLS_ENABLED) {
-  enhancers.push(remoteReduxEnhancer(devToolsOptions));
+if (process.env.REDUX_DEVTOOLS_ENABLED === 'true') {
+  enhancers.push(remoteReduxEnhancer({
+    realtime: true,
+    hostname: 'localhost',
+    port: 5010,
+  }));
 }
 const store = configureStore({
   reducer: rootReducer,
