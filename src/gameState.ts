@@ -7,8 +7,6 @@ import { LootResult } from "./character/loot/loot";
 import { Encounter } from "./monster/Encounter";
 import { Monster } from "./monster/Monster";
 
-import store from './store'
-
 export const DB_FILE = "./db.json";
 
 type GameState = {

@@ -11,7 +11,8 @@
     "prebuild": "rimraf ./.build",
     "build": "tsc",
     "prestart": "npm run build",
-    "start": "node .build/index.js"
+    "start": "node .build/index.js",
+    "redux-devtools": "redux-devtools --hostname=localhost --port=8000"
   },
   "repository": {
     "type": "git",

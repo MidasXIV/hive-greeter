@@ -9,6 +9,7 @@ import { exit } from "process";
 import { Routes } from "discord-api-types/v9";
 import commands from "./commands";
 import { loadDB, saveDB } from "./gameState";
+import { startDevtools } from "./store/start-devtools";
 
 if (!process.env.token) exit(1);
 
@@ -16,6 +17,7 @@ loadDB().then(() => console.log("database loaded"));
 
 const rest = new REST({ version: "9" }).setToken(process.env.token);
 (async () => {
+  await startDevtools();
   if (!process.env.token || !process.env.CLIENT_ID || !process.env.GUILD_ID)
     return;
   try {

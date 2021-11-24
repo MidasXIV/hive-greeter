@@ -1,27 +1,25 @@
-import { configureStore, Dispatch, createSelector } from '@reduxjs/toolkit'
-import reduxDevTools from '@redux-devtools/cli'
-import remoteDevTools from '@redux-devtools/remote'
+import { configureStore, Dispatch } from "@reduxjs/toolkit";
+import remoteReduxEnhancer from "@redux-devtools/remote";
 
-import rootReducer from '../store/reducers'
+import rootReducer from "../store/reducers";
+import { devToolsOptions } from "./start-devtools";
+const enhancers = [];
 
-const devToolsOptions = { 
-  suppressConnectErrors: false, 
-  realtime: true, 
-  hostname: 'localhost', 
-  port: 8000 
+if (process.env.REDUX_DEVTOOLS_ENABLED) {
+  enhancers.push(remoteReduxEnhancer(devToolsOptions));
 }
-
-reduxDevTools(devToolsOptions)
-
 const store = configureStore({
   reducer: rootReducer,
-  enhancers: [remoteDevTools(devToolsOptions)]
-})
-export default store
+  devTools: true,
+  enhancers,
+});
+console.log("store", new Date());
 
-export type ReduxState = ReturnType<typeof store.getState>
-export type AppDispatch = typeof store.dispatch
-export type { Dispatch }
+export default store;
+
+export type ReduxState = ReturnType<typeof store.getState>;
+export type AppDispatch = typeof store.dispatch;
+export type { Dispatch };
 
 // export const useDispatch = () => useReduxDispatch<typeof store.dispatch>()
 // export const useSelector: TypedUseSelectorHook<ReduxState> = (fn) =>

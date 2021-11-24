@@ -10,8 +10,10 @@
       "request": "launch",
       "cwd": "${workspaceFolder}",
       "runtimeExecutable": "yarn",
-      "runtimeArgs": ["start:dev"]
-    }, {
+      "runtimeArgs": ["start:dev"],
+      "console": "integratedTerminal"
+    },
+    {
       "name": "start",
       "type": "node",
       "request": "launch",
