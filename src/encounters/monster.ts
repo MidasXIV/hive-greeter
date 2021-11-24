@@ -21,6 +21,8 @@ import { loot } from "../character/loot/loot";
 import { lootResultEmbed } from "../character/loot/lootResultEmbed";
 import { xpGainField } from "../character/xpGainField";
 import { hpBarField } from "../character/hpBar/hpBarField";
+import store from "../store";
+import { addMonsterAttack, addPlayerAttack } from "../store/slices/encounters";
 
 export const monster = async (
   interaction: CommandInteraction
@@ -69,9 +71,10 @@ export const monster = async (
         ? undefined
         : attack(player.id, monster.id);
     const monsterResult = attack(monster.id, player.id);
-
-    playerResult && encounter.playerAttacks.push(playerResult);
-    monsterResult && encounter.monsterAttacks.push(monsterResult);
+    playerResult &&
+      store.dispatch(addPlayerAttack({ encounter, result: playerResult }));
+    monsterResult &&
+      store.dispatch(addMonsterAttack({ encounter, result: monsterResult }));
     const updatedMonster = getCharacter(monster.id);
     const updatedPlayer = getCharacter(player.id);
     if (!updatedMonster || !updatedPlayer || !monsterResult) return;
