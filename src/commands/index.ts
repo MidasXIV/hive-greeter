@@ -38,6 +38,7 @@ commands.set("inventory", inventory);
 commands.set("list", list);
 commands.set("quests", quests);
 commands.set("set", set);
+commands.set("renew", renew);
 
 if (process.env.DEV_COMMANDS === "true") {
   console.warn("⚠ DEV COMMANDS LOADED ⚠");
@@ -46,7 +47,6 @@ if (process.env.DEV_COMMANDS === "true") {
   commands.set("chest", chest);
   commands.set("hpbartest", hpbartest);
   commands.set("monster", monster);
-  commands.set("renew", renew);
   commands.set("crown", crown);
   commands.set("shop", shop);
   commands.set("lootme", lootme);
