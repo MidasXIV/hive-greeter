@@ -44,7 +44,7 @@ export const execute = async (
     return;
   }
   setCharacterCooldown(character.id, "renew");
-  const healAmount = 3;
+  const healAmount = 2;
   let totalTicks = 5;
   const tickRate = 5 * 60000;
   adjustHP(target.id, healAmount);
