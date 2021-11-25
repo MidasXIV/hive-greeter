@@ -15,6 +15,7 @@ import { Emoji } from "../Emoji";
 import { equipItemPrompt, itemEmbed } from "../equipment/equipment";
 import { grantCharacterItem } from "../equipment/grantCharacterItem";
 import { heavyCrown } from "../heavyCrown/heavyCrown";
+import { isHeavyCrownInPlay } from "../heavyCrown/isHeavyCrownInPlay";
 import { updateStatusEffect } from "../statusEffects/grantStatusEffect";
 import { trapAttack } from "../trap/trapAttack";
 
@@ -183,7 +184,7 @@ export const chest = async (
         "xp"
       )} ${xp} xp.`
     );
-    if (Math.random() <= 0.01) {
+    if (Math.random() <= 0.01 && !isHeavyCrownInPlay()) {
       updateCharacter(
         grantCharacterItem(getUserCharacter(interaction.user), heavyCrown)
       );
