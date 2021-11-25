@@ -1,6 +1,6 @@
 import { readFileSync } from "fs";
 import { join } from "path";
-import { MonsterKind } from "../monster/getRandomMonsterName";
+import { MonsterKind } from "../getRandomMonsterName";
 
 const readSingleColumnCSV = (file: string) =>
   readFileSync(join(__dirname, file))

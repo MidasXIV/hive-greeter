@@ -1,9 +1,13 @@
 import OpenAI from "openai-api";
-import { namesByKind } from "../data";
+import { randomArrayElement } from "./randomArrayElement";
+import { namesByKind } from "./seedNames";
 
 export type MonsterKind = "Goblin" | "Orc" | "Bandit";
 
 const monsterKinds: MonsterKind[] = ["Goblin", "Orc", "Bandit"];
+
+export const getRandomMonsterName = (kind: MonsterKind) =>
+  randomArrayElement(namesByKind.get(kind) ?? [kind]);
 
 const prompts = new Map<MonsterKind, string>(
   monsterKinds.map((kind) => [
@@ -20,12 +24,7 @@ Monster names:`,
   ])
 );
 
-// get a random array element
-function randomArrayElement<T>(array: T[]): T {
-  return array[Math.floor(Math.random() * array.length)];
-}
-
-export const getRandomMonsterName = async (
+const generateRandomMonsterNames = async (
   kind: MonsterKind
 ): Promise<string> => {
   try {
@@ -59,9 +58,3 @@ export const getRandomMonsterName = async (
     return kind;
   }
 };
-
-// (async () => {
-//   for (let index = 0; index < 10; index++) {
-//     console.log(await getRandomMonsterName("Bandit"));
-//   }
-// })();
