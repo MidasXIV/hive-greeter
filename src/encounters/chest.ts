@@ -8,7 +8,9 @@ import { adjustGold } from "../character/adjustGold";
 import { adjustHP } from "../character/adjustHP";
 import { awardXP } from "../character/awardXP";
 import { getUserCharacter } from "../character/getUserCharacter";
+import { gpGainField } from "../character/gpGainField";
 import { updateCharacter } from "../character/updateCharacter";
+import { xpGainField } from "../character/xpGainField";
 import { Emoji } from "../Emoji";
 import { equipItemPrompt, itemEmbed } from "../equipment/equipment";
 import { grantCharacterItem } from "../equipment/grantCharacterItem";
@@ -167,6 +169,10 @@ export const chest = async (
     const gp = Math.floor(Math.random() * 20) + 5;
     awardXP(interaction.user.id, xp);
     adjustGold(interaction.user.id, gp);
+    embed.addFields([
+      xpGainField(interaction, xp),
+      gpGainField(interaction, gp),
+    ]);
     embed.addField(
       "Result",
       `You loot ${Emoji(
