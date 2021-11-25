@@ -184,7 +184,7 @@ export const chest = async (
         "xp"
       )} ${xp} xp.`
     );
-    if (Math.random() <= 0.01 && !isHeavyCrownInPlay()) {
+    if (Math.random() <= 0.005 && !isHeavyCrownInPlay()) {
       updateCharacter(
         grantCharacterItem(getUserCharacter(interaction.user), heavyCrown)
       );
