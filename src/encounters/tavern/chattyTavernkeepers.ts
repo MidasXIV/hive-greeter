@@ -38,7 +38,7 @@ export const chattyTavernkeepers = async (
             customId: "quest",
             placeholder: "So... you in or what?",
           }).addOptions(
-            Object.values(quests).map((quest) => ({
+            [quests.blessed, quests.slayer, quests.survivor].map((quest) => ({
               label: quest.title,
               value: quest.id,
               description: `${quest.objective}: ${quest.reward}`,
