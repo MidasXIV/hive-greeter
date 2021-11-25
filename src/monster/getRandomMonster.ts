@@ -1,7 +1,7 @@
 import { gameState } from "../gameState";
 import { createMonster } from "./createMonster";
 import { getRandomItem } from "./getRandomItem";
-import { getRandomMonsterName } from "./getRandomMonsterName";
+import { getRandomMonsterName } from "./names/getRandomMonsterName";
 import { getRoamingMonsters } from "./getRoamingMonsters";
 import { Monster } from "./Monster";
 

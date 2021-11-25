@@ -1,13 +1,7 @@
 import OpenAI from "openai-api";
-import { randomArrayElement } from "./randomArrayElement";
-import { namesByKind } from "./seedNames";
-
-export type MonsterKind = "Goblin" | "Orc" | "Bandit";
-
-const monsterKinds: MonsterKind[] = ["Goblin", "Orc", "Bandit"];
-
-export const getRandomMonsterName = (kind: MonsterKind) =>
-  randomArrayElement(namesByKind.get(kind) ?? [kind]);
+import { randomArrayElement } from "../randomArrayElement";
+import { MonsterKind, monsterKinds } from "./getRandomMonsterName";
+import { namesByKind } from "./namesByKind";
 
 const prompts = new Map<MonsterKind, string>(
   monsterKinds.map((kind) => [
