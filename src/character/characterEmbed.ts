@@ -1,7 +1,7 @@
 import { Emoji, MessageEmbed } from "discord.js";
 import { Character } from "./Character";
 import { statFields } from "../commands/inspect";
-import { primaryStatFields } from "../commands/primaryStatFields";
+import { primaryStatFields } from "./primaryStatFields";
 import { decoratedName } from "./decoratedName";
 
 export const characterEmbed = (

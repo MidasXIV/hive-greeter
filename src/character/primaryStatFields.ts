@@ -1,7 +1,7 @@
 import { EmbedFieldData, Emoji } from "discord.js";
-import { Character } from "../character/Character";
-import { getCharacterStatModified } from "../character/getCharacterStatModified";
-import { hpBar } from "../character/hpBar/hpBar";
+import { Character } from "./Character";
+import { getCharacterStatModified } from "./getCharacterStatModified";
+import { hpBar } from "./hpBar/hpBar";
 
 export function primaryStatFields({
   character,
