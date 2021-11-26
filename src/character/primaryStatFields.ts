@@ -1,33 +1,34 @@
-import { EmbedFieldData, Emoji } from "discord.js";
+import { CommandInteraction, EmbedFieldData } from "discord.js";
+import { Emoji } from "../Emoji";
 import { Character } from "./Character";
 import { getCharacterStatModified } from "./getCharacterStatModified";
 import { hpBar } from "./hpBar/hpBar";
 
 export function primaryStatFields({
   character,
-  xpEmoji,
   adjustment = 0,
+  interaction,
 }: {
   character: Character;
-  xpEmoji?: Emoji;
   adjustment?: number;
+  interaction: CommandInteraction;
 }): EmbedFieldData[] {
   return [
     {
-      name: "HP",
+      name: "Health",
       value: `${character.hp}/${getCharacterStatModified(
         character,
         "maxHP"
       )}\n${hpBar(character, adjustment)}`,
     },
     {
-      name: "XP",
-      value: (xpEmoji?.toString() ?? "🧠") + " " + character.xp.toString(), // TODO: refactor to use Emoji
+      name: "Experience",
+      value: Emoji(interaction, "xp") + " " + character.xp.toString(),
       inline: true,
     },
     {
-      name: "GP",
-      value: "💰 " + character.gold.toString(),
+      name: "Gold",
+      value: Emoji(interaction, "gold") + " " + character.gold.toString(),
       inline: true,
     },
   ];

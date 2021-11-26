@@ -1,6 +1,16 @@
 import { Interaction } from "discord.js";
 
-type Emojis = "xp" | "gold" | "damage" | "heal";
+type Emojis =
+  | "xp"
+  | "gold"
+  | "damage"
+  | "heal"
+  | "attack"
+  | "ac"
+  | "attackBonus"
+  | "damageMax"
+  | "damageBonus"
+  | "maxHP";
 
 const defaultEmojis: {
   [k in Emojis]: string;
@@ -9,6 +19,12 @@ const defaultEmojis: {
   gold: "💰",
   damage: "💔",
   heal: "🤍",
+  attack: "⚔",
+  ac: "🛡",
+  attackBonus: "⚔",
+  damageBonus: "🩸",
+  maxHP: "♥",
+  damageMax: "🩸",
 };
 
 /**

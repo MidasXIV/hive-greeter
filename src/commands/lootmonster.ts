@@ -25,9 +25,10 @@ export const execute = async (
   interaction.reply({
     embeds: [
       monsterEmbed(getMonsterUpdate(monster)),
-      characterEmbed(getCharacterUpdate(character)).addFields(
-        ...inventoryFields(character)
-      ),
+      characterEmbed({
+        character: getCharacterUpdate(character),
+        interaction,
+      }).addFields(...inventoryFields(character)),
     ].concat(result ? lootResultEmbed(result) : []),
   });
 };

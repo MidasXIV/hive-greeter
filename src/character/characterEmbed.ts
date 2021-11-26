@@ -1,19 +1,17 @@
-import { Emoji, MessageEmbed } from "discord.js";
+import { CommandInteraction, MessageEmbed } from "discord.js";
 import { Character } from "./Character";
-import { statFields } from "../commands/inspect";
 import { primaryStatFields } from "./primaryStatFields";
 import { decoratedName } from "./decoratedName";
 
-export const characterEmbed = (
-  character: Character,
-  xpEmoji?: Emoji
-): MessageEmbed => {
-  const embed = new MessageEmbed()
+export function characterEmbed({
+  character,
+  interaction,
+}: {
+  character: Character;
+  interaction: CommandInteraction;
+}): MessageEmbed {
+  return new MessageEmbed()
     .setTitle(decoratedName(character))
     .setImage(character.profile)
-    .addFields([
-      ...primaryStatFields({ character, xpEmoji }),
-      ...statFields(character),
-    ]);
-  return embed;
-};
+    .addFields([...primaryStatFields({ character, interaction })]);
+}

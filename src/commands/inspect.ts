@@ -1,16 +1,18 @@
 import { SlashCommandBuilder } from "@discordjs/builders";
-import { CacheType, CommandInteraction, MessageEmbed } from "discord.js";
+import { CommandInteraction, MessageEmbed } from "discord.js";
 import { Character } from "../character/Character";
 import { defaultProfile, defaultProfileAttachment } from "../gameState";
 import { getUserCharacter } from "../character/getUserCharacter";
 import { getCharacterStatModifier } from "../character/getCharacterStatModifier";
 import { getCharacterStatModified } from "../character/getCharacterStatModified";
-import { cooldownRemainingText } from "../character/cooldownRemainingText";
 import { Stat } from "../character/Stats";
 import { itemEmbed } from "../equipment/equipment";
 import { characterEmbed } from "../character/characterEmbed";
 import { questEmbed } from "./questEmbed";
 import { statusEffectEmbed } from "../statusEffects/statusEffectEmbed";
+import { actionEmbed } from "./actionEmbed";
+import { Emoji } from "../Emoji";
+import { values } from "remeda";
 
 export const command = new SlashCommandBuilder()
   .setName("inspect")
@@ -29,122 +31,115 @@ export const execute = async (
     interaction.user;
   const character = getUserCharacter(user);
   console.log(`inspect ${character.name}`, character);
-  const xpEmoji = getXPEmoji(interaction);
-  const extendedInfo =
+  const shouldShowExtendedInfo =
     0 <
-    Object.values(character.equipment).length +
+    values(character.equipment).length +
       (character.statusEffects?.length ?? 0) +
-      Object.values(character.quests).length;
+      values(character.quests).length;
 
-  if (extendedInfo)
+  if (shouldShowExtendedInfo)
     await interaction[responseType]({
-      embeds: Object.values(character.equipment)
+      embeds: values(character.equipment)
         .map(itemEmbed)
         .concat(character.statusEffects?.map(statusEffectEmbed) ?? [])
         .concat(questEmbed(character) ?? []),
     });
-  await interaction[extendedInfo ? "followUp" : responseType]({
+  await interaction[shouldShowExtendedInfo ? "followUp" : responseType]({
     attachments:
       character.profile === defaultProfile ? [defaultProfileAttachment] : [],
     embeds: [
-      characterEmbed(character, xpEmoji),
-      statEmbed(character),
-      actionEmbed(character),
+      characterEmbed({ character, interaction }),
+      statEmbed({ character, interaction }),
+      actionEmbed({ character, interaction }),
     ],
   });
 };
 
 export default { command, execute };
 
-export const statText = (character: Character, stat: Stat): string => {
+function statText({
+  character,
+  stat,
+  interaction,
+}: {
+  character: Character;
+  stat: Stat;
+  interaction: CommandInteraction;
+}): string {
   const modified = getCharacterStatModified(character, stat);
   const modifier = getCharacterStatModifier(character, stat);
   const sign = modifier > 0 ? "+" : "";
-  return `${modified}${modifier ? ` (${sign}${modifier})` : ""}`;
-};
-
-function getXPEmoji(interaction: CommandInteraction<CacheType>) {
-  return interaction.guild?.emojis.cache.find((emoji) => emoji.name === "xp");
+  return (
+    Emoji(interaction, stat) +
+    ` ${modified}${modifier ? ` (${sign}${modifier})` : ""}`
+  );
 }
 
-const actionEmbed = (character: Character) =>
-  new MessageEmbed({
-    title: "Actions",
-    fields: [
-      {
-        name: "Attack",
-        value: "⚔ " + cooldownRemainingText(character.id, "attack"),
-        inline: true,
-      },
-      {
-        name: "Adventure",
-        value: "🚶‍♀️ " + cooldownRemainingText(character.id, "adventure"),
-        inline: true,
-      },
-      {
-        name: "Heal",
-        value: "🤍 " + cooldownRemainingText(character.id, "adventure"),
-        inline: true,
-      },
-    ],
-  });
-
 export const statFields = (
-  character: Character
+  character: Character,
+  interaction: CommandInteraction
 ): { name: string; value: string; inline?: boolean }[] => [
   {
     name: "**Stats**",
     value: `───────────`,
   },
   {
-    name: "AC",
-    value: `🛡 ${statText(character, "ac")}`,
+    name: "Armor",
+    value: statText({ character, stat: "ac", interaction }),
     inline: true,
   },
   {
     name: "Attack Bonus",
-    value: `⚔ ${statText(character, "attackBonus")}`,
+    value: statText({ character, stat: "attackBonus", interaction }),
     inline: true,
   },
   {
     name: "Damage Max",
-    value: `🩸 ${statText(character, "damageMax")}`,
+    value: statText({ character, stat: "damageMax", interaction }),
     inline: true,
   },
   {
     name: "Damage Bonus",
-    value: `🩸 ${statText(character, "damageBonus")}`,
+    value: statText({ character, stat: "damageBonus", interaction }),
     inline: true,
   },
   {
-    name: "Max HP",
-    value: `🩸 ${statText(character, "maxHP")}`,
+    name: "Max Health",
+    value: statText({ character, stat: "maxHP", interaction }),
     inline: true,
   },
 ];
-export const statEmbed = (character: Character): MessageEmbed =>
-  new MessageEmbed({
+
+function statEmbed({
+  character,
+  interaction,
+}: {
+  character: Character;
+  interaction: CommandInteraction;
+}): MessageEmbed {
+  return new MessageEmbed({
     title: `Stats`,
     fields: [
       {
-        name: "AC",
-        value: `🛡 ${statText(character, "ac")}`,
+        name: "Armor",
+        value: statText({ character, stat: "ac", interaction }),
         inline: true,
       },
       {
-        name: "Attack Bonus",
-        value: `⚔ ${statText(character, "attackBonus")}`,
+        name: "Attack",
+        value: statText({ character, stat: "attackBonus", interaction }),
         inline: true,
       },
       {
         name: "Damage Max",
-        value: `🩸 ${statText(character, "damageMax")}`,
+        value: statText({ character, stat: "damageMax", interaction }),
         inline: true,
       },
       {
         name: "Damage Bonus",
-        value: `🩸 ${statText(character, "damageBonus")}`,
+        value: statText({ character, stat: "damageBonus", interaction }),
         inline: true,
       },
     ],
   });
+}
