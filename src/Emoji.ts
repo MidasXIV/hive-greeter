@@ -1,16 +1,17 @@
 import { Interaction } from "discord.js";
+import { Stat } from "./character/Stats";
 
 type Emojis =
+  | Stat
   | "xp"
   | "gold"
   | "damage"
   | "heal"
   | "attack"
-  | "ac"
-  | "attackBonus"
-  | "damageMax"
-  | "damageBonus"
-  | "maxHP";
+  | "hit"
+  | "miss"
+  | "run"
+  | "adventure";
 
 const defaultEmojis: {
   [k in Emojis]: string;
@@ -22,9 +23,14 @@ const defaultEmojis: {
   attack: "⚔",
   ac: "🛡",
   attackBonus: "⚔",
-  damageBonus: "🩸",
+  damageBonus: "💔",
   maxHP: "♥",
-  damageMax: "🩸",
+  damageMax: "💔",
+  monsterDamageMax: "👹",
+  hit: "💥",
+  miss: "🛡",
+  run: "🏃‍♀️",
+  adventure: "🚶‍♀️",
 };
 
 /**
@@ -33,7 +39,6 @@ const defaultEmojis: {
 export function Emoji(interaction: Interaction, name: Emojis): string {
   return `${
     interaction.guild?.emojis.cache.find((emoji) => emoji.name === name) ??
-    defaultEmojis[name] ??
-    "❓"
+    defaultEmojis[name]
   }`;
 }

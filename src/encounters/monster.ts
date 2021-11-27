@@ -1,26 +1,21 @@
-import { CommandInteraction, Message, MessageEmbed } from "discord.js";
-import { playerAttack } from "../attack/playerAttack";
+import { CommandInteraction, Message } from "discord.js";
 import { attack } from "../attack/attack";
-import { attackFlavorText, attackRollText } from "../commands/attack";
 import { chest } from "./chest";
 import { isUserQuestComplete } from "../quest/isQuestComplete";
 import quests from "../commands/quests";
 import { updateUserQuestProgess } from "../quest/updateQuestProgess";
-import { questProgressField } from "../quest/questProgressField";
 import { getCharacter } from "../character/getCharacter";
 import { getUserCharacter } from "../character/getUserCharacter";
 import { getRandomMonster } from "../monster/getRandomMonster";
 import { createEncounter } from "../encounter/createEncounter";
 import { Monster } from "../monster/Monster";
 import { encounterInProgressEmbed } from "./encounterInProgressEmbed";
-import { AttackResult } from "../attack/AttackResult";
-import { Character } from "../character/Character";
-import { Encounter } from "../monster/Encounter";
 import { adjustHP } from "../character/adjustHP";
 import { loot } from "../character/loot/loot";
 import { lootResultEmbed } from "../character/loot/lootResultEmbed";
-import { xpGainField } from "../character/xpGainField";
-import { hpBarField } from "../character/hpBar/hpBarField";
+import { Emoji } from "../Emoji";
+import { attackResultEmbed } from "../encounter/attackResultEmbed";
+import { encounterSummaryEmbed } from "../encounter/encounterSummaryEmbed";
 
 export const monster = async (
   interaction: CommandInteraction
@@ -39,13 +34,16 @@ export const monster = async (
 
   while (encounter.outcome === "in progress") {
     encounter.rounds++;
-    await message.react("⚔");
-    await message.react("🏃‍♀️");
+    const attackEmoji = Emoji(interaction, "attack");
+    const runEmoji = Emoji(interaction, "run");
+    await message.react(attackEmoji);
+    await message.react(runEmoji);
     const collected = await message
       .awaitReactions({
         filter: (reaction, user) =>
-          ["⚔", "🏃‍♀️"].includes(String(reaction.emoji.name)) &&
-          user.id === interaction.user.id,
+          [attackEmoji, "attack", runEmoji, "run"].includes(
+            reaction.emoji.name ?? ""
+          ) && user.id === interaction.user.id,
         max: 1,
         time: 60000,
         errors: ["time"],
@@ -114,15 +112,17 @@ export const monster = async (
     }
 
     message.edit({
-      embeds: [
-        encounterInProgressEmbed(encounter),
-        attackExchangeEmbed({
-          monster,
-          player,
-          playerAttack: playerResult,
-          monsterAttack: monsterResult,
-        }),
-      ],
+      embeds: [encounterInProgressEmbed(encounter)]
+        .concat(
+          playerResult
+            ? attackResultEmbed({ result: playerResult, interaction })
+            : []
+        )
+        .concat(
+          monsterResult
+            ? attackResultEmbed({ result: monsterResult, interaction })
+            : []
+        ),
     });
   }
 
@@ -147,97 +147,3 @@ export const monster = async (
   )
     await quests.execute(interaction, "followUp");
 };
-
-function attackExchangeEmbed({
-  monster,
-  player,
-  playerAttack,
-  monsterAttack,
-}: {
-  monster: Monster;
-  player: Character;
-  playerAttack: AttackResult | void;
-  monsterAttack: AttackResult | void;
-}): MessageEmbed {
-  const playerDamage =
-    playerAttack && playerAttack.outcome === "hit" ? -playerAttack.damage : 0;
-  const monsterDamage =
-    monsterAttack && monsterAttack.outcome === "hit"
-      ? -monsterAttack.damage
-      : 0;
-  const embed = new MessageEmbed({
-    fields: [
-      hpBarField(monster, playerDamage, true),
-      hpBarField(player, monsterDamage, true),
-    ],
-  });
-
-  if (monsterAttack) embed.addField(...attackField(monsterAttack));
-  if (playerAttack) {
-    embed.addField(...attackField(playerAttack));
-  }
-  return embed;
-}
-
-const attackField = (
-  result: ReturnType<typeof playerAttack>
-): [string, string] => [
-  result
-    ? result.outcome === "cooldown"
-      ? "cooldown"
-      : `${result.attacker.name}'s attack`
-    : "No result.",
-  result
-    ? `${attackFlavorText(result)}\n${attackRollText(result)}${
-        result.outcome === "hit" ? "\n🩸 " + result.damage.toString() : ""
-      }`
-    : "No result.",
-];
-
-function encounterSummaryEmbed({
-  encounter,
-  monster,
-  character,
-  interaction,
-}: {
-  encounter: Encounter;
-  monster: Monster;
-  character: Character;
-  interaction: CommandInteraction;
-}): MessageEmbed {
-  const summary = new MessageEmbed({ title: "Encounter Summary" });
-
-  switch (encounter.outcome) {
-    case "double ko":
-      summary.addField("Double KO!", `You knocked eachother out!`);
-      break;
-    case "in progress":
-      summary.addField("In Progress", "Encounter in progress.");
-      break;
-    case "monster fled":
-      summary.addField("Evaded!", `${monster.name} escaped!`);
-      break;
-    case "player defeated":
-      summary.addField("Unconscious", `${character.name} knocked out!`);
-      if (encounter.goldLooted) {
-        summary.addField("Looted!", `Lost 💰 ${encounter.goldLooted}!`);
-      }
-      break;
-    case "player fled":
-      summary.addField("Fled", `${character.name} escaped with their life!`);
-      break;
-    case "player victory":
-      summary.addField(
-        "Triumphant!",
-        `${character.name} defeated the ${monster.name}! 🎉`
-      );
-      // summary.addField("XP Gained", "🧠 " + monster.xpValue.toString());
-      summary.addFields([xpGainField(interaction)]);
-      summary.addField("GP Gained", "💰 " + monster.gold.toString());
-      if (character && character.quests.slayer)
-        summary.addFields([questProgressField(character.quests.slayer)]);
-      break;
-  }
-
-  return summary;
-}

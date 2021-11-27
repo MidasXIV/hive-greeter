@@ -1,9 +1,23 @@
+export const stats = [
+  "ac",
+  "attackBonus",
+  "damageBonus",
+  "damageMax",
+  "maxHP",
+  "monsterDamageMax",
+] as const;
+
+export type Stat = typeof stats[number];
+
 export type Stats = {
-  ac: number;
-  attackBonus: number;
-  damageBonus: number;
-  damageMax: number;
-  maxHP: number;
-  monsterDamageMax: number;
+  [key in Stat]: number;
 };
-export type Stat = "ac" | "attackBonus" | "damageBonus" | "damageMax" | "maxHP";
+
+export const statTitles: { [key in Stat]: string } = {
+  ac: "Armor",
+  attackBonus: "Attack Bonus",
+  damageBonus: "Damage Bonus",
+  damageMax: "Damage Max",
+  maxHP: "Max Health",
+  monsterDamageMax: "Monster Damage Max",
+};

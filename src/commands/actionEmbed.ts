@@ -17,17 +17,24 @@ export function actionEmbed({
         name: "Attack",
         value:
           Emoji(interaction, "attack") +
+          " " +
           cooldownRemainingText(character.id, "attack"),
         inline: true,
       },
       {
         name: "Adventure",
-        value: "🚶‍♀️ " + cooldownRemainingText(character.id, "adventure"),
+        value:
+          Emoji(interaction, "adventure") +
+          " " +
+          cooldownRemainingText(character.id, "adventure"),
         inline: true,
       },
       {
         name: "Heal",
-        value: "🤍 " + cooldownRemainingText(character.id, "adventure"),
+        value:
+          Emoji(interaction, "heal") +
+          " " +
+          cooldownRemainingText(character.id, "adventure"),
         inline: true,
       },
     ],
