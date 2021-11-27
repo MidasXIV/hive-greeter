@@ -6,9 +6,9 @@ import {
 } from "discord.js";
 import { Character } from "../character/Character";
 import { itemSelect } from "../commands/itemSelect";
-import { dropInventoryItem } from "./dropInventoryItem";
+import { dropItemConfirm } from "./dropItemConfirm";
 
-export async function dropInventoryItemPrompt(
+export async function dropItemPrompt(
   interaction: CommandInteraction,
   character: Character
 ): Promise<void> {
@@ -61,6 +61,10 @@ export async function dropInventoryItemPrompt(
     })
     .then((i) => {
       const slot = parseInt(i.values[0]);
-      dropInventoryItem({ character, slot, interaction });
+      message.edit({
+        content: `${character.inventory[slot].name} dropped.`,
+        components: [],
+      });
+      dropItemConfirm({ character, slot, interaction });
     });
 }

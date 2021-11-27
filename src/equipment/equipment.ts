@@ -1,6 +1,10 @@
-import { CommandInteraction, Message } from "discord.js";
+import {
+  CommandInteraction,
+  Message,
+  MessageActionRow,
+  MessageButton,
+} from "discord.js";
 import inspect from "../commands/inspect";
-import { equipItemRow } from "./equipItemRow";
 import { getUserCharacter } from "../character/getUserCharacter";
 import { equipItem } from "../character/equipItem";
 import { updateCharacter } from "../character/updateCharacter";
@@ -176,7 +180,17 @@ export const equipItemPrompt = async (
   const message = await interaction.followUp({
     content,
     embeds: [itemEmbed({ item, interaction })],
-    components: [equipItemRow(item)],
+    components: [
+      new MessageActionRow({
+        components: [
+          new MessageButton({
+            customId: "equip",
+            label: `Equip the ${item.name}`,
+            style: "PRIMARY",
+          }),
+        ],
+      }),
+    ],
   });
 
   if (!(message instanceof Message)) return;

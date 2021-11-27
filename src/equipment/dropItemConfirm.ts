@@ -6,10 +6,10 @@ import {
 } from "discord.js";
 import { Character } from "../character/Character";
 import { getUserCharacter } from "../character/getUserCharacter";
-import { equipmentFilter } from "../character/loot/loot";
 import { updateCharacter } from "../character/updateCharacter";
+import { dropItem } from "./dropItem";
 
-export async function dropInventoryItem({
+export async function dropItemConfirm({
   character,
   slot,
   interaction,
@@ -28,13 +28,7 @@ export async function dropInventoryItem({
     return;
   }
 
-  updateCharacter({
-    ...character,
-    equipment: equipmentFilter(
-      character.equipment,
-      (item) => item.id !== droppedItem.id
-    ),
-  });
+  dropItem({ character, item: droppedItem });
 
   const message = await interaction.followUp({
     content: `You dropped your ${droppedItem.name}.`,
@@ -51,6 +45,7 @@ export async function dropInventoryItem({
       }),
     ],
   });
+
   if (!(message instanceof Message)) return;
   message
     .awaitMessageComponent({

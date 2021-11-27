@@ -10,9 +10,11 @@ import { values } from "remeda";
 export function itemEmbed({
   item,
   interaction,
+  showEqupStatus = false,
 }: {
   item: Item;
   interaction: CommandInteraction;
+  showEqupStatus?: boolean;
 }): MessageEmbed {
   const fields: EmbedFieldData[] = [];
   stats.forEach((stat) => {
@@ -33,13 +35,15 @@ export function itemEmbed({
     ],
   });
 
-  const character = getUserCharacter(interaction.user);
-  const isEquipped =
-    values(equipmentFilter(character.equipment, (i) => i.id === item.id))
-      .length > 0;
-
   embed.addField("Lootable?", item.lootable ? "Yes" : "No");
-  embed.addField("Equipped?", isEquipped ? "Yes" : "No");
+
+  if (showEqupStatus) {
+    const character = getUserCharacter(interaction.user);
+    const isEquipped =
+      values(equipmentFilter(character.equipment, (i) => i.id === item.id))
+        .length > 0;
+    embed.addField("Equipped?", isEquipped ? "Yes" : "No");
+  }
 
   return embed;
 }

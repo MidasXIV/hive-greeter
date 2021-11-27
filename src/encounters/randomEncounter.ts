@@ -10,7 +10,7 @@ import { travel } from "./travel";
 import { chest } from "./chest";
 import { vigorShrine } from "./shrine/vigor";
 import { weightedRandom } from "./weightedRandom";
-import { shop } from "./shop";
+import { shop } from "./shop/shop";
 
 type CommandHandler = (interaction: CommandInteraction) => Promise<void>;
 type EncounterId =

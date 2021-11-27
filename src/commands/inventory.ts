@@ -8,7 +8,8 @@ import {
 import { getUserCharacter } from "../character/getUserCharacter";
 import { itemEmbed } from "../equipment/itemEmbed";
 import { equipPrompt } from "../equipment/equipPrompt";
-import { dropInventoryItemPrompt } from "../equipment/dropInventoryItemPrompt";
+import { dropItemPrompt } from "../equipment/dropItemPrompt";
+import { giveItemPrompt } from "../equipment/giveItemPrompt";
 
 export const command = new SlashCommandBuilder()
   .setName("inventory")
@@ -25,24 +26,26 @@ export const execute = async (
     return;
   }
   const message = await interaction[responseType]({
-    embeds: character.inventory.map((item) => itemEmbed({ item, interaction })),
+    embeds: character.inventory.map((item) =>
+      itemEmbed({ item, interaction, showEqupStatus: true })
+    ),
     fetchReply: true,
     components: [
       new MessageActionRow({
         components: [
           new MessageButton({
             customId: "equip",
-            style: "SECONDARY",
+            style: "PRIMARY",
             label: "Equip",
           }),
           new MessageButton({
             customId: "drop",
-            style: "SECONDARY",
+            style: "PRIMARY",
             label: "Drop",
           }),
           new MessageButton({
             customId: "give",
-            style: "SECONDARY",
+            style: "PRIMARY",
             label: "Give",
           }),
         ],
@@ -50,18 +53,30 @@ export const execute = async (
     ],
   });
   if (!(message instanceof Message)) return;
-  const reply = await message.awaitMessageComponent({
-    filter: (i) => {
-      i.deferUpdate();
-      return i.user.id === interaction.user.id;
-    },
-    componentType: "BUTTON",
-  });
+  const reply = await message
+    .awaitMessageComponent({
+      time: 30000,
+      filter: (i) => {
+        i.deferUpdate();
+        return i.user.id === interaction.user.id;
+      },
+      componentType: "BUTTON",
+    })
+    .catch(() => {
+      message.edit({
+        components: [],
+      });
+    });
+  if (!reply) return;
+  message.edit({ components: [] });
   if (reply.customId === "drop") {
-    await dropInventoryItemPrompt(interaction, character);
+    await dropItemPrompt(interaction, character);
   }
   if (reply.customId === "equip") {
     await equipPrompt(interaction);
+  }
+  if (reply.customId === "give") {
+    await giveItemPrompt(interaction);
   }
 };
 
