@@ -13,6 +13,7 @@ import { heavyCrown } from "../heavyCrown/heavyCrown";
 import { buyItem } from "../commands/buyItem";
 import { randomShopItem } from "../equipment/randomShopItem";
 import { inventorySelector } from "../commands/inventorySelector";
+import { Emoji } from "../Emoji";
 
 export const shop = async (interaction: CommandInteraction): Promise<void> => {
   const shopImage = new MessageAttachment(
@@ -31,7 +32,10 @@ export const shop = async (interaction: CommandInteraction): Promise<void> => {
     embeds: [
       new MessageEmbed()
         .setImage(`attachment://${shopImage.name}`)
-        .addField("Your Gold", "💰 " + player.gold.toString()),
+        .addField(
+          "Your Gold",
+          Emoji(interaction, "gold") + " " + player.gold.toString()
+        ),
       ...inventory.map((item) => itemEmbed({ item, interaction })),
     ],
     components: [
@@ -55,7 +59,10 @@ export const shop = async (interaction: CommandInteraction): Promise<void> => {
         embeds: [
           new MessageEmbed()
             .setImage(`attachment://${shopImage.name}`)
-            .addField("Your Gold", "💰 " + player.gold.toString()),
+            .addField(
+              "Your Gold",
+              Emoji(interaction, "gold") + " " + player.gold.toString()
+            ),
           ...inventory.map((item) => itemEmbed({ item, interaction })),
         ],
         components: [],

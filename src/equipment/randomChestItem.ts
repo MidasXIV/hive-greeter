@@ -2,6 +2,7 @@ import { weightedRandom } from "../encounters/weightedRandom";
 import {
   buckler,
   chainArmor,
+  createItem,
   dagger,
   kiteShield,
   leatherArmor,
@@ -25,7 +26,7 @@ export const weights = new Map<Item, number>([
 ]);
 
 export function randomChestItem(): Item {
-  return Array.from(weights.keys())[
-    weightedRandom(Array.from(weights.values()))
-  ];
+  return createItem(
+    Array.from(weights.keys())[weightedRandom(Array.from(weights.values()))]
+  );
 }

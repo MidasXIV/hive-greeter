@@ -1,30 +1,25 @@
-import {
-  CommandInteraction,
-  Message,
-  MessageActionRow,
-  MessageSelectMenu,
-} from "discord.js";
+import { CommandInteraction, Message, MessageActionRow } from "discord.js";
 import { getUserCharacter } from "../character/getUserCharacter";
-import { isEquippable } from "./equipment";
-import { itemEmbed } from "./itemEmbed";
-import { Item } from "./Item";
 import { equipItem } from "../character/equipItem";
 import { updateCharacter } from "../character/updateCharacter";
+import { itemSelect } from "../commands/itemSelect";
 
 export const equipPrompt = async (
-  interaction: CommandInteraction,
-  isFollowUp = false
+  interaction: CommandInteraction
 ): Promise<void> => {
   const character = getUserCharacter(interaction.user);
-  const message = await interaction[isFollowUp ? "followUp" : "reply"]({
+  const message = await interaction.editReply({
     content: "What would you like to equip?",
-    embeds: character.inventory.map((item) => itemEmbed({ item, interaction })),
     components: [
       new MessageActionRow({
-        components: [equipOptions(character.inventory)],
+        components: [
+          itemSelect({
+            inventory: character.inventory,
+            placeholder: "Choose an item to equip.",
+          }),
+        ],
       }),
     ],
-    fetchReply: true,
   });
   if (!(message instanceof Message)) return;
 
@@ -40,15 +35,3 @@ export const equipPrompt = async (
   updateCharacter(equipItem(getUserCharacter(interaction.user), item));
   interaction.followUp(`You equip the ${item.name}.`);
 };
-
-const equipOptions = (inventory: Item[]) =>
-  new MessageSelectMenu()
-    .setCustomId("item")
-    .setPlaceholder("What would you like to equip?")
-    .addOptions(
-      inventory.filter(isEquippable).map((item, i) => ({
-        label: item.name,
-        description: item.description,
-        value: i.toString(),
-      }))
-    );

@@ -69,12 +69,12 @@ const autoEquip = (
 };
 
 /**
- * Equipment minus lootables.
+ * Equipment minus
  */
-const equipmentFilter = (
+export const equipmentFilter = (
   equipment: Character["equipment"],
   predicate: (item: Item) => boolean
-) =>
+): Character["equipment"] =>
   values(equipment)
     .filter(predicate)
     .reduce(

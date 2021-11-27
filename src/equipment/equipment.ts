@@ -6,6 +6,7 @@ import { equipItem } from "../character/equipItem";
 import { updateCharacter } from "../character/updateCharacter";
 import { Item } from "./Item";
 import { itemEmbed } from "./itemEmbed";
+import { randomUUID } from "crypto";
 
 export type Equippable = Item & { equippable: true };
 
@@ -44,6 +45,8 @@ export const isArmor = (item: Item): item is Armor => item.type === "armor";
 export const isShield = (item: Item): item is Shield => item.type === "shield";
 export const isWeapon = (item: Item): item is Weapon => item.type === "weapon";
 export const isEquippable = (item: Item): item is Equippable => item.equippable;
+
+export const createItem = (item: Item): Item => ({ ...item, id: randomUUID() });
 
 export const dagger: Weapon = {
   type: "weapon",

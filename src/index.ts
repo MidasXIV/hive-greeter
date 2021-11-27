@@ -75,7 +75,7 @@ client.on("interactionCreate", async (interaction) => {
   try {
     await commands.get(interaction.commandName).execute(interaction);
   } catch (e) {
-    await interaction.reply(
+    await interaction.followUp(
       `Command \`${interaction.command}\` failed with error: \`${e}\``
     );
   }
