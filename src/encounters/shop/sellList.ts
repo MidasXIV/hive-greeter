@@ -1,16 +1,19 @@
 import { CommandInteraction, MessageSelectMenu } from "discord.js";
 import { Item } from "../../equipment/Item";
 
-export function purchaseList({
+export function sellList({
   inventory,
-  interaction,
+  percent,
 }: {
   inventory: Item[];
   interaction: CommandInteraction;
+  percent: number;
 }): MessageSelectMenu {
   return new MessageSelectMenu({
     customId: "item",
-    placeholder: "What would you like to buy?",
+    placeholder: `Which item would you like to buy? ${(percent * 100).toFixed(
+      0
+    )}`,
     options: inventory.map((item, i) => ({
       label: item.name,
       description: `${item.goldValue}g ${item.description}`,

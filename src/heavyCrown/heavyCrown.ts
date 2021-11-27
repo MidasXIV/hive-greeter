@@ -13,4 +13,5 @@ export const heavyCrown: Hat = {
     ac: -2,
   },
   lootable: true,
+  sellable: false,
 };

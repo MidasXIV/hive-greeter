@@ -1,7 +1,7 @@
 import { CommandInteraction, MessageEmbed } from "discord.js";
-import { Character } from "../character/Character";
-import { cooldownRemainingText } from "../character/cooldownRemainingText";
-import { Emoji } from "../Emoji";
+import { Character } from "../../character/Character";
+import { cooldownRemainingText } from "../../character/cooldownRemainingText";
+import { Emoji } from "../../Emoji";
 
 export function actionEmbed({
   character,

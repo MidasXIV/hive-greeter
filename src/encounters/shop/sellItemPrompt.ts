@@ -1,20 +1,23 @@
 import { CommandInteraction, Message, MessageActionRow } from "discord.js";
 import { getUserCharacter } from "../../character/getUserCharacter";
-import { buyItem } from "../../commands/buyItem";
+import { sellItem } from "./sellItem";
 import { buyList } from "./buyList";
-import { Item } from "../../equipment/Item";
 
-export async function buyItemPrompt({
+export async function sellItemPrompt({
   interaction,
-  inventory,
 }: {
   interaction: CommandInteraction;
-  inventory: Item[];
 }): Promise<void> {
+  const character = getUserCharacter(interaction.user);
   const message = await interaction.editReply({
     components: [
       new MessageActionRow({
-        components: [buyList({ inventory, interaction })],
+        components: [
+          buyList({
+            inventory: character.inventory.filter((i) => i.sellable),
+            interaction,
+          }),
+        ],
       }),
     ],
   });
@@ -35,10 +38,7 @@ export async function buyItemPrompt({
     });
   if (!response) return;
   const slot = parseInt(response.values[0]);
-  if (isNaN(slot)) return;
-  await buyItem(
-    interaction,
-    getUserCharacter(interaction.user),
-    inventory[slot]
-  );
+  const item = character.inventory[slot];
+  if (!item) return;
+  sellItem({ character, item, percent: 0.8 });
 }

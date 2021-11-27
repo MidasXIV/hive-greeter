@@ -5,7 +5,7 @@ import { getUserCharacter } from "../character/getUserCharacter";
 import { updateCharacter } from "../character/updateCharacter";
 import { grantCharacterItem } from "../equipment/grantCharacterItem";
 import { heavyCrown } from "../heavyCrown/heavyCrown";
-import { execute as inspect } from "./inspect";
+import { execute as inspect } from "./inspect/inspect";
 
 export const command = new SlashCommandBuilder()
   .setName("crown")

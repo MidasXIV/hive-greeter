@@ -1,14 +1,14 @@
 import { SlashCommandBuilder } from "@discordjs/builders";
 import { CommandInteraction } from "discord.js";
-import { defaultProfile, defaultProfileAttachment } from "../gameState";
-import { getUserCharacter } from "../character/getUserCharacter";
-import { characterEmbed } from "../character/characterEmbed";
-import { questEmbed } from "./questEmbed";
-import { statusEffectEmbed } from "../statusEffects/statusEffectEmbed";
+import { defaultProfile, defaultProfileAttachment } from "../../gameState";
+import { getUserCharacter } from "../../character/getUserCharacter";
+import { characterEmbed } from "../../character/characterEmbed";
+import { questEmbed } from "../questEmbed";
+import { statusEffectEmbed } from "../../statusEffects/statusEffectEmbed";
 import { actionEmbed } from "./actionEmbed";
 import { values } from "remeda";
-import { statsEmbed } from "./statsEmbed";
-import { itemEmbed } from "../equipment/itemEmbed";
+import { statsEmbed } from "../statsEmbed";
+import { itemEmbed } from "../../equipment/itemEmbed";
 
 export const command = new SlashCommandBuilder()
   .setName("inspect")

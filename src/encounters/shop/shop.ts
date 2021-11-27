@@ -13,8 +13,8 @@ import { isHeavyCrownInPlay } from "../../heavyCrown/isHeavyCrownInPlay";
 import { heavyCrown } from "../../heavyCrown/heavyCrown";
 import { randomShopItem } from "../../equipment/randomShopItem";
 import { Emoji } from "../../Emoji";
-import { itemSelect } from "../../commands/itemSelect";
 import { buyItemPrompt } from "./buyItemPrompt";
+import { sellItemPrompt } from "./sellItemPrompt";
 
 export const shop = async (interaction: CommandInteraction): Promise<void> => {
   const shopImage = new MessageAttachment(
@@ -84,6 +84,7 @@ export const shop = async (interaction: CommandInteraction): Promise<void> => {
     if (response.customId === "leave") hasLeft = true;
     if (response.customId === "buy")
       await buyItemPrompt({ interaction, inventory });
+    if (response.customId === "sell") await sellItemPrompt({ interaction });
   }
   interaction.editReply({ components: [] });
 };

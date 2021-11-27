@@ -9,4 +9,5 @@ export type Item = {
   modifiers?: StatModifier;
   equippable: boolean;
   lootable?: boolean;
+  sellable?: boolean;
 };

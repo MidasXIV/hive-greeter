@@ -9,7 +9,7 @@ import db from "./db";
 import heal from "./heal";
 import hp from "./hp";
 import hpbartest from "../character/hpBar/hpbartest";
-import inspect from "./inspect";
+import inspect from "./inspect/inspect";
 import inventory from "./inventory";
 import list from "./list/list";
 import monster from "./monster";

@@ -4,7 +4,7 @@ import {
   MessageActionRow,
   MessageButton,
 } from "discord.js";
-import inspect from "../commands/inspect";
+import inspect from "../commands/inspect/inspect";
 import { getUserCharacter } from "../character/getUserCharacter";
 import { equipItem } from "../character/equipItem";
 import { updateCharacter } from "../character/updateCharacter";
@@ -70,6 +70,7 @@ export const dagger: Weapon = {
     veryAccurate: ["<@attacker>'s dagger pierces <@defender> true"],
   },
   equippable: true,
+  sellable: true,
 };
 
 export const mace: Weapon = {
@@ -88,6 +89,7 @@ export const mace: Weapon = {
     veryAccurate: ["<@attacker>'s mace crushes <@defender> true"],
   },
   equippable: true,
+  sellable: true,
 };
 
 export const longsword: Weapon = {
@@ -103,6 +105,7 @@ export const longsword: Weapon = {
     veryAccurate: ["<@attacker>'s longsword cuts <@defender> true"],
   },
   equippable: true,
+  sellable: true,
 };
 
 export const leatherArmor: Armor = {
@@ -114,7 +117,9 @@ export const leatherArmor: Armor = {
   modifiers: {
     ac: 2,
   },
+  sellable: true,
 };
+
 export const chainArmor: Armor = {
   type: "armor",
   description: "Linked metal chains worn to protect.",
@@ -124,6 +129,7 @@ export const chainArmor: Armor = {
   modifiers: {
     ac: 3,
   },
+  sellable: true,
 };
 
 export const plateArmor: Armor = {
@@ -135,6 +141,7 @@ export const plateArmor: Armor = {
   modifiers: {
     ac: 4,
   },
+  sellable: true,
 };
 
 export const buckler: Shield = {
@@ -146,6 +153,7 @@ export const buckler: Shield = {
   modifiers: {
     ac: 1,
   },
+  sellable: true,
 };
 
 export const kiteShield: Shield = {
@@ -158,7 +166,9 @@ export const kiteShield: Shield = {
   modifiers: {
     ac: 2,
   },
+  sellable: true,
 };
+
 export const towerShield: Shield = {
   type: "shield",
   description:
@@ -170,6 +180,7 @@ export const towerShield: Shield = {
     ac: 4,
     attackBonus: -2,
   },
+  sellable: true,
 };
 
 export const equipItemPrompt = async (
