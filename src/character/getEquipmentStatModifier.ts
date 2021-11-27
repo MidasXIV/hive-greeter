@@ -1,5 +1,5 @@
 import { Character } from "./Character";
-import { Item } from "../equipment/equipment";
+import { Item } from "../equipment/Item";
 import { Stat } from "./Stats";
 
 export const getEquipmentStatModifier = (

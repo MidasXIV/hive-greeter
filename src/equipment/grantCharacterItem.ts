@@ -1,6 +1,6 @@
 import { Character } from "../character/Character";
 import { gameState } from "../gameState";
-import { Item } from "./equipment";
+import { Item } from "./Item";
 
 export const grantCharacterItem = (
   character: Character,

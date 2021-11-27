@@ -6,12 +6,12 @@ import {
   MessageEmbed,
 } from "discord.js";
 import { getUserCharacter } from "../character/getUserCharacter";
-import { itemEmbed } from "../equipment/equipment";
+import { itemEmbed } from "../equipment/itemEmbed";
 import { times } from "remeda";
 import { isHeavyCrownInPlay } from "../heavyCrown/isHeavyCrownInPlay";
 import { heavyCrown } from "../heavyCrown/heavyCrown";
 import { buyItem } from "../commands/buyItem";
-import { randomInventoryItem } from "../commands/randomInventoryItem";
+import { randomShopItem } from "../equipment/randomShopItem";
 import { inventorySelector } from "../commands/inventorySelector";
 
 export const shop = async (interaction: CommandInteraction): Promise<void> => {
@@ -20,7 +20,7 @@ export const shop = async (interaction: CommandInteraction): Promise<void> => {
     "shop.png"
   );
   const player = getUserCharacter(interaction.user);
-  const inventory = times(3, randomInventoryItem);
+  const inventory = times(3, randomShopItem);
 
   if (!isHeavyCrownInPlay() && Math.random() <= 0.1) {
     inventory.push(heavyCrown);
@@ -32,7 +32,7 @@ export const shop = async (interaction: CommandInteraction): Promise<void> => {
       new MessageEmbed()
         .setImage(`attachment://${shopImage.name}`)
         .addField("Your Gold", "💰 " + player.gold.toString()),
-      ...inventory.map(itemEmbed),
+      ...inventory.map((item) => itemEmbed({ item, interaction })),
     ],
     components: [
       new MessageActionRow({ components: [inventorySelector(inventory)] }),
@@ -56,7 +56,7 @@ export const shop = async (interaction: CommandInteraction): Promise<void> => {
           new MessageEmbed()
             .setImage(`attachment://${shopImage.name}`)
             .addField("Your Gold", "💰 " + player.gold.toString()),
-          ...inventory.map(itemEmbed),
+          ...inventory.map((item) => itemEmbed({ item, interaction })),
         ],
         components: [],
       });

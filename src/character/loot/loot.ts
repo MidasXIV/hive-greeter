@@ -1,6 +1,6 @@
 import { randomUUID } from "crypto";
 import { values } from "remeda";
-import { Item } from "../../equipment/equipment";
+import { Item } from "../../equipment/Item";
 import { gameState } from "../../gameState";
 import { Character } from "../Character";
 import { getCharacter } from "../getCharacter";

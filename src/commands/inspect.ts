@@ -2,13 +2,13 @@ import { SlashCommandBuilder } from "@discordjs/builders";
 import { CommandInteraction } from "discord.js";
 import { defaultProfile, defaultProfileAttachment } from "../gameState";
 import { getUserCharacter } from "../character/getUserCharacter";
-import { itemEmbed } from "../equipment/equipment";
 import { characterEmbed } from "../character/characterEmbed";
 import { questEmbed } from "./questEmbed";
 import { statusEffectEmbed } from "../statusEffects/statusEffectEmbed";
 import { actionEmbed } from "./actionEmbed";
 import { values } from "remeda";
 import { statsEmbed } from "./statsEmbed";
+import { itemEmbed } from "../equipment/itemEmbed";
 
 export const command = new SlashCommandBuilder()
   .setName("inspect")
@@ -36,7 +36,12 @@ export const execute = async (
   if (shouldShowExtendedInfo)
     await interaction[responseType]({
       embeds: values(character.equipment)
-        .map(itemEmbed)
+        .map((item) => itemEmbed({ item, interaction }))
+        .concat(
+          character.statusEffects?.map((effect) =>
+            statusEffectEmbed(effect, interaction)
+          ) ?? []
+        )
         .concat(
           character.statusEffects?.map((effect) =>
             statusEffectEmbed(effect, interaction)

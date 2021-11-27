@@ -1,10 +1,13 @@
 import { MessageActionRow, MessageButton } from "discord.js";
-import { Item } from "./equipment";
+import { Item } from "./Item";
 
 export const equipItemRow = (item: Item): MessageActionRow =>
-  new MessageActionRow().addComponents(
-    new MessageButton()
-      .setCustomId("equip")
-      .setLabel(`Equip the ${item.name}`)
-      .setStyle("PRIMARY")
-  );
+  new MessageActionRow({
+    components: [
+      new MessageButton({
+        customId: "equip",
+        label: `Equip the ${item.name}`,
+        style: "PRIMARY",
+      }),
+    ],
+  });

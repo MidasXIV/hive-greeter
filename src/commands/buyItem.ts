@@ -3,7 +3,8 @@ import { Character } from "../character/Character";
 import { adjustGold } from "../character/adjustGold";
 import { getUserCharacter } from "../character/getUserCharacter";
 import { grantCharacterItem } from "../equipment/grantCharacterItem";
-import { equipItemPrompt, Item } from "../equipment/equipment";
+import { equipItemPrompt } from "../equipment/equipment";
+import { Item } from "../equipment/Item";
 import { updateCharacter } from "../character/updateCharacter";
 
 export const buyItem = async (

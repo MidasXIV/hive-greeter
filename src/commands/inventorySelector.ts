@@ -1,5 +1,5 @@
 import { MessageSelectMenu } from "discord.js";
-import { Item } from "../equipment/equipment";
+import { Item } from "../equipment/Item";
 
 export const inventorySelector = (inventory: Item[]): MessageSelectMenu =>
   new MessageSelectMenu()

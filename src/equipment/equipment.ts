@@ -1,20 +1,12 @@
-import { CommandInteraction, Message, MessageEmbed } from "discord.js";
+import { CommandInteraction, Message } from "discord.js";
 import inspect from "../commands/inspect";
 import { equipItemRow } from "./equipItemRow";
 import { getUserCharacter } from "../character/getUserCharacter";
-import { StatModifier } from "../statusEffects/StatModifier";
 import { equipItem } from "../character/equipItem";
 import { updateCharacter } from "../character/updateCharacter";
+import { Item } from "./Item";
+import { itemEmbed } from "./itemEmbed";
 
-export type Item = {
-  type: "weapon" | "armor" | "shield" | "hat";
-  name: string;
-  description: string;
-  goldValue: number;
-  modifiers?: StatModifier;
-  equippable: boolean;
-  lootable?: boolean;
-};
 export type Equippable = Item & { equippable: true };
 
 export type Weapon = Equippable & {
@@ -173,34 +165,6 @@ export const towerShield: Shield = {
   },
 };
 
-export const itemEmbed = (item: Item): MessageEmbed => {
-  const embed = new MessageEmbed()
-    .setTitle(item.name)
-    .setDescription(item.description)
-    .setFooter("💰 " + item.goldValue.toString());
-
-  if (isWeapon(item) && item.damageMax)
-    embed.addField("Damage Max", item.damageMax.toString(), true);
-
-  if (item.modifiers?.attackBonus)
-    embed.addField("Attack Bonus", item.modifiers.attackBonus.toString(), true);
-
-  if (item.modifiers?.damageBonus)
-    embed.addField("Damage Bonus", item.modifiers.damageBonus.toString(), true);
-
-  if (item.modifiers?.ac)
-    embed.addField("AC Bonus", item.modifiers?.ac.toString());
-
-  if (item.modifiers?.monsterDamageMax)
-    embed.addField(
-      "Monster Damage Max",
-      item.modifiers?.monsterDamageMax.toString()
-    );
-  embed.addField("Lootable?", item.lootable ? "Yes" : "No");
-
-  return embed;
-};
-
 export const equipItemPrompt = async (
   interaction: CommandInteraction,
   item: Item
@@ -208,6 +172,7 @@ export const equipItemPrompt = async (
   const content = `Would you like to equip the ${item.name}?`;
   const message = await interaction.followUp({
     content,
+    embeds: [itemEmbed({ item, interaction })],
     components: [equipItemRow(item)],
   });
 
