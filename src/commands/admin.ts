@@ -3,7 +3,8 @@ import { CommandInteraction, MessageEmbed } from "discord.js";
 
 export const command = new SlashCommandBuilder()
   .setName("admin")
-  .setDescription("Admins only.");
+  .setDescription("Admins only.")
+  .addStringOption((option) => option.setName("apply_uuids"));
 
 export const execute = async (
   interaction: CommandInteraction

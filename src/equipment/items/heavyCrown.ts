@@ -1,6 +1,8 @@
-import { Hat } from "../equipment/equipment";
+import { randomUUID } from "crypto";
+import { Hat } from "../equipment";
 
-export const heavyCrown: Hat = {
+export const heavyCrown = (): Hat => ({
+  id: randomUUID(),
   name: "heavy crown",
   description: "Beset with jewels, in the daylight it commands the eye.",
   equippable: true,
@@ -14,4 +16,4 @@ export const heavyCrown: Hat = {
   },
   lootable: true,
   sellable: false,
-};
+});

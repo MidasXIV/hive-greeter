@@ -10,7 +10,7 @@ import { getUserCharacter } from "../../character/getUserCharacter";
 import { itemEmbed } from "../../equipment/itemEmbed";
 import { times } from "remeda";
 import { isHeavyCrownInPlay } from "../../heavyCrown/isHeavyCrownInPlay";
-import { heavyCrown } from "../../heavyCrown/heavyCrown";
+import { heavyCrown } from "../../equipment/items/heavyCrown";
 import { randomShopItem } from "../../equipment/randomShopItem";
 import { Emoji } from "../../Emoji";
 import { buyItemPrompt } from "./buyItemPrompt";
@@ -21,12 +21,15 @@ export const shop = async (interaction: CommandInteraction): Promise<void> => {
     "./images/weapon-shop.jpg",
     "shop.png"
   );
-  const player = getUserCharacter(interaction.user);
+  const character = getUserCharacter(interaction.user);
   const inventory = times(3, randomShopItem);
 
   if (!isHeavyCrownInPlay() && Math.random() <= 0.1) {
-    inventory.push(heavyCrown);
+    inventory.push(heavyCrown());
   }
+
+  const hasStuffToSell =
+    character.inventory.filter((i) => i.sellable).length > 0;
 
   const message = await interaction.reply({
     files: [shopImage],
@@ -35,7 +38,7 @@ export const shop = async (interaction: CommandInteraction): Promise<void> => {
         .setImage(`attachment://${shopImage.name}`)
         .addField(
           "Your Gold",
-          Emoji(interaction, "gold") + " " + player.gold.toString()
+          Emoji(interaction, "gold") + " " + character.gold.toString()
         ),
       ...inventory.map((item) => itemEmbed({ item, interaction })),
     ],
@@ -47,17 +50,23 @@ export const shop = async (interaction: CommandInteraction): Promise<void> => {
             label: "Buy",
             style: "PRIMARY",
           }),
-          new MessageButton({
-            customId: "sell",
-            label: "Sell",
-            style: "PRIMARY",
-          }),
-          new MessageButton({
-            customId: "leave",
-            label: "Leave",
-            style: "SECONDARY",
-          }),
-        ],
+        ]
+          .concat(
+            hasStuffToSell
+              ? new MessageButton({
+                  customId: "sell",
+                  label: "Sell",
+                  style: "PRIMARY",
+                })
+              : []
+          )
+          .concat(
+            new MessageButton({
+              customId: "leave",
+              label: "Leave",
+              style: "SECONDARY",
+            })
+          ),
       }),
     ],
     fetchReply: true,

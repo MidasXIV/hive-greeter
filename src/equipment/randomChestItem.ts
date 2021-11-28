@@ -1,19 +1,17 @@
 import { weightedRandom } from "../encounters/weightedRandom";
-import {
-  buckler,
-  chainArmor,
-  createItem,
-  dagger,
-  kiteShield,
-  leatherArmor,
-  longsword,
-  mace,
-  plateArmor,
-  towerShield,
-} from "./equipment";
-import { Item } from "./Item";
 
-export const weights = new Map<Item, number>([
+import { Item } from "./Item";
+import { buckler } from "./items/buckler";
+import { chainArmor } from "./items/chainArmor";
+import { dagger } from "./items/dagger";
+import { kiteShield } from "./items/kiteShield";
+import { leatherArmor } from "./items/leatherArmor";
+import { longsword } from "./items/longsword";
+import { mace } from "./items/mace";
+import { plateArmor } from "./items/plateArmor";
+import { towerShield } from "./items/towerShield";
+
+export const weights = new Map<() => Item, number>([
   [dagger, 1.3],
   [mace, 1],
   [longsword, 1],
@@ -26,7 +24,7 @@ export const weights = new Map<Item, number>([
 ]);
 
 export function randomChestItem(): Item {
-  return createItem(
-    Array.from(weights.keys())[weightedRandom(Array.from(weights.values()))]
-  );
+  return Array.from(weights.keys())[
+    weightedRandom(Array.from(weights.values()))
+  ]();
 }

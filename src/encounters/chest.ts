@@ -16,7 +16,7 @@ import { equipItemPrompt } from "../equipment/equipment";
 import { itemEmbed } from "../equipment/itemEmbed";
 import { grantCharacterItem } from "../equipment/grantCharacterItem";
 import { randomChestItem } from "../equipment/randomChestItem";
-import { heavyCrown } from "../heavyCrown/heavyCrown";
+import { heavyCrown } from "../equipment/items/heavyCrown";
 import { isHeavyCrownInPlay } from "../heavyCrown/isHeavyCrownInPlay";
 import { updateStatusEffect } from "../statusEffects/grantStatusEffect";
 import { trapAttack } from "../trap/trapAttack";
@@ -189,17 +189,18 @@ export async function chest(
       )} ${xp} xp.`
     );
     if (Math.random() <= 0.005 && !isHeavyCrownInPlay()) {
+      const crown = heavyCrown();
       updateCharacter(
-        grantCharacterItem(getUserCharacter(interaction.user), heavyCrown)
+        grantCharacterItem(getUserCharacter(interaction.user), crown)
       );
       embed.addField(
         "Heavy Crown",
-        `You find a heavy crown. ${heavyCrown.description}`
+        `You find a heavy crown. ${crown.description}`
       );
       await interaction.followUp({
-        embeds: [itemEmbed({ item: heavyCrown, interaction })],
+        embeds: [itemEmbed({ item: crown, interaction })],
       });
-      await equipItemPrompt(interaction, heavyCrown);
+      await equipItemPrompt(interaction, crown);
     }
     if (Math.random() <= 0.95) {
       const item = randomChestItem();

@@ -1,7 +1,7 @@
 import { StatModifier } from "../statusEffects/StatModifier";
 
 export type Item = {
-  id?: string;
+  id: string;
   type: "weapon" | "armor" | "shield" | "hat";
   name: string;
   description: string;
