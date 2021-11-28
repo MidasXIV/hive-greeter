@@ -37,6 +37,7 @@ export function itemEmbed({
 
   embed.addField("Lootable?", item.lootable ? "Yes" : "No", true);
   embed.addField("Sellable?", item.sellable ? "Yes" : "No", true);
+  embed.addField("Tradeable?", item.tradeable ? "Yes" : "No", true);
 
   if (showEqupStatus) {
     const character = getUserCharacter(interaction.user);
