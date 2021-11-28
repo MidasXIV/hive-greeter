@@ -56,7 +56,7 @@ export const monster = async (
       !collected ||
       timeout ||
       !reaction ||
-      (reaction && reaction.emoji.name === "🏃‍♀️")
+      [runEmoji, "run"].includes(reaction.emoji.name ?? "")
     ) {
       encounter.outcome = "player fled";
     }
