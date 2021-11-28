@@ -31,7 +31,7 @@ export const equipItemPrompt = async (
           new MessageButton({
             customId: "equip",
             label: `Equip the ${item.name}`,
-            style: "PRIMARY",
+            style: "SECONDARY",
           }),
         ],
       }),

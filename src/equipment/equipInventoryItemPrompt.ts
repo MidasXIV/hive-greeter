@@ -66,14 +66,14 @@ export const equipInventoryItemPrompt = async (
       });
     if (!response) return;
     if (response.isButton() && response.customId === "done") {
-      message.edit({ content: "Done", components: [] });
+      message.delete();
       done = true;
     }
     if (response.isSelectMenu()) {
       const item = inventory[parseInt(response.values[0])];
       const character = getUserCharacter(interaction.user);
       updateCharacter(equipItem(character, item));
-      interaction.followUp(`${character.name} equipped the ${item.name}.`);
+      interaction.followUp(`${character.name} equipped their ${item.name}.`);
     }
   }
 };

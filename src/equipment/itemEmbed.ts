@@ -35,6 +35,8 @@ export function itemEmbed({
     fields: [...fields],
   });
 
+  embed.addField("ID", item.id, true);
+  embed.addField("Type", item.type, true);
   embed.addField("Lootable?", item.lootable ? "Yes" : "No", true);
   embed.addField("Sellable?", item.sellable ? "Yes" : "No", true);
   embed.addField("Tradeable?", item.tradeable ? "Yes" : "No", true);

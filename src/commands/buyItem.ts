@@ -20,5 +20,5 @@ export const buyItem = async (
   }
   adjustGold(player.id, -item.goldValue);
   updateCharacter(grantCharacterItem(getUserCharacter(interaction.user), item));
-  await equipItemPrompt(interaction, item);
+  equipItemPrompt(interaction, item);
 };

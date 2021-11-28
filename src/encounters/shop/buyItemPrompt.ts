@@ -1,4 +1,9 @@
-import { CommandInteraction, Message, MessageActionRow } from "discord.js";
+import {
+  CommandInteraction,
+  Message,
+  MessageActionRow,
+  MessageButton,
+} from "discord.js";
 import { getUserCharacter } from "../../character/getUserCharacter";
 import { buyItem } from "../../commands/buyItem";
 import { buyList } from "./buyList";
@@ -10,11 +15,20 @@ export async function buyItemPrompt({
 }: {
   interaction: CommandInteraction;
   inventory: Item[];
-}): Promise<void> {
+}): Promise<void | Item> {
   const message = await interaction.editReply({
     components: [
       new MessageActionRow({
         components: [buyList({ inventory, interaction })],
+      }),
+      new MessageActionRow({
+        components: [
+          new MessageButton({
+            customId: "cancel",
+            style: "SECONDARY",
+            label: "Nevermind",
+          }),
+        ],
       }),
     ],
   });
@@ -25,7 +39,6 @@ export async function buyItemPrompt({
         i.deferUpdate();
         return i.user.id === interaction.user.id;
       },
-      componentType: "SELECT_MENU",
       time: 60000,
     })
     .catch(() => {
@@ -34,11 +47,10 @@ export async function buyItemPrompt({
       });
     });
   if (!response) return;
-  const slot = parseInt(response.values[0]);
-  if (isNaN(slot)) return;
-  await buyItem(
-    interaction,
-    getUserCharacter(interaction.user),
-    inventory[slot]
-  );
+  if (!response.isSelectMenu()) return;
+
+  const item = inventory[parseInt(response.values[0])];
+  if (!item) return;
+  await buyItem(interaction, getUserCharacter(interaction.user), item);
+  return item;
 }

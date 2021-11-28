@@ -15,6 +15,7 @@ import { randomShopItem } from "../../equipment/randomShopItem";
 import { buyItemPrompt } from "./buyItemPrompt";
 import { sellItemPrompt } from "./sellItemPrompt";
 import { goldValue } from "../../equipment/goldValue";
+import { getCharacterUpdate } from "../../character/getCharacterUpdate";
 
 export const shop = async (interaction: CommandInteraction): Promise<void> => {
   const shopImage = new MessageAttachment(
@@ -39,6 +40,7 @@ export const shop = async (interaction: CommandInteraction): Promise<void> => {
   let hasLeft = false;
   while (!hasLeft) {
     await message.edit(shopMain());
+    console.log("updating the shop");
     const response = await message
       .awaitMessageComponent({
         filter: (i) => {
@@ -67,7 +69,10 @@ export const shop = async (interaction: CommandInteraction): Promise<void> => {
       fields: [
         {
           name: "Your Gold",
-          value: goldValue({ interaction, goldValue: character.gold }),
+          value: goldValue({
+            interaction,
+            goldValue: getCharacterUpdate(character).gold,
+          }),
         },
       ],
     }).setImage(`attachment://${shopImage.name}`);

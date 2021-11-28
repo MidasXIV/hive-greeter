@@ -3,6 +3,7 @@ import {
   Message,
   MessageActionRow,
   MessageAttachment,
+  MessageButton,
   MessageEmbed,
 } from "discord.js";
 import { getUserCharacter } from "../../character/getUserCharacter";
@@ -12,6 +13,8 @@ import { gpGainField } from "../../character/gpGainField";
 import { sellList } from "./sellList";
 import { getSaleRate } from "./getSaleRate";
 import { sellValue } from "./sellValue";
+import { goldValue } from "../../equipment/goldValue";
+import { getCharacterUpdate } from "../../character/getCharacterUpdate";
 
 export async function sellItemPrompt({
   interaction,
@@ -44,6 +47,15 @@ export async function sellItemPrompt({
           }),
         ],
       }),
+      new MessageActionRow({
+        components: [
+          new MessageButton({
+            customId: "cancel",
+            style: "SECONDARY",
+            label: "Nevermind",
+          }),
+        ],
+      }),
     ],
   });
   if (!(message instanceof Message)) return;
@@ -53,7 +65,6 @@ export async function sellItemPrompt({
         i.deferUpdate();
         return i.user.id === interaction.user.id;
       },
-      componentType: "SELECT_MENU",
       time: 60000,
     })
     .catch(() => {
@@ -62,13 +73,23 @@ export async function sellItemPrompt({
       });
     });
   if (!response) return;
+  if (!response.isSelectMenu()) return;
   const item = inventory[parseInt(response.values[0])];
   if (!item) return;
   sellItem({ character, item });
   interaction.followUp({
     embeds: [
       new MessageEmbed({
-        fields: [gpGainField(interaction, sellValue(item))],
+        fields: [
+          gpGainField(interaction, sellValue(item)),
+          {
+            name: `${character.name}'s Total Gold`,
+            value: goldValue({
+              interaction,
+              goldValue: getCharacterUpdate(character).gold,
+            }),
+          },
+        ],
       }),
     ],
     content: `${character.name} sold their ${item.name}.`,

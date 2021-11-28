@@ -1,3 +1,5 @@
+// dupe bug
+
 import {
   CommandInteraction,
   Message,
@@ -33,6 +35,15 @@ export const offerItemPrompt = async (
           }),
         ],
       }),
+      new MessageActionRow({
+        components: [
+          new MessageButton({
+            customId: "cancel",
+            label: "Nevermind",
+            style: "SECONDARY",
+          }),
+        ],
+      }),
     ],
   });
   if (!(message instanceof Message)) return;
@@ -43,9 +54,20 @@ export const offerItemPrompt = async (
     })
     .catch(() => {
       timeout = true;
+      message.edit({
+        content: `${sender.name} decided not to offer any items.`,
+        components: [],
+      });
     });
   message.edit({ components: [] });
-  if (!(response && response.isSelectMenu())) return;
+  if (!response) return;
+  if (response.isButton()) {
+    message.edit({
+      content: `${sender.name} decided not to offer any items.`,
+      components: [],
+    });
+  }
+  if (!response.isSelectMenu()) return;
   const item = inventory[parseInt(response.values[0])];
   if (timeout || !item) return;
   if (!item) return;

@@ -14,6 +14,7 @@ export function sellItem({
   updateCharacter({
     ...character,
     equipment: equipmentFilter(character.equipment, (i) => i.id !== item.id),
+    inventory: character.inventory.filter((i) => i.id !== item.id),
     gold: character.gold + sellValue(item),
   });
 }

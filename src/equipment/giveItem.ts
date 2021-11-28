@@ -18,6 +18,7 @@ export function giveItem({
     console.error(error, item);
     return false;
   }
+  if (sender.id === recipient.id) return true;
   // take from sender
   updateCharacter(
     removeItemIdFromCharacter({ character: sender, itemId: item.id })
