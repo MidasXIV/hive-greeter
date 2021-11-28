@@ -10,4 +10,5 @@ export type Item = {
   equippable: boolean;
   lootable?: boolean;
   sellable?: boolean;
+  tradeable?: boolean;
 };

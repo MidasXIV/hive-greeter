@@ -7,7 +7,7 @@ import {
 } from "discord.js";
 import { getUserCharacter } from "../character/getUserCharacter";
 import { itemEmbed } from "../equipment/itemEmbed";
-import { equipPrompt } from "../equipment/equipPrompt";
+import { equipItemPrompt } from "../equipment/equipItemPrompt";
 import { dropItemPrompt } from "../equipment/dropItemPrompt";
 import { giveItemPrompt } from "../equipment/giveItemPrompt";
 
@@ -73,7 +73,7 @@ export const execute = async (
     await dropItemPrompt(interaction);
   }
   if (reply.customId === "equip") {
-    await equipPrompt(interaction);
+    await equipItemPrompt(interaction);
   }
   if (reply.customId === "give") {
     await giveItemPrompt(interaction);

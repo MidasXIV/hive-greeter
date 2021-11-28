@@ -3,23 +3,19 @@ import {
   Message,
   MessageActionRow,
   MessageButton,
-  MessageSelectMenu,
   SelectMenuInteraction,
 } from "discord.js";
 import { getUserCharacter } from "../character/getUserCharacter";
 import { itemSelect } from "../commands/itemSelect";
-import { getUserCharacters } from "../character/getUserCharacters";
 import { Item } from "./Item";
-import { Character } from "../character/Character";
-import { getCharacter } from "../character/getCharacter";
 import { giveItem } from "./giveItem";
 
 export const giveItemPrompt = async (
   interaction: CommandInteraction
 ): Promise<void> => {
   const sender = getUserCharacter(interaction.user);
-  const message = await interaction.editReply({
-    content: "Give someone an item",
+  const message = await interaction.followUp({
+    content: "Give up an item",
     components: [
       new MessageActionRow({
         components: [
@@ -29,87 +25,59 @@ export const giveItemPrompt = async (
           }),
         ],
       }),
-      new MessageActionRow({
-        components: [
-          new MessageSelectMenu({
-            customId: "recipient",
-            placeholder: "To whom?",
-            options: getUserCharacters().map((character) => ({
-              label: character.name,
-              value: character.id,
-            })),
-          }),
-        ],
-      }),
+    ],
+  });
+  if (!(message instanceof Message)) return;
+  let timeout = false;
+  let item: Item | void = undefined;
+  const response = await message
+    .awaitMessageComponent({
+      time: 60000,
+    })
+    .catch((e) => {
+      timeout = true;
+    });
+  if (!response) return;
+  if (
+    "item" === response.customId &&
+    response instanceof SelectMenuInteraction
+  ) {
+    const slot = parseInt(response.values[0]);
+    item = sender.inventory[slot];
+  }
+  if (timeout || !item) return;
+  const offer = await interaction.followUp({
+    content: `${sender.name} offers their ${item.name}.`,
+    fetchReply: true,
+    components: [
       new MessageActionRow({
         components: [
           new MessageButton({
-            customId: "send",
-            label: "Send",
+            customId: "take",
+            label: `Take the ${item.name}.`,
             style: "PRIMARY",
-          }),
-          new MessageButton({
-            customId: "cancel",
-            label: "Cancel",
-            style: "SECONDARY",
           }),
         ],
       }),
     ],
   });
-  if (!(message instanceof Message)) return;
-  let send = false;
-  let timeout = false;
-  let cancel = false;
-  let item: Item | void = undefined;
-  let recipient: Character | void = undefined;
-  while (!(send || cancel || timeout)) {
-    const response = await message
-      .awaitMessageComponent({
-        time: 60000,
-        filter: (interaction) => {
-          interaction.deferUpdate();
-          return interaction.user.id === interaction.user.id;
-        },
-      })
-      .catch((e) => {
-        timeout = true;
-      });
-    if (!response) break;
-    if (
-      "item" === response.customId &&
-      response instanceof SelectMenuInteraction
-    ) {
-      const slot = parseInt(response.values[0]);
-      item = sender.inventory[slot];
-    }
-    if (
-      "recipient" === response.customId &&
-      response instanceof SelectMenuInteraction
-    ) {
-      const character = getCharacter(response.values[0]);
-      if (character) recipient = character;
-    }
-    if ("send" === response.customId) {
-      send = Boolean(item && recipient);
-    }
-    if ("cancel" === response.customId) {
-      cancel = true;
-    }
-  }
-  if (send && sender && recipient && item && item.id) {
-    if (
-      giveItem({
-        sender,
-        recipient,
-        item,
-      })
-    ) {
-      interaction.followUp(
-        `${sender.name} gave ${item.name} to ${recipient.name}.`
-      );
-    } else {
-      interaction.followUp(`Failed to give ${item.name} to ${recipient.name}.`);
-    }
+
+  if (!(offer instanceof Message)) return;
+  const reply = await offer
+    .awaitMessageComponent({
+      componentType: "BUTTON",
+      time: 60000,
+    })
+    .catch(() => {
+      message.edit({ components: [] });
+    });
+  if (reply && reply.isButton()) {
+    const recipient = getUserCharacter(reply.user);
+    giveItem({
+      sender,
+      item,
+      recipient,
+    });
+    offer.edit({ components: [] });
   }
 };
