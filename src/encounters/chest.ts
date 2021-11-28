@@ -12,7 +12,7 @@ import { gpGainField } from "../character/gpGainField";
 import { updateCharacter } from "../character/updateCharacter";
 import { xpGainField } from "../character/xpGainField";
 import { Emoji } from "../Emoji";
-import { equipItemPrompt } from "../equipment/equipment";
+import { equipItemPrompt } from "../equipment/equipItemPrompt";
 import { itemEmbed } from "../equipment/itemEmbed";
 import { grantCharacterItem } from "../equipment/grantCharacterItem";
 import { randomChestItem } from "../equipment/randomChestItem";

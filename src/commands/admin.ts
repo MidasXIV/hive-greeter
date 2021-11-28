@@ -3,6 +3,7 @@ import { randomUUID } from "crypto";
 import { CommandInteraction } from "discord.js";
 import { getUserCharacters } from "../character/getUserCharacters";
 import { updateCharacter } from "../character/updateCharacter";
+import { heavyCrown } from "../equipment/items";
 
 export const command = new SlashCommandBuilder()
   .setName("admin")
@@ -35,7 +36,7 @@ const markAllForSale = () => {
       ...character,
       inventory: character.inventory.map((item) => ({
         ...item,
-        sellable: true,
+        sellable: item.name !== heavyCrown().name,
       })),
     })
   );

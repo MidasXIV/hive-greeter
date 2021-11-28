@@ -6,10 +6,9 @@ import {
   MessageButton,
 } from "discord.js";
 import { getUserCharacter } from "../character/getUserCharacter";
+import { equipInventoryItemPrompt } from "../equipment/equipInventoryItemPrompt";
 import { itemEmbed } from "../equipment/itemEmbed";
-import { equipItemPrompt } from "../equipment/equipItemPrompt";
-import { dropItemPrompt } from "../equipment/dropItemPrompt";
-import { giveItemPrompt } from "../equipment/giveItemPrompt";
+import { offerItemPrompt as offerItemPrompt } from "../equipment/offerItemPrompt";
 
 export const command = new SlashCommandBuilder()
   .setName("inventory")
@@ -39,14 +38,9 @@ export const execute = async (
             label: "Equip",
           }),
           new MessageButton({
-            customId: "drop",
+            customId: "offer",
             style: "PRIMARY",
-            label: "Drop",
-          }),
-          new MessageButton({
-            customId: "give",
-            style: "PRIMARY",
-            label: "Give",
+            label: "Offer",
           }),
         ],
       }),
@@ -69,14 +63,11 @@ export const execute = async (
     });
   if (!reply) return;
   message.edit({ components: [] });
-  if (reply.customId === "drop") {
-    await dropItemPrompt(interaction);
-  }
   if (reply.customId === "equip") {
-    await equipItemPrompt(interaction);
+    await equipInventoryItemPrompt(interaction);
   }
-  if (reply.customId === "give") {
-    await giveItemPrompt(interaction);
+  if (reply.customId === "offer") {
+    await offerItemPrompt(interaction);
   }
 };
 

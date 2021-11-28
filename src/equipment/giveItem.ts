@@ -1,8 +1,8 @@
 import { updateCharacter } from "../character/updateCharacter";
-import { Item } from "./Item";
 import { Character } from "../character/Character";
 import { grantCharacterItem } from "./grantCharacterItem";
 import { removeItemIdFromCharacter } from "./removeItemIdFromCharacter";
+import { Tradeable } from "./equipment";
 
 export function giveItem({
   sender,
@@ -11,7 +11,7 @@ export function giveItem({
 }: {
   sender: Character;
   recipient: Character;
-  item: Item;
+  item: Tradeable;
 }): boolean {
   if (!item.id) {
     const error = `Tried to give an item without an ID`;

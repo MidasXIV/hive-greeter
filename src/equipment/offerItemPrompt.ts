@@ -3,24 +3,25 @@ import {
   Message,
   MessageActionRow,
   MessageButton,
-  SelectMenuInteraction,
 } from "discord.js";
 import { getUserCharacter } from "../character/getUserCharacter";
 import { itemSelect } from "../commands/itemSelect";
-import { Item } from "./Item";
+import { isTradeable } from "./equipment";
+
 import { giveItem } from "./giveItem";
 
-export const giveItemPrompt = async (
+export const offerItemPrompt = async (
   interaction: CommandInteraction
 ): Promise<void> => {
   const sender = getUserCharacter(interaction.user);
+  const inventory = sender.inventory.filter(isTradeable);
   const message = await interaction.followUp({
-    content: "Give up an item",
+    content: "Offer which item?",
     components: [
       new MessageActionRow({
         components: [
           itemSelect({
-            inventory: sender.inventory,
+            inventory,
             placeholder: "Which item?",
           }),
         ],
@@ -29,26 +30,21 @@ export const giveItemPrompt = async (
   });
   if (!(message instanceof Message)) return;
   let timeout = false;
-  let item: Item | void = undefined;
   const response = await message
     .awaitMessageComponent({
       time: 60000,
     })
-    .catch((e) => {
+    .catch(() => {
       timeout = true;
     });
-  if (!response) return;
-  if (
-    "item" === response.customId &&
-    response instanceof SelectMenuInteraction
-  ) {
-    const slot = parseInt(response.values[0]);
-    item = sender.inventory[slot];
-  }
+  message.edit({ components: [] });
+  if (!(response && response.isSelectMenu())) return;
+  const item = inventory[parseInt(response.values[0])];
   if (timeout || !item) return;
+  if (!item) return;
   const offer = await interaction.followUp({
-    content: `${sender.name} offers their ${item.name}.`,
     fetchReply: true,
+    content: `${sender.name} offers their ${item.name}.`,
     components: [
       new MessageActionRow({
         components: [
@@ -69,7 +65,10 @@ export const giveItemPrompt = async (
       time: 60000,
     })
     .catch(() => {
-      message.edit({ components: [] });
+      offer.edit({
+        content: `${item.name} is dust in the wind.`,
+        components: [],
+      });
     });
   if (reply && reply.isButton()) {
     const recipient = getUserCharacter(reply.user);
@@ -79,5 +78,8 @@ export const giveItemPrompt = async (
       recipient,
     });
     offer.edit({ components: [] });
+    interaction.followUp(
+      `${recipient.name} took ${sender.name}'s ${item.name}`
+    );
   }
 };
