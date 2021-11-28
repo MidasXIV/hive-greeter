@@ -7,19 +7,14 @@ import {
 } from "discord.js";
 import { getUserCharacter } from "../../character/getUserCharacter";
 import { updateCharacter } from "../../character/updateCharacter";
-import {
-  dagger,
-  equipItemPrompt,
-  longsword,
-  mace,
-  Weapon,
-} from "../../equipment/equipment";
+import { Weapon, equipItemPrompt } from "../../equipment/equipment";
+import { dagger, longsword, mace } from "../../equipment/items";
 
 export const slayerQuestReward = async (
   interaction: CommandInteraction
 ): Promise<void> => {
   const character = getUserCharacter(interaction.user);
-  const weaponTemplates = [dagger, mace, longsword];
+  const weaponTemplates = [dagger(), mace(), longsword()];
   const embeds = [
     new MessageEmbed({
       title: `Slayer Quest Complete!`,
