@@ -34,7 +34,7 @@ type Encounters = {
 
 type randomEncounter = CommandHandler;
 const encounterWeights = {
-  angels: 1,
+  angels: 0.5,
   armorShrine: 1,
   attackShrine: 1,
   vigorShrine: 1,
