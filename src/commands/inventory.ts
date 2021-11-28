@@ -8,6 +8,7 @@ import {
 import { getUserCharacter } from "../character/getUserCharacter";
 import { equipInventoryItemPrompt } from "../equipment/equipInventoryItemPrompt";
 import { isTradeable } from "../equipment/equipment";
+import { equippableInventory } from "../equipment/equippableInventory";
 import { itemEmbed } from "../equipment/itemEmbed";
 import { offerItemPrompt as offerItemPrompt } from "../equipment/offerItemPrompt";
 
@@ -22,10 +23,28 @@ export const execute = async (
   const character = getUserCharacter(interaction.user);
   console.log(`${character.name}'s inventory`, character.inventory);
   const hasItemsToOffer = character.inventory.filter(isTradeable).length > 0;
+  const hasItemsToEquip = equippableInventory(character);
   if (!character.inventory.length) {
     await interaction[responseType]("Your inventory is empty.");
     return;
   }
+  const components = [];
+  if (hasItemsToEquip)
+    components.push(
+      new MessageButton({
+        customId: "equip",
+        style: "PRIMARY",
+        label: "Equip",
+      })
+    );
+  if (hasItemsToOffer)
+    components.push(
+      new MessageButton({
+        customId: "offer",
+        style: "PRIMARY",
+        label: "Offer",
+      })
+    );
   const message = await interaction[responseType]({
     embeds: character.inventory.map((item) =>
       itemEmbed({ item, interaction, showEquipStatus: true })
@@ -33,21 +52,7 @@ export const execute = async (
     fetchReply: true,
     components: [
       new MessageActionRow({
-        components: [
-          new MessageButton({
-            customId: "equip",
-            style: "PRIMARY",
-            label: "Equip",
-          }),
-        ].concat(
-          hasItemsToOffer
-            ? new MessageButton({
-                customId: "offer",
-                style: "PRIMARY",
-                label: "Offer",
-              })
-            : []
-        ),
+        components,
       }),
     ],
   });

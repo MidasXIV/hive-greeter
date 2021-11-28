@@ -53,13 +53,18 @@ export const equipInventoryItemPrompt = async (
   let done = false;
 
   while (!done) {
-    const response = await message.awaitMessageComponent({
-      filter: (interaction) => {
-        interaction.deferUpdate();
-        return interaction.user.id === interaction.user.id;
-      },
-      time: 60000,
-    });
+    const response = await message
+      .awaitMessageComponent({
+        filter: (interaction) => {
+          interaction.deferUpdate();
+          return interaction.user.id === interaction.user.id;
+        },
+        time: 60000,
+      })
+      .catch(() => {
+        message.edit({ components: [] });
+      });
+    if (!response) return;
     if (response.isButton() && response.customId === "done") {
       message.edit({ content: "Done", components: [] });
       done = true;

@@ -9,20 +9,27 @@ import { itemSelect } from "../commands/itemSelect";
 import { isTradeable } from "./equipment";
 
 import { giveItem } from "./giveItem";
+import { itemEmbed } from "./itemEmbed";
+import { removeItemIdFromCharacter } from "./removeItemIdFromCharacter";
 
 export const offerItemPrompt = async (
   interaction: CommandInteraction
 ): Promise<void> => {
   const sender = getUserCharacter(interaction.user);
   const inventory = sender.inventory.filter(isTradeable);
+  if (inventory.length === 0) {
+    interaction.followUp(`No items to offer.`);
+    return;
+  }
   const message = await interaction.followUp({
-    content: "Offer which item?",
+    content:
+      "Offer an item for grabs. First to click gets it. If time expires, it will become dust in the wind.",
     components: [
       new MessageActionRow({
         components: [
           itemSelect({
             inventory,
-            placeholder: "Which item?",
+            placeholder: "Which item to be rid of?",
           }),
         ],
       }),
@@ -45,6 +52,7 @@ export const offerItemPrompt = async (
   const offer = await interaction.followUp({
     fetchReply: true,
     content: `${sender.name} offers their ${item.name}.`,
+    embeds: [itemEmbed({ item, interaction })],
     components: [
       new MessageActionRow({
         components: [
@@ -65,6 +73,7 @@ export const offerItemPrompt = async (
       time: 60000,
     })
     .catch(() => {
+      removeItemIdFromCharacter({ character: sender, itemId: item.id });
       offer.edit({
         content: `${item.name} is dust in the wind.`,
         components: [],

@@ -3,55 +3,46 @@ import { randomUUID } from "crypto";
 import { CommandInteraction } from "discord.js";
 import { getUserCharacters } from "../character/getUserCharacters";
 import { updateCharacter } from "../character/updateCharacter";
-import { heavyCrown } from "../equipment/items";
 
 export const command = new SlashCommandBuilder()
   .setName("admin")
   .setDescription("Administrative functions.")
   .addSubcommand((option) =>
-    option.setName("apply_item_uuids").setDescription("Apply UUIDs to items")
-  )
-  .addSubcommand((option) =>
     option
-      .setName("set_all_forsale")
-      .setDescription("Set all items sellable: true")
+      .setName("apply_item_defaults")
+      .setDescription("Apply default properties to any items that lack them.")
   );
 
 export const execute = async (
   interaction: CommandInteraction
 ): Promise<void> => {
   switch (interaction.options.getSubcommand()) {
-    case "apply_item_uuids":
-      applyItemUuids();
-      return interaction.reply("UUIDS applied.");
-    case "set_all_forsale":
-      markAllForSale();
-      return interaction.reply("All items marked as for sale.");
+    case "apply_item_defaults":
+      unequipAll();
+      applyItemDefaults();
+      return interaction.reply("Item defaults applied. All equipment removed.");
   }
 };
 
-const markAllForSale = () => {
+const applyItemDefaults = async (): Promise<void> => {
   getUserCharacters().forEach((character) =>
     updateCharacter({
       ...character,
       inventory: character.inventory.map((item) => ({
         ...item,
-        sellable: item.name !== heavyCrown().name,
+        id: item.id ?? randomUUID(),
+        sellable: item.sellable ?? item.name !== "heavy crown",
+        tradeable: item.tradeable ?? item.name !== "heavy crown",
       })),
     })
   );
 };
 
-const applyItemUuids = async (): Promise<void> => {
-  // for each user, clear equipped items and apply uuids to all inventory items
+const unequipAll = async (): Promise<void> => {
   getUserCharacters().forEach((character) =>
     updateCharacter({
       ...character,
       equipment: {},
-      inventory: character.inventory.map((item) => ({
-        ...item,
-        id: item.id ?? randomUUID(),
-      })),
     })
   );
 };
