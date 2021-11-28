@@ -13,5 +13,6 @@ export function dropItem({
   updateCharacter({
     ...character,
     equipment: equipmentFilter(character.equipment, (i) => i.id !== item.id),
+    inventory: character.inventory.filter((i) => i.id !== item.id),
   });
 }

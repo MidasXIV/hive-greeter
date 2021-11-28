@@ -4,14 +4,14 @@ import {
   MessageActionRow,
   MessageButton,
 } from "discord.js";
-import { Character } from "../character/Character";
+import { getUserCharacter } from "../character/getUserCharacter";
 import { itemSelect } from "../commands/itemSelect";
 import { dropItemConfirm } from "./dropItemConfirm";
 
 export async function dropItemPrompt(
-  interaction: CommandInteraction,
-  character: Character
+  interaction: CommandInteraction
 ): Promise<void> {
+  const character = getUserCharacter(interaction.user);
   const message = await interaction.followUp({
     content: "Drop which item?",
     fetchReply: true,

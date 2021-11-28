@@ -3,9 +3,8 @@ import { Item } from "./Item";
 import { goldValue } from "./goldValue";
 import { stats, statTitles } from "../character/Stats";
 import { Emoji } from "../Emoji";
-import { equipmentFilter } from "../character/loot/loot";
 import { getUserCharacter } from "../character/getUserCharacter";
-import { values } from "remeda";
+import { isEquipped } from "./isEquipped";
 
 export function itemEmbed({
   item,
@@ -39,11 +38,7 @@ export function itemEmbed({
 
   if (showEqupStatus) {
     const character = getUserCharacter(interaction.user);
-    const isEquipped =
-      values(equipmentFilter(character.equipment, (i) => i.id === item.id))
-        .length > 0;
-    embed.addField("Equipped?", isEquipped ? "Yes" : "No");
+    embed.addField("Equipped?", isEquipped({ character, item }) ? "Yes" : "No");
   }
-
   return embed;
 }

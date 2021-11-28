@@ -70,7 +70,7 @@ export const execute = async (
   if (!reply) return;
   message.edit({ components: [] });
   if (reply.customId === "drop") {
-    await dropItemPrompt(interaction, character);
+    await dropItemPrompt(interaction);
   }
   if (reply.customId === "equip") {
     await equipPrompt(interaction);
