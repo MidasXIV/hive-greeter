@@ -26,7 +26,7 @@ export const execute = async (
   }
   const message = await interaction[responseType]({
     embeds: character.inventory.map((item) =>
-      itemEmbed({ item, interaction, showEqupStatus: true })
+      itemEmbed({ item, interaction, showEquipStatus: true })
     ),
     fetchReply: true,
     components: [

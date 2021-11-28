@@ -10,12 +10,12 @@ import { sellValue } from "../encounters/shop/sellValue";
 export function itemEmbed({
   item,
   interaction,
-  showEqupStatus = false,
+  showEquipStatus: showEqupStatus = false,
   saleRate,
 }: {
   item: Item;
   interaction: CommandInteraction;
-  showEqupStatus?: boolean;
+  showEquipStatus?: boolean;
   saleRate?: number;
 }): MessageEmbed {
   const fields: EmbedFieldData[] = [];
