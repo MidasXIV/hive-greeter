@@ -61,8 +61,9 @@ export const equipItemPrompt = async (
     }
     if (response.isSelectMenu()) {
       const item = inventory[parseInt(response.values[0])];
-      updateCharacter(equipItem(getUserCharacter(interaction.user), item));
-      interaction.followUp(`You equip the ${item.name}.`);
+      const character = getUserCharacter(interaction.user);
+      updateCharacter(equipItem(character, item));
+      interaction.followUp(`${character.name} equipped the ${item.name}.`);
     }
   }
 };

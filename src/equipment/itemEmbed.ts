@@ -5,15 +5,18 @@ import { stats, statTitles } from "../character/Stats";
 import { Emoji } from "../Emoji";
 import { getUserCharacter } from "../character/getUserCharacter";
 import { isEquipped } from "./isEquipped";
+import { sellValue } from "../encounters/shop/sellValue";
 
 export function itemEmbed({
   item,
   interaction,
   showEqupStatus = false,
+  saleRate,
 }: {
   item: Item;
   interaction: CommandInteraction;
   showEqupStatus?: boolean;
+  saleRate?: number;
 }): MessageEmbed {
   const fields: EmbedFieldData[] = [];
   stats.forEach((stat) => {
@@ -22,23 +25,39 @@ export function itemEmbed({
     fields.push({
       name: statTitles[stat],
       value: Emoji(interaction, stat) + " " + modifier.toString(),
+      inline: true,
     });
   });
 
   const embed = new MessageEmbed({
     title: item.name,
     description: item.description,
-    fields: [
-      ...fields,
-      { name: "Gold Value", inline: true, value: goldValue(item, interaction) },
-    ],
+    fields: [...fields],
   });
 
-  embed.addField("Lootable?", item.lootable ? "Yes" : "No");
+  embed.addField("Lootable?", item.lootable ? "Yes" : "No", true);
+  embed.addField("Sellable?", item.sellable ? "Yes" : "No", true);
 
   if (showEqupStatus) {
     const character = getUserCharacter(interaction.user);
-    embed.addField("Equipped?", isEquipped({ character, item }) ? "Yes" : "No");
+    embed.addField(
+      "Equipped?",
+      isEquipped({ character, item }) ? "Yes" : "No",
+      true
+    );
+  }
+  embed.addField(
+    "Gold Value",
+    goldValue({ goldValue: item.goldValue, interaction })
+  );
+  if (saleRate !== undefined) {
+    embed.addField(
+      "Sell Value",
+      goldValue({
+        goldValue: sellValue(item),
+        interaction,
+      })
+    );
   }
   return embed;
 }

@@ -9,6 +9,11 @@ export const command = new SlashCommandBuilder()
   .setDescription("Administrative functions.")
   .addSubcommand((option) =>
     option.setName("apply_item_uuids").setDescription("Apply UUIDs to items")
+  )
+  .addSubcommand((option) =>
+    option
+      .setName("set_all_forsale")
+      .setDescription("Set all items sellable: true")
   );
 
 export const execute = async (
@@ -18,7 +23,22 @@ export const execute = async (
     case "apply_item_uuids":
       applyItemUuids();
       return interaction.reply("UUIDS applied.");
+    case "set_all_forsale":
+      markAllForSale();
+      return interaction.reply("All items marked as for sale.");
   }
+};
+
+const markAllForSale = () => {
+  getUserCharacters().forEach((character) =>
+    updateCharacter({
+      ...character,
+      inventory: character.inventory.map((item) => ({
+        ...item,
+        sellable: true,
+      })),
+    })
+  );
 };
 
 const applyItemUuids = async (): Promise<void> => {

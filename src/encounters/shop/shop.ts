@@ -12,9 +12,9 @@ import { times } from "remeda";
 import { isHeavyCrownInPlay } from "../../heavyCrown/isHeavyCrownInPlay";
 import { heavyCrown } from "../../equipment/items/heavyCrown";
 import { randomShopItem } from "../../equipment/randomShopItem";
-import { Emoji } from "../../Emoji";
 import { buyItemPrompt } from "./buyItemPrompt";
 import { sellItemPrompt } from "./sellItemPrompt";
+import { goldValue } from "../../equipment/goldValue";
 
 export const shop = async (interaction: CommandInteraction): Promise<void> => {
   const shopImage = new MessageAttachment(
@@ -32,48 +32,13 @@ export const shop = async (interaction: CommandInteraction): Promise<void> => {
     character.inventory.filter((i) => i.sellable).length > 0;
 
   const message = await interaction.reply({
-    files: [shopImage],
-    embeds: [
-      new MessageEmbed()
-        .setImage(`attachment://${shopImage.name}`)
-        .addField(
-          "Your Gold",
-          Emoji(interaction, "gold") + " " + character.gold.toString()
-        ),
-      ...inventory.map((item) => itemEmbed({ item, interaction })),
-    ],
-    components: [
-      new MessageActionRow({
-        components: [
-          new MessageButton({
-            customId: "buy",
-            label: "Buy",
-            style: "PRIMARY",
-          }),
-        ]
-          .concat(
-            hasStuffToSell
-              ? new MessageButton({
-                  customId: "sell",
-                  label: "Sell",
-                  style: "PRIMARY",
-                })
-              : []
-          )
-          .concat(
-            new MessageButton({
-              customId: "leave",
-              label: "Leave",
-              style: "SECONDARY",
-            })
-          ),
-      }),
-    ],
+    ...shopMain(),
     fetchReply: true,
   });
   if (!(message instanceof Message)) return;
   let hasLeft = false;
   while (!hasLeft) {
+    await message.edit(shopMain());
     const response = await message
       .awaitMessageComponent({
         filter: (i) => {
@@ -96,4 +61,49 @@ export const shop = async (interaction: CommandInteraction): Promise<void> => {
     if (response.customId === "sell") await sellItemPrompt({ interaction });
   }
   interaction.editReply({ components: [] });
+
+  function shopMain() {
+    const shopEmbed = new MessageEmbed({
+      fields: [
+        {
+          name: "Your Gold",
+          value: goldValue({ interaction, goldValue: character.gold }),
+        },
+      ],
+    }).setImage(`attachment://${shopImage.name}`);
+    return {
+      files: [shopImage],
+      embeds: [
+        shopEmbed,
+        ...inventory.map((item) => itemEmbed({ item, interaction })),
+      ],
+      components: [
+        new MessageActionRow({
+          components: [
+            new MessageButton({
+              customId: "buy",
+              label: "Buy",
+              style: "PRIMARY",
+            }),
+          ]
+            .concat(
+              hasStuffToSell
+                ? new MessageButton({
+                    customId: "sell",
+                    label: "Sell",
+                    style: "PRIMARY",
+                  })
+                : []
+            )
+            .concat(
+              new MessageButton({
+                customId: "leave",
+                label: "Leave",
+                style: "SECONDARY",
+              })
+            ),
+        }),
+      ],
+    };
+  }
 };
