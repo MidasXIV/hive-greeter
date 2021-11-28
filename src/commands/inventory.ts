@@ -7,6 +7,7 @@ import {
 } from "discord.js";
 import { getUserCharacter } from "../character/getUserCharacter";
 import { equipInventoryItemPrompt } from "../equipment/equipInventoryItemPrompt";
+import { isTradeable } from "../equipment/equipment";
 import { itemEmbed } from "../equipment/itemEmbed";
 import { offerItemPrompt as offerItemPrompt } from "../equipment/offerItemPrompt";
 
@@ -20,6 +21,7 @@ export const execute = async (
 ): Promise<void> => {
   const character = getUserCharacter(interaction.user);
   console.log(`${character.name}'s inventory`, character.inventory);
+  const hasItemsToOffer = character.inventory.filter(isTradeable).length > 0;
   if (!character.inventory.length) {
     await interaction[responseType]("Your inventory is empty.");
     return;
@@ -37,12 +39,15 @@ export const execute = async (
             style: "PRIMARY",
             label: "Equip",
           }),
-          new MessageButton({
-            customId: "offer",
-            style: "PRIMARY",
-            label: "Offer",
-          }),
-        ],
+        ].concat(
+          hasItemsToOffer
+            ? new MessageButton({
+                customId: "offer",
+                style: "PRIMARY",
+                label: "Offer",
+              })
+            : []
+        ),
       }),
     ],
   });
