@@ -35,7 +35,7 @@ export function itemEmbed({
     fields: [...fields],
   });
 
-  embed.addField("ID", item.id, true);
+  if (process.env.SHOW_ITEM_IDS === "true") embed.addField("ID", item.id, true);
   embed.addField("Type", item.type, true);
   embed.addField("Lootable?", item.lootable ? "Yes" : "No", true);
   embed.addField("Sellable?", item.sellable ? "Yes" : "No", true);
