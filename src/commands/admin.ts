@@ -11,6 +11,9 @@ export const command = new SlashCommandBuilder()
     option
       .setName("apply_item_defaults")
       .setDescription("Apply default properties to any items that lack them.")
+  )
+  .addSubcommand((option) =>
+    option.setName("unequip_all").setDescription("Globally unequip all items.")
   );
 
 export const execute = async (
@@ -18,9 +21,11 @@ export const execute = async (
 ): Promise<void> => {
   switch (interaction.options.getSubcommand()) {
     case "apply_item_defaults":
-      unequipAll();
       applyItemDefaults();
-      return interaction.reply("Item defaults applied. All equipment removed.");
+      return interaction.reply("Item defaults applied.");
+    case "unequip_all":
+      unequipAll();
+      return interaction.reply("All equipment removed.");
   }
 };
 
