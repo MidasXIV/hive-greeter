@@ -14,6 +14,7 @@ const characterSlice = createSlice({
   name: "characters",
   initialState: {
     charactersById,
+    isHeavyCrownInPlay: false,
   },
   reducers: {
     updateCharacter(state, action: PayloadAction<Character>) {
@@ -135,6 +136,9 @@ const characterSlice = createSlice({
       }>
     ) {
       const { character, item } = action.payload;
+      if (item.name === "heavy crown") {
+        state.isHeavyCrownInPlay = true;
+      }
       state.charactersById[character.id] = {
         ...character,
         inventory: [...character.inventory, item],
