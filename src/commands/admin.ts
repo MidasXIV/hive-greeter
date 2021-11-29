@@ -1,23 +1,50 @@
 import { SlashCommandBuilder } from "@discordjs/builders";
-import { CommandInteraction, MessageEmbed } from "discord.js";
+import { randomUUID } from "crypto";
+import { CommandInteraction } from "discord.js";
+import { getUserCharacters } from "../character/getUserCharacters";
+import { updateCharacter } from "../character/updateCharacter";
 
 export const command = new SlashCommandBuilder()
   .setName("admin")
-  .setDescription("Admins only.");
+  .setDescription("Administrative functions.")
+  .addSubcommand((option) =>
+    option
+      .setName("apply_item_defaults")
+      .setDescription("Apply default properties to any items that lack them.")
+  );
 
 export const execute = async (
   interaction: CommandInteraction
 ): Promise<void> => {
-  console.log(interaction.options.getSubcommand());
-  interaction.reply({
-    embeds: [
-      new MessageEmbed()
-        .setTitle("Dance!")
-        .setImage(
-          "http://www.gamergeoff.com/images/dancing/halfling%20dance2%20male.gif"
-        ),
-    ],
-  });
+  switch (interaction.options.getSubcommand()) {
+    case "apply_item_defaults":
+      unequipAll();
+      applyItemDefaults();
+      return interaction.reply("Item defaults applied. All equipment removed.");
+  }
+};
+
+const applyItemDefaults = async (): Promise<void> => {
+  getUserCharacters().forEach((character) =>
+    updateCharacter({
+      ...character,
+      inventory: character.inventory.map((item) => ({
+        ...item,
+        id: item.id ?? randomUUID(),
+        sellable: item.sellable ?? item.name !== "heavy crown",
+        tradeable: item.tradeable ?? item.name !== "heavy crown",
+      })),
+    })
+  );
+};
+
+const unequipAll = async (): Promise<void> => {
+  getUserCharacters().forEach((character) =>
+    updateCharacter({
+      ...character,
+      equipment: {},
+    })
+  );
 };
 
 export default { command, execute };

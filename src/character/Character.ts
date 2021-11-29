@@ -1,5 +1,6 @@
 import { User } from "discord.js";
-import { Armor, Hat, Item, Shield, Weapon } from "../equipment/equipment";
+import { Armor, Hat, Shield, Weapon } from "../equipment/equipment";
+import { Item } from "../equipment/Item";
 import { Quest } from "../quest/Quest";
 import { QuestId } from "../quest/quests";
 import { StatusEffect } from "../statusEffects/StatusEffect";

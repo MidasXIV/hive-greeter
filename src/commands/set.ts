@@ -1,7 +1,7 @@
 import { SlashCommandBuilder } from "@discordjs/builders";
 import { CommandInteraction } from "discord.js";
 import { setProfile } from "../character/setProfile";
-import { execute as inspect } from "./inspect";
+import { execute as inspect } from "./inspect/inspect";
 
 export const command = new SlashCommandBuilder()
   .setName("set")

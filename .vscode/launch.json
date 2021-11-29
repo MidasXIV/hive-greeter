@@ -10,7 +10,8 @@
       "request": "launch",
       "cwd": "${workspaceFolder}",
       "runtimeExecutable": "npm",
-      "runtimeArgs": ["run", "start:dev"]
+      "runtimeArgs": ["run", "start:dev"],
+      "console": "integratedTerminal"
     }
   ]
 }

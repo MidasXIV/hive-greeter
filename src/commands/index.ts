@@ -6,11 +6,10 @@ import crown from "./crown";
 import dance from "./dance";
 import lootme from "./lootme";
 import db from "./db";
-import equip from "./equip";
 import heal from "./heal";
 import hp from "./hp";
 import hpbartest from "../character/hpBar/hpbartest";
-import inspect from "./inspect";
+import inspect from "./inspect/inspect";
 import inventory from "./inventory";
 import list from "./list/list";
 import monster from "./monster";
@@ -23,6 +22,7 @@ import admin from "./admin";
 import chest from "./chest";
 import lootmonster from "./lootmonster";
 import barFight from "./barFight";
+import lootchest from "./lootchest";
 
 const commands = new Map();
 commands.set("adventure", adventure);
@@ -30,7 +30,6 @@ commands.set("attack", attack);
 commands.set("cooldowns", cooldowns);
 commands.set("dance", dance);
 commands.set("db", db);
-commands.set("equip", equip);
 commands.set("heal", heal);
 commands.set("hp", hp);
 commands.set("inspect", inspect);
@@ -51,6 +50,7 @@ if (process.env.DEV_COMMANDS === "true") {
   commands.set("shop", shop);
   commands.set("lootme", lootme);
   commands.set("lootmonster", lootmonster);
+  commands.set("lootchest", lootchest);
   commands.set("bar_fight", barFight);
   commands.set("angels", angels);
 }

@@ -12,12 +12,15 @@ import { gpGainField } from "../character/gpGainField";
 import { updateCharacter } from "../character/updateCharacter";
 import { xpGainField } from "../character/xpGainField";
 import { Emoji } from "../Emoji";
-import { equipItemPrompt, itemEmbed } from "../equipment/equipment";
+import { equipItemPrompt } from "../equipment/equipItemPrompt";
+import { itemEmbed } from "../equipment/itemEmbed";
 import { grantCharacterItem } from "../equipment/grantCharacterItem";
-import { heavyCrown } from "../heavyCrown/heavyCrown";
+import { randomChestItem } from "../equipment/randomChestItem";
+import { heavyCrown } from "../equipment/items/heavyCrown";
 import { isHeavyCrownInPlay } from "../heavyCrown/isHeavyCrownInPlay";
 import { updateStatusEffect } from "../statusEffects/grantStatusEffect";
 import { trapAttack } from "../trap/trapAttack";
+import { isEquippable } from "../equipment/equipment";
 
 const chestImage = new MessageAttachment("./images/chest.jpg", "chest.jpg");
 
@@ -37,10 +40,11 @@ type Chest = {
   trapResult?: string;
 };
 
-export const chest = async (
+export async function chest(
   interaction: CommandInteraction,
-  followUp = false
-): Promise<void> => {
+  followUp = false,
+  chestConfig?: Partial<Chest>
+): Promise<void> {
   let fled = false;
   let timeout = false;
 
@@ -60,6 +64,7 @@ export const chest = async (
     trapDisarmed: false,
     trapDisarmAttempted: false,
     trapTriggered: false,
+    ...chestConfig,
   };
 
   const message = await interaction[followUp ? "followUp" : "reply"]({
@@ -185,15 +190,25 @@ export const chest = async (
       )} ${xp} xp.`
     );
     if (Math.random() <= 0.005 && !isHeavyCrownInPlay()) {
+      const crown = heavyCrown();
       updateCharacter(
-        grantCharacterItem(getUserCharacter(interaction.user), heavyCrown)
+        grantCharacterItem(getUserCharacter(interaction.user), crown)
       );
       embed.addField(
         "Heavy Crown",
-        `You find a heavy crown. ${heavyCrown.description}`
+        `You find a heavy crown. ${crown.description}`
       );
-      await interaction.followUp({ embeds: [itemEmbed(heavyCrown)] });
-      await equipItemPrompt(interaction, heavyCrown);
+      await interaction.followUp({
+        embeds: [itemEmbed({ item: crown, interaction })],
+      });
+      await equipItemPrompt(interaction, crown);
+    }
+    if (Math.random() <= 0.1) {
+      const item = randomChestItem();
+      updateCharacter(
+        grantCharacterItem(getUserCharacter(interaction.user), item)
+      );
+      if (isEquippable(item)) equipItemPrompt(interaction, item);
     }
   }
   if (getUserCharacter(interaction.user).hp === 0) {
@@ -203,14 +218,14 @@ export const chest = async (
     files: [chestImage],
     embeds: [embed],
   });
-};
+}
 
 const chestEmbed = (chest: Chest): MessageEmbed => {
-  const embed = new MessageEmbed()
-    .setTitle("A chest!")
-    .setColor("GOLD")
-    .setDescription(`You found a treasure chest! What wonders wait within?`)
-    .setImage("attachment://chest.jpg");
+  const embed = new MessageEmbed({
+    title: "A chest!",
+    color: "GOLD",
+    description: `You found a treasure chest! What wonders wait within?`,
+  }).setImage("attachment://chest.jpg");
 
   if (chest.inspected) {
     embed.addField("Inspected", "You inspected the chest.");
@@ -222,7 +237,7 @@ const chestEmbed = (chest: Chest): MessageEmbed => {
   if (chest.trapDisarmAttempted)
     embed.addField(
       "Trap Disarmed",
-      "You _believe_ the trap has been disabled...."
+      "You _believe_ the trap has been disabled..."
     );
 
   if (chest.lockFound && !chest.isLocked)
@@ -232,7 +247,9 @@ const chestEmbed = (chest: Chest): MessageEmbed => {
   if (chest.lockFound && chest.isLocked && chest.unlockAttempted) {
     embed.addField("Locked", "This lock is beyond your ability.");
   }
-  if (chest.trapResult) embed.addField("Trap Triggered!", chest.trapResult);
+  if (chest.trapResult) {
+    embed.addField("Trap Triggered!", chest.trapResult);
+  }
   return embed;
 };
 

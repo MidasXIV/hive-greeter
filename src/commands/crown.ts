@@ -4,8 +4,8 @@ import { equipItem } from "../character/equipItem";
 import { getUserCharacter } from "../character/getUserCharacter";
 import { updateCharacter } from "../character/updateCharacter";
 import { grantCharacterItem } from "../equipment/grantCharacterItem";
-import { heavyCrown } from "../heavyCrown/heavyCrown";
-import { execute as inspect } from "./inspect";
+import { heavyCrown } from "../equipment/items/heavyCrown";
+import { execute as inspect } from "./inspect/inspect";
 
 export const command = new SlashCommandBuilder()
   .setName("crown")
@@ -15,10 +15,9 @@ export const execute = async (
   interaction: CommandInteraction
 ): Promise<void> => {
   const character = getUserCharacter(interaction.user);
-  updateCharacter(
-    equipItem(grantCharacterItem(character, heavyCrown), heavyCrown)
-  );
-  console.log("granted", heavyCrown);
+  const crown = heavyCrown();
+  updateCharacter(equipItem(grantCharacterItem(character, crown), crown));
+  console.log("granted", crown);
   inspect(interaction);
 };
 
