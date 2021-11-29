@@ -1,8 +1,13 @@
 import { configureStore, Dispatch } from "@reduxjs/toolkit";
 import remoteReduxEnhancer from "@redux-devtools/remote";
 
+import fs from 'fs'
 import rootReducer from "../store/reducers";
 const enhancers = [];
+
+export const DB_FILE = "./db.redux.json";
+
+const preloadedState = fs.existsSync(DB_FILE) ? JSON.parse(fs.readFileSync(DB_FILE).toString('utf-8')) : undefined
 
 if (process.env.REDUX_DEVTOOLS_ENABLED === 'true') {
   enhancers.push(remoteReduxEnhancer({
@@ -15,15 +20,11 @@ const store = configureStore({
   reducer: rootReducer,
   devTools: true,
   enhancers,
+  preloadedState,
 });
-console.log("store", new Date());
 
 export default store;
 
 export type ReduxState = ReturnType<typeof store.getState>;
 export type AppDispatch = typeof store.dispatch;
 export type { Dispatch };
-
-// export const useDispatch = () => useReduxDispatch<typeof store.dispatch>()
-// export const useSelector: TypedUseSelectorHook<ReduxState> = (fn) =>
-//   useReduxSelector(fn, shallowEqual)

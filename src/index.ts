@@ -8,7 +8,7 @@ import Discord, { Intents } from "discord.js";
 import { exit } from "process";
 import { Routes } from "discord-api-types/v9";
 import commands from "./commands";
-import { loadDB, saveDB } from "./gameState";
+import { saveDB } from "./gameState";
 
 if (!process.env.token) exit(1);
 
@@ -40,7 +40,7 @@ const installCommands = async () => {
 };
 
 async function main() {
-  await loadDB();
+  // await loadDB();
   await installCommands();
 
   const discordClient = new Discord.Client({

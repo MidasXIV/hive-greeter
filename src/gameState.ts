@@ -1,10 +1,8 @@
 import { MessageAttachment } from "discord.js";
-import { readFile, writeFile } from "fs/promises";
-import store, { ReduxState } from "./store";
-import { Character } from "./character/Character";
-import { defaultCharacter } from "./character/defaultCharacter";
-import { defaultCooldowns } from "./character/defaultCooldowns";
-import { keys } from "remeda";
+import fs from 'fs'
+import { updateLastSave } from "./store/slices/game";
+import store from "./store";
+// import { keys } from "remeda";
 
 export const DB_FILE = "./db.redux.json";
 
@@ -14,34 +12,13 @@ export const defaultProfileAttachment = new MessageAttachment(
   "profile.png"
 );
 
-export const getDBJSON = (space = 2): string =>
-  JSON.stringify(store.getState(), null, space);
-
-const isEmptyState = (state: ReduxState) =>
-  keys(state.characters.charactersById).length === 0 &&
-  keys(state.monsters.monstersById).length === 0 &&
-  keys(state.encounters.encountersById).length === 0 &&
-  keys(state.loots.lootsById).length === 0;
-
-export const saveDB = async (file = DB_FILE): Promise<void> => {
+export const saveDB = (file = DB_FILE) => {
   console.time("saveDB");
+  store.dispatch(updateLastSave())
   const state = store.getState();
-  if (isEmptyState(state)) return;
-
-  debugger;
-  await writeFile(file, getDBJSON(), { encoding: "utf-8" });
+  fs.writeFileSync(file, JSON.stringify(state, null, 2));
   console.timeEnd("saveDB");
-};
-
-export const loadDB = async (): Promise<void> => {
-  console.time("loadDB");
-  const data = await readFile(DB_FILE, { encoding: "utf-8" });
-  loadSerializedDB(data.toString());
-  console.timeEnd("loadDB");
-};
-
-export const loadSerializedDB = (serialized: string): GameState => {
-  const parsed = JSON.parse(serialized);
+  return state
 };
 
 export const d20 = (): number => Math.ceil(Math.random() * 20);
