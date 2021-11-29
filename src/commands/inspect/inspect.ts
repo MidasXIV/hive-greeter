@@ -7,7 +7,7 @@ import { questEmbed } from "../questEmbed";
 import { statusEffectEmbed } from "../../statusEffects/statusEffectEmbed";
 import { actionEmbed } from "./actionEmbed";
 import { values } from "remeda";
-import { statsEmbed } from "../statsEmbed";
+import { statsEmbed } from "../../character/statsEmbed";
 import { itemEmbed } from "../../equipment/itemEmbed";
 
 export const command = new SlashCommandBuilder()
