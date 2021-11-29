@@ -4,7 +4,7 @@ import { getUserCharacter } from "../character/getUserCharacter";
 import { addItemToInventory } from "../store/slices/characters";
 import { heavyCrown } from "../equipment/items/heavyCrown";
 import { execute as inspect } from "./inspect/inspect";
-import store from "store";
+import store from "../store";
 
 export const command = new SlashCommandBuilder()
   .setName("crown")

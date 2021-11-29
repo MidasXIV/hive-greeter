@@ -4,8 +4,8 @@ import { adjustGold } from "../character/adjustGold";
 import { getUserCharacter } from "../character/getUserCharacter";
 import { addItemToInventory } from "../store/slices/characters";
 import store from "../store";
-import { equipItemPrompt } from "equipment/equipItemPrompt";
-import { Item } from "equipment/Item";
+import { equipItemPrompt } from "../equipment/equipItemPrompt";
+import { Item } from "../equipment/Item";
 
 export const buyItem = async (
   interaction: CommandInteraction,
