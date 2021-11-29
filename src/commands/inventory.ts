@@ -62,7 +62,7 @@ export default { command, execute };
 function inventoryMain(interaction: CommandInteraction): MessageOptions {
   const character = getUserCharacter(interaction.user);
   const hasItemsToOffer = character.inventory.filter(isTradeable).length > 0;
-  const hasItemsToEquip = equippableInventory(character);
+  const hasItemsToEquip = equippableInventory(character).length > 0;
 
   const components = [];
   if (hasItemsToEquip)
