@@ -1,12 +1,10 @@
 import { SlashCommandBuilder } from "@discordjs/builders";
 import { CommandInteraction } from "discord.js";
-import { equipItem } from "../character/equipItem";
 import { getUserCharacter } from "../character/getUserCharacter";
-import { grantCharacterItem } from "../equipment/grantCharacterItem";
-import { heavyCrown } from "../heavyCrown/heavyCrown";
-import { execute as inspect } from "./inspect";
-import store from '../store'
-import { addItemToInventory } from '../store/slices/characters';
+import { addItemToInventory } from "../store/slices/characters";
+import { heavyCrown } from "../equipment/items/heavyCrown";
+import { execute as inspect } from "./inspect/inspect";
+import store from "store";
 
 export const command = new SlashCommandBuilder()
   .setName("crown")
@@ -16,22 +14,17 @@ export const execute = async (
   interaction: CommandInteraction
 ): Promise<void> => {
   const character = getUserCharacter(interaction.user);
-  store.dispatch(addItemToInventory({
-    character,
-    item: heavyCrown,
-  }))
+  const crown = heavyCrown();
+  store.dispatch(
+    addItemToInventory({
+      character,
+      item: crown,
+    })
+  );
   // TODO Equip Item Reducer
 
-  // store.dispatch(addItemToInventory({
-  //   character,
-  //   item: heavyCrown,
-  // }))
-
-  // updateCharacter(
-    // equipItem(grantCharacterItem(character, heavyCrown), heavyCrown)
-  // );
-  // store.dispatch() //grantCharacterItem(character, heavyCrown)
   console.log("granted", heavyCrown);
+  console.log("granted", crown);
   inspect(interaction);
 };
 

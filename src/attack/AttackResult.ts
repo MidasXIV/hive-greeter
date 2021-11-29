@@ -6,6 +6,8 @@ type AttackHit = {
   defender: Character;
   attackRoll: number;
   damage: number;
+  monsterDamageRoll: number;
+  damageRoll: number;
 };
 type AttackMiss = {
   outcome: "miss";
@@ -13,6 +15,8 @@ type AttackMiss = {
   defender: Character;
   attackRoll: number;
   damage: number;
+  monsterDamageRoll: number;
+  damageRoll: number;
 };
 type AttackCooldown = { outcome: "cooldown" };
 export type AttackResult = AttackHit | AttackMiss | AttackCooldown;

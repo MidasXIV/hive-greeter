@@ -57,7 +57,7 @@ export async function restfulNight(
             : []
         ),
       }).setImage("https://i.imgur.com/5FAD82X.png"),
-      statusEffectEmbed(buff),
+      statusEffectEmbed(buff, interaction),
     ],
   });
 

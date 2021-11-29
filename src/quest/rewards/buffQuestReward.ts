@@ -1,5 +1,5 @@
 import { CommandInteraction, MessageEmbed } from "discord.js";
-import inspect from "../../commands/inspect";
+import inspect from "../../commands/inspect/inspect";
 import { getUserCharacter } from "../../character/getUserCharacter";
 import { updateStatusEffect } from "../../statusEffects/grantStatusEffect";
 import { StatusEffect } from "../../statusEffects/StatusEffect";

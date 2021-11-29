@@ -1,7 +1,6 @@
 import { SlashCommandBuilder } from "@discordjs/builders";
 import { CommandInteraction } from "discord.js";
 import { characterEmbed } from "../character/characterEmbed";
-import { getCharacter } from "../character/getCharacter";
 import { getCharacterUpdate } from "../character/getCharacterUpdate";
 import { getUserCharacter } from "../character/getUserCharacter";
 import { inventoryFields } from "../character/inventoryFields";
@@ -19,15 +18,16 @@ export const command = new SlashCommandBuilder()
 export const execute = async (
   interaction: CommandInteraction
 ): Promise<void> => {
-  const monster = getRandomMonster();
+  const monster = await getRandomMonster();
   const character = getUserCharacter(interaction.user);
   const result = loot({ looterId: monster.id, targetId: interaction.user.id });
   interaction.reply({
     embeds: [
       monsterEmbed(monster),
-      characterEmbed(getCharacterUpdate(character)).addFields(
-        ...inventoryFields(character)
-      ),
+      characterEmbed({
+        character: getCharacterUpdate(character),
+        interaction,
+      }).addFields(...inventoryFields(character)),
     ].concat(result ? lootResultEmbed(result) : []),
   });
 };

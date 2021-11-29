@@ -16,8 +16,17 @@ export const attack = (
   if (!attacker || !defender) return;
 
   const attackRoll = d20();
-  const damageMax = getCharacterStatModified(attacker, "damageMax");
-  const damage = Math.ceil(Math.random() * damageMax);
+  const damageBonus = getCharacterStatModified(attacker, "damageBonus");
+  const damageRoll = Math.ceil(
+    Math.random() * getCharacterStatModified(attacker, "damageMax")
+  );
+  const monsterDamageRoll = defender.isMonster
+    ? Math.ceil(
+        Math.random() * getCharacterStatModified(attacker, "monsterDamageMax")
+      )
+    : 0;
+
+  const damage = damageRoll + monsterDamageRoll + damageBonus;
   if (
     attackRoll + getCharacterStatModified(attacker, "attackBonus") >=
     getCharacterStatModified(defender, "ac")
@@ -29,6 +38,8 @@ export const attack = (
       outcome: "hit",
       attackRoll,
       damage,
+      damageRoll,
+      monsterDamageRoll,
       attacker: getCharacter(attacker.id) as Character,
       defender: getCharacter(defender.id) as Character,
     };
@@ -38,6 +49,8 @@ export const attack = (
     outcome: "miss",
     attackRoll,
     damage,
+    damageRoll,
+    monsterDamageRoll,
     attacker: getCharacter(attacker.id) as Character,
     defender: getCharacter(defender.id) as Character,
   };

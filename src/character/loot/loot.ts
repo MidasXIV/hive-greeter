@@ -1,11 +1,11 @@
 import { randomUUID } from "crypto";
 import { values } from "remeda";
 import { updateLootResult } from "../../store/slices/loots";
-import { Item } from "../../equipment/equipment";
 import { Character } from "../Character";
 import { getCharacter } from "../getCharacter";
 import { updateCharacter } from "../updateCharacter";
 import store from "../../store";
+import { Item } from "equipment/Item";
 
 export type LootResult = {
   id: string;
@@ -70,12 +70,12 @@ const autoEquip = (
 };
 
 /**
- * Equipment minus lootables.
+ * Equipment minus
  */
-const equipmentFilter = (
+export const equipmentFilter = (
   equipment: Character["equipment"],
   predicate: (item: Item) => boolean
-) =>
+): Character["equipment"] =>
   values(equipment)
     .filter(predicate)
     .reduce(

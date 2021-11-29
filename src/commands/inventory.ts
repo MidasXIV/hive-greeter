@@ -1,7 +1,17 @@
 import { SlashCommandBuilder } from "@discordjs/builders";
-import { CommandInteraction } from "discord.js";
+import {
+  CommandInteraction,
+  Message,
+  MessageActionRow,
+  MessageButton,
+  MessageOptions,
+} from "discord.js";
 import { getUserCharacter } from "../character/getUserCharacter";
-import { itemEmbed } from "../equipment/equipment";
+import { equipInventoryItemPrompt } from "../equipment/equipInventoryItemPrompt";
+import { isTradeable } from "../equipment/equipment";
+import { equippableInventory } from "../equipment/equippableInventory";
+import { itemEmbed } from "../equipment/itemEmbed";
+import { offerItemPrompt as offerItemPrompt } from "../equipment/offerItemPrompt";
 
 export const command = new SlashCommandBuilder()
   .setName("inventory")
@@ -11,15 +21,83 @@ export const execute = async (
   interaction: CommandInteraction,
   responseType: "followUp" | "reply" = "reply"
 ): Promise<void> => {
-  const player = getUserCharacter(interaction.user);
-  console.log(`${player.name}'s inventory`, player.inventory);
-  if (!player.inventory.length) {
+  const character = getUserCharacter(interaction.user);
+  console.log(`${character.name}'s inventory`, character.inventory);
+  if (!character.inventory.length) {
     await interaction[responseType]("Your inventory is empty.");
     return;
   }
-  interaction[responseType]({
-    embeds: player.inventory.map(itemEmbed),
+  const message = await interaction[responseType]({
+    ...inventoryMain(interaction),
+    fetchReply: true,
   });
+  if (!(message instanceof Message)) return;
+  let done = false;
+  while (!done) {
+    const reply = await message
+      .awaitMessageComponent({
+        time: 30000,
+        filter: (i) => {
+          i.deferUpdate();
+          return i.user.id === interaction.user.id;
+        },
+        componentType: "BUTTON",
+      })
+      .catch(() => {
+        message.edit({
+          components: [],
+        });
+      });
+    if (!reply) return;
+    if (reply.customId === "equip") await equipInventoryItemPrompt(interaction);
+    if (reply.customId === "offer") await offerItemPrompt(interaction);
+    if (reply.customId === "done") done = true;
+    message.edit(inventoryMain(interaction));
+  }
+  message.edit({ components: [] });
 };
 
 export default { command, execute };
+
+function inventoryMain(interaction: CommandInteraction): MessageOptions {
+  const character = getUserCharacter(interaction.user);
+  const hasItemsToOffer = character.inventory.filter(isTradeable).length > 0;
+  const hasItemsToEquip = equippableInventory(character).length > 0;
+
+  const components = [];
+  if (hasItemsToEquip)
+    components.push(
+      new MessageButton({
+        customId: "equip",
+        style: "SECONDARY",
+        label: "Equip",
+      })
+    );
+  if (hasItemsToOffer)
+    components.push(
+      new MessageButton({
+        customId: "offer",
+        style: "SECONDARY",
+        label: "Offer",
+      })
+    );
+
+  components.push(
+    new MessageButton({
+      customId: "done",
+      style: "SECONDARY",
+      label: "Done",
+    })
+  );
+
+  return {
+    embeds: character.inventory.map((item) =>
+      itemEmbed({ item, interaction, showEquipStatus: true })
+    ),
+    components: [
+      new MessageActionRow({
+        components,
+      }),
+    ],
+  };
+}

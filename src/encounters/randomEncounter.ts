@@ -10,10 +10,12 @@ import { travel } from "./travel";
 import { chest } from "./chest";
 import { vigorShrine } from "./shrine/vigor";
 import { weightedRandom } from "./weightedRandom";
-import { shop } from "./shop";
+import { angels } from "./angels";
+import { shop } from "./shop/shop";
 
 type CommandHandler = (interaction: CommandInteraction) => Promise<void>;
 type EncounterId =
+  | "angels"
   | "armorShrine"
   | "attackShrine"
   | "chest"
@@ -32,6 +34,7 @@ type Encounters = {
 
 type randomEncounter = CommandHandler;
 const encounterWeights = {
+  angels: 0.5,
   armorShrine: 1,
   attackShrine: 1,
   vigorShrine: 1,
@@ -47,6 +50,7 @@ const encounterWeights = {
 
 // TODO: refactor to Map<EncounterId, weight> to prevent mis-alignment bugs
 const encounters: CommandHandler[] = [
+  angels,
   armorShrine,
   attackShrine,
   vigorShrine,

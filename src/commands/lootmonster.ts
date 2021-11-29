@@ -19,15 +19,16 @@ export const command = new SlashCommandBuilder()
 export const execute = async (
   interaction: CommandInteraction
 ): Promise<void> => {
-  const monster = getRandomMonster();
+  const monster = await getRandomMonster();
   const character = getUserCharacter(interaction.user);
   const result = loot({ looterId: character.id, targetId: monster.id });
   interaction.reply({
     embeds: [
       monsterEmbed(getMonsterUpdate(monster)),
-      characterEmbed(getCharacterUpdate(character)).addFields(
-        ...inventoryFields(character)
-      ),
+      characterEmbed({
+        character: getCharacterUpdate(character),
+        interaction,
+      }).addFields(...inventoryFields(character)),
     ].concat(result ? lootResultEmbed(result) : []),
   });
 };

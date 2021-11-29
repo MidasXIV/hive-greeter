@@ -53,6 +53,7 @@
     "express": "^4.17.1",
     "lowdb": "^3.0.0",
     "moment": "^2.29.1",
+    "openai-api": "^1.2.6",
     "progress": "^2.0.3",
     "remeda": "^0.0.30",
     "rimraf": "^3.0.2",

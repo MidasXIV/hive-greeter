@@ -1,10 +1,11 @@
 import { gameState } from "../gameState";
 import { createMonster } from "./createMonster";
 import { getRandomItem } from "./getRandomItem";
+import { getRandomMonsterName } from "./names/getRandomMonsterName";
 import { getRoamingMonsters } from "./getRoamingMonsters";
 import { Monster } from "./Monster";
 
-export const getRandomMonster = (): Monster => {
+export const getRandomMonster = async (): Promise<Monster> => {
   console.log(
     "chance to encounter existing monster",
     gameState.monsters.size / 10
@@ -35,7 +36,7 @@ export const getRandomMonster = (): Monster => {
       });
     case rand > 0.6:
       return createMonster({
-        name: "Orc",
+        name: getRandomMonsterName("Orc"),
         profile: "https://i.imgur.com/2cT3cLm.jpeg",
         gold: Math.floor(Math.random() * 6) + 2,
         isMonster: true,
@@ -44,7 +45,7 @@ export const getRandomMonster = (): Monster => {
       return createMonster({
         hp: 8,
         maxHP: 8,
-        name: "Bandit",
+        name: getRandomMonsterName("Bandit"),
         profile: "https://i.imgur.com/MV96z4T.png",
         xpValue: 4,
         gold: Math.floor(Math.random() * 5) + 1,
@@ -54,7 +55,7 @@ export const getRandomMonster = (): Monster => {
       return createMonster({
         hp: 5,
         maxHP: 5,
-        name: "Goblin",
+        name: getRandomMonsterName("Goblin"),
         profile: "https://i.imgur.com/gPH1JSl.png",
         xpValue: 3,
         gold: Math.floor(Math.random() * 3) + 1,
@@ -62,3 +63,10 @@ export const getRandomMonster = (): Monster => {
       });
   }
 };
+
+// (async function () {
+//   for (let index = 0; index < 5; index++) {
+//     const monster = await getRandomMonster();
+//     console.log("Monster name: ", monster.name);
+//   }
+// })();

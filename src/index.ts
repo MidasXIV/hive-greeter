@@ -37,10 +37,10 @@ const installCommands = async () => {
   } catch (error) {
     console.log(error);
   }
-}
+};
 
-async function main () {
-  await loadDB()
+async function main() {
+  await loadDB();
   await installCommands();
 
   const discordClient = new Discord.Client({
@@ -55,12 +55,10 @@ async function main () {
 
   const app = express();
 
-
   app.use("/", (request: Request, response: Response) => {
     response.sendStatus(200);
   });
 
-  
   discordClient.on("interactionCreate", async (interaction) => {
     if (!interaction.isCommand()) return;
     console.log("interactionCreate");
@@ -89,4 +87,4 @@ async function main () {
   }, 5 * 60000);
 }
 
-main()
+main();

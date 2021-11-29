@@ -11,6 +11,9 @@ import { attack } from "../attack/attack";
 import { hpBarField } from "../character/hpBar/hpBarField";
 import { loot } from "../character/loot/loot";
 import { lootResultEmbed } from "../character/loot/lootResultEmbed";
+import { AttackResult } from "../attack/AttackResult";
+import { Emoji } from "../Emoji";
+import { damgeTakenField } from "../character/damgeTakenField";
 
 export const command = new SlashCommandBuilder()
   .setName("attack")
@@ -55,7 +58,7 @@ export const execute = async (
     );
   const embeds = [];
   embeds.push(
-    attackResultEmbed(result).setTitle(
+    attackResultEmbed({ result, interaction }).setTitle(
       `${attacker.name} attacks ${defender.name}!`
     )
   );
@@ -76,7 +79,7 @@ export const execute = async (
         `No attack result or retaliation outcome is cooldown. This should not happen.`
       );
     retaliationEmbeds.push(
-      attackResultEmbed(result).setTitle(
+      attackResultEmbed({ result, interaction }).setTitle(
         `${defender.name} retaliates against ${attacker.name}!`
       )
     );
@@ -185,9 +188,13 @@ export const hpText = (result: ReturnType<typeof playerAttack>): string =>
         )} ${result.defender.hp <= 0 ? "(unconscious)" : ""}`
     : "No result";
 
-export const attackRollText = (
-  result: ReturnType<typeof playerAttack>
-): string => {
+export const attackRollText = ({
+  result,
+  interaction,
+}: {
+  result: AttackResult;
+  interaction: CommandInteraction;
+}): string => {
   if (!result) return "No result. This should not happen.";
   if (result.outcome === "cooldown") return "on cooldown";
   const ac = result.defender.ac;
@@ -195,20 +202,31 @@ export const attackRollText = (
   const roll = result.attackRoll;
   const attackBonus = getCharacterStatModified(result.attacker, "attackBonus");
   const totalAttack = roll + attackBonus;
-  const totalAc = ac + acModifier;
 
   const acModifierText =
     acModifier > 0 ? `+${acModifier}` : acModifier < 0 ? `-${acModifier}` : ``;
 
   const comparison = result.outcome === "hit" ? "≥" : "<";
-  const outcome = result.outcome === "hit" ? "Hit!" : "Miss.";
+  const outcomeText =
+    result.outcome === "hit"
+      ? Emoji(interaction, "hit") + " Hit!"
+      : Emoji(interaction, "miss") + " Miss.";
 
-  return `${outcome}\n⚔${totalAttack} ${comparison} 🛡${totalAc} (\`${roll}\`+${attackBonus} vs ${ac}${acModifierText})`;
+  return `${outcomeText}\n${Emoji(
+    interaction,
+    "attack"
+  )}${totalAttack} ${comparison} ${Emoji(interaction, "ac")}${
+    10 + acModifier
+  } (\`${roll}\`+${attackBonus} vs ${ac}${acModifierText})`;
 };
 
-const attackResultEmbed = (
-  result: ReturnType<typeof playerAttack>
-): MessageEmbed => {
+function attackResultEmbed({
+  result,
+  interaction,
+}: {
+  result: AttackResult;
+  interaction: CommandInteraction;
+}): MessageEmbed {
   const embed = new MessageEmbed().setDescription(attackFlavorText(result));
   if (!result || result.outcome === "cooldown") return embed;
 
@@ -228,12 +246,12 @@ const attackResultEmbed = (
     hpBarField(result.defender),
     {
       name: `Attack`,
-      value: attackRollText(result),
+      value: attackRollText({ result, interaction }),
     },
   ]);
 
   if (result.damage)
-    embed.addField("Damage", "🩸 " + result.damage.toString(), true); // TODO: damageRollText
+    embed.addFields(damgeTakenField(interaction, result.damage)); // TODO: damageRollText
 
   return embed;
-};
+}
