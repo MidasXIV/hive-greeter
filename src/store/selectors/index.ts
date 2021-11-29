@@ -1,5 +1,4 @@
 import { createSelector } from "@reduxjs/toolkit";
-import { identity } from "remeda";
 import { Character } from "../../character/Character";
 // import { purgeExpiredStatuses } from "../purgeExpiredStatuses";
 import { ReduxState } from "../../store";
@@ -56,5 +55,5 @@ export const getLoot = createSelector(
 
 export const isHeavyCrownInPlay = createSelector(
   (state: ReduxState) => state.characters.isHeavyCrownInPlay,
-  identity
+  (isHeavyCrownInPlay) => isHeavyCrownInPlay
 );
