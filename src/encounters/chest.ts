@@ -20,8 +20,8 @@ import { heavyCrown } from "../equipment/items/heavyCrown";
 import { updateStatusEffect } from "../statusEffects/grantStatusEffect";
 import { trapAttack } from "../trap/trapAttack";
 import { isEquippable } from "../equipment/equipment";
-import { isHeavyCrownInPlay } from "store/selectors";
-import store from "store";
+import { isHeavyCrownInPlay } from "../store/selectors";
+import store from "../store";
 
 const chestImage = new MessageAttachment("./images/chest.jpg", "chest.jpg");
 
