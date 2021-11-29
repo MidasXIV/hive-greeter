@@ -5,7 +5,6 @@ export const heavyCrown = (): Hat => ({
   id: randomUUID(),
   name: "heavy crown",
   description: "Beset with jewels, in the daylight it commands the eye.",
-  equippable: true,
   goldValue: 300,
   type: "hat",
   modifiers: {
@@ -14,6 +13,7 @@ export const heavyCrown = (): Hat => ({
     damageBonus: 3,
     ac: -2,
   },
-  lootable: true,
-  sellable: false,
+  equippable: true,
+  sellable: true,
+  tradeable: true,
 });

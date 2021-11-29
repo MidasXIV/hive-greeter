@@ -6,10 +6,11 @@ export const plateArmor = (): Armor => ({
   type: "armor",
   description: "Strong plates to protect you.",
   goldValue: 80,
-  equippable: true,
   name: "plate armor",
   modifiers: {
     ac: 4,
   },
+  equippable: true,
   sellable: true,
+  tradeable: true,
 });

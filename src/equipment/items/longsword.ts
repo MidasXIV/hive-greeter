@@ -16,4 +16,5 @@ export const longsword = (): Weapon => ({
   },
   equippable: true,
   sellable: true,
+  tradeable: true,
 });
