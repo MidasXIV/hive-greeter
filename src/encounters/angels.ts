@@ -17,6 +17,7 @@ export const angels = async (
     embeds: [
       new MessageEmbed({
         title: "Angels",
+        color: "WHITE",
         description:
           "An angel implores you to mend what is broken.\nA taste of their power in return is thier token.",
       }).setImage(
