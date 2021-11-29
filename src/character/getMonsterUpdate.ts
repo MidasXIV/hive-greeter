@@ -1,11 +1,9 @@
-import { gameState } from "../gameState";
 import { purgeExpiredStatuses } from "../statusEffects/purgeExpiredStatuses";
 import { Monster } from "../monster/Monster";
+import { getMonsterById } from "../store/selectors";
+import store from "../store";
 
-export const getMonsterUpate = (monster: Monster): Monster => {
+export const getMonsterUpdate = (monster: Monster): Monster => {
   purgeExpiredStatuses(monster.id);
-  if (!gameState.monsters.get(monster.id)) {
-    console.warn(`getMonsterUpate: unable to read monster id ${monster.id}`);
-  }
-  return gameState.monsters.get(monster.id) ?? monster;
+  return getMonsterById(store.getState(), monster.id) ?? monster;
 };

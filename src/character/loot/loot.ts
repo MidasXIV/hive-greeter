@@ -5,7 +5,7 @@ import { Character } from "../Character";
 import { getCharacter } from "../getCharacter";
 import { updateCharacter } from "../updateCharacter";
 import store from "../../store";
-import { Item } from "equipment/Item";
+import { Item } from "../../equipment/Item";
 
 export type LootResult = {
   id: string;
