@@ -1,7 +1,6 @@
 import { Character } from "./Character";
 import { getCharacter } from "./getCharacter";
-import store from '../store'
-import { updateGold } from '../store/slices/characters'
+import { updateGold } from "../store/slices/characters";
 
 export const setGold = (
   characterId: string,
