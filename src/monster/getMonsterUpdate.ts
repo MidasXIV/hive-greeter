@@ -1,5 +1,5 @@
 import { purgeExpiredStatuses } from "../statusEffects/purgeExpiredStatuses";
-import { Monster } from "../monster/Monster";
+import { Monster } from "./Monster";
 import { getMonsterById } from "../store/selectors";
 import store from "../store";
 

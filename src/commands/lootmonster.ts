@@ -8,7 +8,7 @@ import { loot } from "../character/loot/loot";
 import { lootResultEmbed } from "../character/loot/lootResultEmbed";
 import { getRandomMonster } from "../monster/getRandomMonster";
 import { monsterEmbed } from "../encounters/monsterEmbed";
-import { getMonsterUpdate } from "../character/getMonsterUpdate";
+import { getMonsterUpdate } from "../monster/getMonsterUpdate";
 
 export const command = new SlashCommandBuilder()
   .setName("lootmonster")
