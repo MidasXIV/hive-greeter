@@ -1,5 +1,5 @@
 import { SlashCommandBuilder } from "@discordjs/builders";
-import { CommandInteraction } from "discord.js";
+import { CommandInteraction, MessageEmbed, TextChannel } from "discord.js";
 import { defaultProfile, defaultProfileAttachment } from "../../gameState";
 import { getUserCharacter } from "../../character/getUserCharacter";
 import { characterEmbed } from "../../character/characterEmbed";
@@ -27,29 +27,8 @@ export const execute = async (
     interaction.user;
   const character = getUserCharacter(user);
   console.log(`inspect ${character.name}`, character);
-  const shouldShowExtendedInfo =
-    0 <
-    values(character.equipment).length +
-      (character.statusEffects?.length ?? 0) +
-      values(character.quests).length;
 
-  if (shouldShowExtendedInfo)
-    await interaction[responseType]({
-      embeds: values(character.equipment)
-        .map((item) => itemEmbed({ item, interaction }))
-        .concat(
-          character.statusEffects?.map((effect) =>
-            statusEffectEmbed(effect, interaction)
-          ) ?? []
-        )
-        .concat(
-          character.statusEffects?.map((effect) =>
-            statusEffectEmbed(effect, interaction)
-          ) ?? []
-        )
-        .concat(questEmbed(character) ?? []),
-    });
-  await interaction[shouldShowExtendedInfo ? "followUp" : responseType]({
+  await interaction[responseType]({
     attachments:
       character.profile === defaultProfile ? [defaultProfileAttachment] : [],
     embeds: [
@@ -58,6 +37,54 @@ export const execute = async (
       actionEmbed({ character, interaction }),
     ],
   });
+
+  const channel = interaction.channel;
+  if (!(channel instanceof TextChannel)) return;
+  const thread = await channel.threads.create({
+    name: `Inspect ${character.name}`,
+  });
+  const webhooks = await channel.fetchWebhooks();
+  const hook = webhooks.first();
+  if (!hook) return;
+
+  const equipmentEmbeds = values(character.equipment)
+    .map((item) => itemEmbed({ item, interaction }))
+    .slice(0, 9);
+  if (equipmentEmbeds.length) {
+    await hook.edit({
+      name: "Equipment",
+      avatar:
+        "https://www.wallpaperup.com/uploads/wallpapers/2013/02/22/43066/33ee1c3920aa37d0b18a0de6cd9796b9.jpg",
+    });
+    await hook.send({
+      embeds: equipmentEmbeds,
+      threadId: thread.id,
+    });
+  }
+
+  if ((character.statusEffects?.length ?? 0) > 0) {
+    await hook.edit({
+      name: "Status Effects",
+      avatar:
+        "https://www.wallpaperup.com/uploads/wallpapers/2013/02/22/43066/33ee1c3920aa37d0b18a0de6cd9796b9.jpg",
+    });
+    await hook.send({
+      embeds: character.statusEffects?.map((effect) =>
+        statusEffectEmbed(effect, interaction)
+      ),
+      threadId: thread.id,
+    });
+  }
+  const embed = questEmbed(character);
+  if (embed) {
+    await hook.edit({
+      name: "Quests",
+      avatar:
+        "https://www.wallpaperup.com/uploads/wallpapers/2013/02/22/43066/33ee1c3920aa37d0b18a0de6cd9796b9.jpg",
+    });
+    await hook.send({ embeds: [embed], threadId: thread.id });
+  }
+  thread.setArchived(true);
 };
 
 export default { command, execute };
