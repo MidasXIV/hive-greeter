@@ -20,6 +20,7 @@ import { heavyCrown } from "../equipment/items/heavyCrown";
 import { isHeavyCrownInPlay } from "../heavyCrown/isHeavyCrownInPlay";
 import { updateStatusEffect } from "../statusEffects/grantStatusEffect";
 import { trapAttack } from "../trap/trapAttack";
+import { isEquippable } from "../equipment/equipment";
 
 const chestImage = new MessageAttachment("./images/chest.jpg", "chest.jpg");
 
@@ -202,12 +203,12 @@ export async function chest(
       });
       await equipItemPrompt(interaction, crown);
     }
-    if (Math.random() <= 0.95) {
+    if (Math.random() <= 0.1) {
       const item = randomChestItem();
       updateCharacter(
         grantCharacterItem(getUserCharacter(interaction.user), item)
       );
-      await equipItemPrompt(interaction, item);
+      if (isEquippable(item)) equipItemPrompt(interaction, item);
     }
   }
   if (getUserCharacter(interaction.user).hp === 0) {
