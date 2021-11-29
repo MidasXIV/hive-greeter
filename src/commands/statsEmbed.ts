@@ -1,7 +1,7 @@
 import { CommandInteraction, MessageEmbed } from "discord.js";
 import { Character } from "../character/Character";
 import { stats } from "../character/Stats";
-import { statField } from "./statField";
+import { statField } from "../character/statField";
 
 export function statsEmbed({
   character,
