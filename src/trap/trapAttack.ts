@@ -1,5 +1,5 @@
 import { getCharacterStatModified } from "../character/getCharacterStatModified";
-import { d20, d6 } from "../gameState";
+import { d20, d6 } from "../utils/dice";
 import { TrapResult } from "./TrapResult";
 import { getCharacter } from "../character/getCharacter";
 import { adjustHP } from "../character/adjustHP";

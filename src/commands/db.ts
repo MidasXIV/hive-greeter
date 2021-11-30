@@ -1,6 +1,7 @@
 import { SlashCommandBuilder } from "@discordjs/builders";
 import { CommandInteraction, MessageAttachment, Permissions } from "discord.js";
-import { DB_FILE, loadDB, saveDB } from "../gameState";
+import { saveDB } from "../db";
+import { DB_FILE } from "../fixtures";
 import { CommandHandler } from "../utils";
 
 export const command = new SlashCommandBuilder()
@@ -11,9 +12,6 @@ export const command = new SlashCommandBuilder()
   )
   .addSubcommand((option) =>
     option.setName("save").setDescription("Save the database to disk.")
-  )
-  .addSubcommand((option) =>
-    option.setName("load").setDescription("Load the database from disk.")
   );
 
 const subcommands = new Map<string, CommandHandler>();
@@ -23,22 +21,10 @@ subcommands.set("save", async (interaction: CommandInteraction) => {
     return await interaction.reply("Admin required.");
   }
   try {
-    await saveDB();
+    saveDB();
     await interaction.reply("Database saved successfully.");
   } catch (e) {
     await interaction.reply("Database save FAILED.");
-  }
-});
-
-subcommands.set("load", async (interaction: CommandInteraction) => {
-  if (!interaction.memberPermissions?.has(Permissions.FLAGS.ADMINISTRATOR)) {
-    return await interaction.reply("Admin required.");
-  }
-  try {
-    await loadDB();
-    await interaction.reply("Database loaded successfully.");
-  } catch (e) {
-    await interaction.reply(`Database load FAILED. ${e}`);
   }
 });
 

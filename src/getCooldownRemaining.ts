@@ -1,13 +1,15 @@
 import { Character } from "./character/Character";
-import { gameState } from "./gameState";
+import store from './store'
+import { getCooldownByType, getCharacterById } from "./store/selectors";
 
 export const getCooldownRemaining = (
   characterId: string,
   type: keyof Character["cooldowns"]
 ): number => {
+  const state = store.getState()
   try {
-    const cooldown = gameState.cooldowns[type] ?? 5 * 60000;
-    const lastUsed = gameState.characters.get(characterId)?.cooldowns[type];
+    const cooldown = getCooldownByType(state, type) ?? 5 * 60000;
+    const lastUsed = getCharacterById(state, characterId)?.cooldowns[type];
     if (!lastUsed) return 0;
     const remaining = new Date(lastUsed).valueOf() + cooldown - Date.now();
     if (remaining < 0) return 0;

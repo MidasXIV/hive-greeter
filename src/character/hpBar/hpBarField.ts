@@ -1,8 +1,8 @@
 import { EmbedFieldData } from "discord.js";
-import { Character } from "../Character";
-import { getCharacterStatModified } from "../getCharacterStatModified";
-import { getCharacterUpdate } from "../getCharacterUpdate";
-import { hpBar } from "./hpBar";
+import { Character } from "../../character/Character";
+import { getCharacterStatModified } from "../../character/getCharacterStatModified";
+import { getCharacterUpdate } from "../../character/getCharacterUpdate";
+import { hpBar } from "../../character/hpBar/hpBar";
 
 const numberModifierText = (num?: number): string => {
   if (!num) return "";

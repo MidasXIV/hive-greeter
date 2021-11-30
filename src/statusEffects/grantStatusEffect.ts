@@ -1,7 +1,8 @@
 import { Character } from "../character/Character";
 import { StatusEffect } from "./StatusEffect";
 import { getCharacter } from "../character/getCharacter";
-import { updateCharacter } from "../character/updateCharacter";
+import store from '../store'
+import { addCharacterStatusEffect } from '../store/slices/characters'
 
 export const updateStatusEffect = (
   characterId: string,
@@ -9,10 +10,10 @@ export const updateStatusEffect = (
 ): Character | void => {
   const character = getCharacter(characterId);
   if (!character) return;
-  updateCharacter({
-    ...character,
-    statusEffects: [...(character.statusEffects || []), effect],
-  });
+  store.dispatch(addCharacterStatusEffect({
+    character,
+    effect,
+  }))
   return getCharacter(characterId);
 };
 

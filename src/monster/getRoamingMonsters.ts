@@ -1,8 +1,6 @@
-import { gameState } from "../gameState";
-import { Monster } from "./Monster";
+import store from "../store";
+import { getRoamingMonsters as doGetRoamingMonsters } from "../store/selectors";
 
-export function getRoamingMonsters(): Monster[] {
-  return Array.from(gameState.monsters.values()).filter((monster) => {
-    return monster.hp > 0;
-  });
+export function getRoamingMonsters() {
+  return doGetRoamingMonsters(store.getState());
 }

@@ -17,10 +17,11 @@ import { itemEmbed } from "../equipment/itemEmbed";
 import { grantCharacterItem } from "../equipment/grantCharacterItem";
 import { randomChestItem } from "../equipment/randomChestItem";
 import { heavyCrown } from "../equipment/items/heavyCrown";
-import { isHeavyCrownInPlay } from "../heavyCrown/isHeavyCrownInPlay";
 import { updateStatusEffect } from "../statusEffects/grantStatusEffect";
 import { trapAttack } from "../trap/trapAttack";
 import { isEquippable } from "../equipment/equipment";
+import { isHeavyCrownInPlay } from "../store/selectors";
+import store from "../store";
 
 const chestImage = new MessageAttachment("./images/chest.jpg", "chest.jpg");
 
@@ -189,7 +190,7 @@ export async function chest(
         "xp"
       )} ${xp} xp.`
     );
-    if (Math.random() <= 0.005 && !isHeavyCrownInPlay()) {
+    if (Math.random() <= 0.005 && !isHeavyCrownInPlay(store.getState())) {
       const crown = heavyCrown();
       updateCharacter(
         grantCharacterItem(getUserCharacter(interaction.user), crown)
