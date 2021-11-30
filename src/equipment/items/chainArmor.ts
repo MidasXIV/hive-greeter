@@ -6,10 +6,11 @@ export const chainArmor = (): Armor => ({
   type: "armor",
   description: "Linked metal chains worn to protect.",
   goldValue: 40,
-  equippable: true,
   name: "chain armor",
   modifiers: {
     ac: 3,
   },
+  equippable: true,
   sellable: true,
+  tradeable: true,
 });

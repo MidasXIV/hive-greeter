@@ -6,10 +6,11 @@ export const leatherArmor = (): Armor => ({
   type: "armor",
   description: "Tanned hides serve to protect yours.",
   goldValue: 20,
-  equippable: true,
   name: "leather armor",
   modifiers: {
     ac: 2,
   },
+  equippable: true,
   sellable: true,
+  tradeable: true,
 });

@@ -21,4 +21,5 @@ export const dagger = (): Weapon => ({
   },
   equippable: true,
   sellable: true,
+  tradeable: true,
 });

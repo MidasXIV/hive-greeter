@@ -6,10 +6,11 @@ export const buckler = (): Shield => ({
   type: "shield",
   description: "A small and nimble shield that doesn't get in the way.",
   goldValue: 20,
-  equippable: true,
   name: "buckler",
   modifiers: {
     ac: 1,
   },
+  equippable: true,
   sellable: true,
+  tradeable: true,
 });

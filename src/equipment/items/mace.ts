@@ -19,4 +19,5 @@ export const mace = (): Weapon => ({
   },
   equippable: true,
   sellable: true,
+  tradeable: true,
 });
