@@ -22,7 +22,6 @@ const installCommands = async () => {
     const body = Array.from(commands.values()).map(({ command }) =>
       command.toJSON()
     );
-    // console.log("Updating commands", body);
     console.time("updating commands");
     await rest.put(
       Routes.applicationGuildCommands(
@@ -40,7 +39,6 @@ const installCommands = async () => {
 };
 
 async function main() {
-  // await loadDB();
   await installCommands();
 
   const discordClient = new Discord.Client({

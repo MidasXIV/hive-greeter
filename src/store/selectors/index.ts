@@ -1,6 +1,5 @@
 import { createSelector } from "@reduxjs/toolkit";
 import { Character } from "../../character/Character";
-// import { purgeExpiredStatuses } from "../purgeExpiredStatuses";
 import { ReduxState } from "../../store";
 
 export const getCharacterById = createSelector(

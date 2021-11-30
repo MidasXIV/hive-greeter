@@ -12,9 +12,6 @@ export const command = new SlashCommandBuilder()
   )
   .addSubcommand((option) =>
     option.setName("save").setDescription("Save the database to disk.")
-  )
-  .addSubcommand((option) =>
-    option.setName("load").setDescription("Load the database from disk.")
   );
 
 const subcommands = new Map<string, CommandHandler>();
@@ -30,19 +27,6 @@ subcommands.set("save", async (interaction: CommandInteraction) => {
     await interaction.reply("Database save FAILED.");
   }
 });
-
-// subcommands.set("load", async (interaction: CommandInteraction) => {
-//   if (!interaction.memberPermissions?.has(Permissions.FLAGS.ADMINISTRATOR)) {
-//     return await interaction.reply("Admin required.");
-//   }
-//   try {
-//     loadDB();
-//     await interaction.reply("Database loaded successfully.");
-//   } catch (e) {
-//     console.log(e)
-//     await interaction.reply(`Database load FAILED. ${e}`);
-//   }
-// });
 
 subcommands.set("dump", async (interaction: CommandInteraction) => {
   if (!interaction.memberPermissions?.has(Permissions.FLAGS.ADMINISTRATOR)) {
