@@ -1,7 +1,7 @@
 import { User } from "discord.js";
 import { Character } from "./Character";
 import { createCharacter } from "./createCharacter";
-import { defaultProfile } from "../gameState";
+import { defaultProfile } from "../fixtures";
 
 import { purgeExpiredStatuses } from "../statusEffects/purgeExpiredStatuses";
 

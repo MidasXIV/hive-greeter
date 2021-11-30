@@ -1,6 +1,6 @@
 import { SlashCommandBuilder } from "@discordjs/builders";
-import { CommandInteraction, MessageEmbed, TextChannel } from "discord.js";
-import { defaultProfile, defaultProfileAttachment } from "../../gameState";
+import { CommandInteraction, TextChannel } from "discord.js";
+import { defaultProfile, defaultProfileAttachment } from "../../fixtures";
 import { getUserCharacter } from "../../character/getUserCharacter";
 import { characterEmbed } from "../../character/characterEmbed";
 import { questEmbed } from "../questEmbed";
