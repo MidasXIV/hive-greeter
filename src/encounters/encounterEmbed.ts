@@ -1,7 +1,7 @@
 import { MessageEmbed } from "discord.js";
 import { getCharacter } from "../character/getCharacter";
 import { Encounter } from "../monster/Encounter";
-import { getMonster } from "../character/getMonster";
+import { getMonster } from "../monster/getMonster";
 import { decoratedName } from "../character/decoratedName";
 import { accuracyText } from "./accuracyText";
 

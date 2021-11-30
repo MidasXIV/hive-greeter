@@ -1,11 +1,10 @@
 import { SlashCommandBuilder } from "@discordjs/builders";
 import { CommandInteraction } from "discord.js";
-import { equipItem } from "../character/equipItem";
 import { getUserCharacter } from "../character/getUserCharacter";
-import { updateCharacter } from "../character/updateCharacter";
-import { grantCharacterItem } from "../equipment/grantCharacterItem";
+import { addItemToInventory } from "../store/slices/characters";
 import { heavyCrown } from "../equipment/items/heavyCrown";
 import { execute as inspect } from "./inspect/inspect";
+import store from "../store";
 
 export const command = new SlashCommandBuilder()
   .setName("crown")
@@ -16,7 +15,15 @@ export const execute = async (
 ): Promise<void> => {
   const character = getUserCharacter(interaction.user);
   const crown = heavyCrown();
-  updateCharacter(equipItem(grantCharacterItem(character, crown), crown));
+  store.dispatch(
+    addItemToInventory({
+      character,
+      item: crown,
+    })
+  );
+  // TODO Equip Item Reducer
+
+  console.log("granted", heavyCrown);
   console.log("granted", crown);
   inspect(interaction);
 };

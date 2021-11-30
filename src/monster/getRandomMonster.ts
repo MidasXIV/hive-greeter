@@ -1,4 +1,3 @@
-import { gameState } from "../gameState";
 import { createMonster } from "./createMonster";
 import { getRandomItem } from "./getRandomItem";
 import { getRandomMonsterName } from "./names/getRandomMonsterName";
@@ -6,16 +5,10 @@ import { getRoamingMonsters } from "./getRoamingMonsters";
 import { Monster } from "./Monster";
 
 export const getRandomMonster = async (): Promise<Monster> => {
-  console.log(
-    "chance to encounter existing monster",
-    gameState.monsters.size / 10
-  );
-  if (
-    gameState.monsters.size &&
-    Math.random() <= gameState.monsters.size / 10
-  ) {
+  const roamingMonsters = getRoamingMonsters();
+  if (roamingMonsters.length && Math.random() <= roamingMonsters.length / 10) {
     console.log("returning existing monster");
-    const monster = getRandomItem(getRoamingMonsters());
+    const monster = getRandomItem(roamingMonsters);
     if (monster) return monster;
   }
   const rand = Math.random();

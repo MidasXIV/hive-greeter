@@ -2,10 +2,10 @@ import { CommandInteraction } from "discord.js";
 import { Character } from "../character/Character";
 import { adjustGold } from "../character/adjustGold";
 import { getUserCharacter } from "../character/getUserCharacter";
-import { grantCharacterItem } from "../equipment/grantCharacterItem";
+import { addItemToInventory } from "../store/slices/characters";
+import store from "../store";
 import { equipItemPrompt } from "../equipment/equipItemPrompt";
 import { Item } from "../equipment/Item";
-import { updateCharacter } from "../character/updateCharacter";
 
 export const buyItem = async (
   interaction: CommandInteraction,
@@ -19,6 +19,12 @@ export const buyItem = async (
     return;
   }
   adjustGold(player.id, -item.goldValue);
-  updateCharacter(grantCharacterItem(getUserCharacter(interaction.user), item));
+  store.dispatch(
+    addItemToInventory({
+      character: getUserCharacter(interaction.user),
+      item,
+    })
+  );
+  await equipItemPrompt(interaction, item);
   equipItemPrompt(interaction, item);
 };

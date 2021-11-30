@@ -9,13 +9,14 @@ import {
 import { getUserCharacter } from "../../character/getUserCharacter";
 import { itemEmbed } from "../../equipment/itemEmbed";
 import { times } from "remeda";
-import { isHeavyCrownInPlay } from "../../heavyCrown/isHeavyCrownInPlay";
 import { heavyCrown } from "../../equipment/items/heavyCrown";
 import { randomShopItem } from "../../equipment/randomShopItem";
 import { buyItemPrompt } from "./buyItemPrompt";
 import { sellItemPrompt } from "./sellItemPrompt";
 import { goldValue } from "../../equipment/goldValue";
 import { getCharacterUpdate } from "../../character/getCharacterUpdate";
+import { isHeavyCrownInPlay } from "../../store/selectors";
+import store from "../../store";
 
 export const shop = async (interaction: CommandInteraction): Promise<void> => {
   const shopImage = new MessageAttachment(
@@ -25,7 +26,7 @@ export const shop = async (interaction: CommandInteraction): Promise<void> => {
   const character = getUserCharacter(interaction.user);
   const inventory = times(3, randomShopItem);
 
-  if (!isHeavyCrownInPlay() && Math.random() <= 0.1) {
+  if (!isHeavyCrownInPlay(store.getState()) && Math.random() <= 0.1) {
     inventory.push(heavyCrown());
   }
 

@@ -3,7 +3,7 @@ import { adjustHP } from "../../character/adjustHP";
 import { awardXP } from "../../character/awardXP";
 import { getUserCharacter } from "../../character/getUserCharacter";
 import { hpBarField } from "../../character/hpBar/hpBarField";
-import { d6 } from "../../gameState";
+import { d6 } from "../../utils/dice";
 import { updateStatusEffect } from "../../statusEffects/grantStatusEffect";
 import { StatusEffect } from "../../statusEffects/StatusEffect";
 import { statusEffectEmbed } from "../../statusEffects/statusEffectEmbed";

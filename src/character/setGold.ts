@@ -1,6 +1,6 @@
 import { Character } from "./Character";
 import { getCharacter } from "./getCharacter";
-import { updateCharacter } from "./updateCharacter";
+import { updateGold } from "../store/slices/characters";
 
 export const setGold = (
   characterId: string,
@@ -8,8 +8,8 @@ export const setGold = (
 ): Character | void => {
   const character = getCharacter(characterId);
   if (!character) return;
-  updateCharacter({
-    ...character,
+  updateGold({
+    character,
     gold: amount,
   });
   return getCharacter(characterId);

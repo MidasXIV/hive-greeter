@@ -7,8 +7,8 @@ export function listLootResults(interaction: CommandInteraction): void {
   console.log("listLootResults", loots);
   interaction.reply({
     embeds:
-      loots.size > 0
-        ? Array.from(loots.values())
+      loots.length > 0
+        ? loots
             .sort(
               (a, b) =>
                 new Date(a.timestamp).valueOf() -

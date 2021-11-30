@@ -1,5 +1,5 @@
 import { Character } from "./Character";
-import { defaultProfile } from "../gameState";
+import { defaultProfile } from "../fixtures";
 
 export const defaultCharacter: Omit<Character, "id" | "name"> = {
   profile: defaultProfile,

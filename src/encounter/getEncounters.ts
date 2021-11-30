@@ -1,6 +1,6 @@
-import { Encounter } from "../monster/Encounter";
-import { gameState } from "../gameState";
+import store from '../store'
+import { getAllEncounters } from "../store/selectors";
 
-export function getEncounters(): Map<string, Encounter> {
-  return gameState.encounters;
+export function getEncounters() {
+  return getAllEncounters(store.getState())
 }

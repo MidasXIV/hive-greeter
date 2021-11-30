@@ -13,7 +13,6 @@ export type Character = Stats & {
   id: string;
   name: string;
   profile: string;
-  user?: User;
   hp: number;
 
   inventory: Item[];

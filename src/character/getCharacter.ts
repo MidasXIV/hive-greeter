@@ -1,8 +1,11 @@
-import { Character } from "./Character";
-import { gameState } from "../gameState";
 import { purgeExpiredStatuses } from "../statusEffects/purgeExpiredStatuses";
+import { Character } from "../character/Character";
+import store from '../store'
+import { getCharacterById, getMonsterById } from "../store/selectors";
 
-export const getCharacter = (id: string): Character | void => {
-  purgeExpiredStatuses(id);
-  return gameState.characters.get(id) ?? gameState.monsters.get(id);
+export const getCharacter = (characterId: string): Character | void => {
+  purgeExpiredStatuses(characterId);
+  const state = store.getState();
+  const character = getCharacterById(state, characterId);
+  return character ?? getMonsterById(state, characterId);
 };

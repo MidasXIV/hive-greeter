@@ -1,9 +1,10 @@
 import { User } from "discord.js";
 import { Character } from "../character/Character";
 import { getUserCharacter } from "../character/getUserCharacter";
-import { updateCharacter } from "../character/updateCharacter";
-import { addQuestProgress } from "./addQuestProgress";
 import { QuestId } from "./quests";
+import store from '../store'
+import { addCharacterQuestProgress } from '../store/slices/characters'
+import { getCharacterById } from '../store/selectors';
 
 export const updateUserQuestProgess = (
   user: User,
@@ -17,5 +18,11 @@ export const updateCharacterQuestProgess = (
   character: Character,
   questId: QuestId,
   change: number
-): Character | void =>
-  updateCharacter(addQuestProgress(character.id, questId, change));
+): Character | void => {
+  store.dispatch(addCharacterQuestProgress({
+    character,
+    questId,
+    amount: change,
+  }))
+  return getCharacterById(store.getState(), character.id)
+}

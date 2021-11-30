@@ -1,10 +1,11 @@
 import { randomUUID } from "crypto";
 import { values } from "remeda";
-import { Item } from "../../equipment/Item";
-import { gameState } from "../../gameState";
+import { updateLootResult } from "../../store/slices/loots";
 import { Character } from "../Character";
 import { getCharacter } from "../getCharacter";
 import { updateCharacter } from "../updateCharacter";
+import store from "../../store";
+import { Item } from "../../equipment/Item";
 
 export type LootResult = {
   id: string;
@@ -57,7 +58,7 @@ export function loot({
     timestamp: new Date().toString(),
   };
   console.log(`${looter.name} loots ${target.name}`, loot);
-  gameState.loots.set(loot.id, loot);
+  store.dispatch(updateLootResult(loot));
   return loot;
 }
 

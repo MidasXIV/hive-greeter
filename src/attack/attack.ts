@@ -1,5 +1,5 @@
 import { Character } from "../character/Character";
-import { d20 } from "../gameState";
+import { d20 } from "../utils/dice";
 import { getCharacter } from "../character/getCharacter";
 import { AttackResult } from "./AttackResult";
 import { getCharacterStatModified } from "../character/getCharacterStatModified";

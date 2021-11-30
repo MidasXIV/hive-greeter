@@ -1,5 +1,3 @@
-// dupe bug
-
 import {
   CommandInteraction,
   Message,

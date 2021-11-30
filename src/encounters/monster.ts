@@ -13,6 +13,8 @@ import { encounterInProgressEmbed } from "./encounterInProgressEmbed";
 import { adjustHP } from "../character/adjustHP";
 import { loot } from "../character/loot/loot";
 import { lootResultEmbed } from "../character/loot/lootResultEmbed";
+import store from "../store";
+import { addMonsterAttack, addPlayerAttack } from "../store/slices/encounters";
 import { Emoji } from "../Emoji";
 import { attackResultEmbed } from "../encounter/attackResultEmbed";
 import { encounterSummaryEmbed } from "../encounter/encounterSummaryEmbed";
@@ -23,6 +25,7 @@ export const monster = async (
   // TODO: explore do/while refactor
   let monster = await getRandomMonster();
   let player = getUserCharacter(interaction.user);
+
   console.log("monster encounter", monster, player);
   const encounter = createEncounter({ monster, player });
   let timeout = false;
@@ -66,9 +69,10 @@ export const monster = async (
         ? undefined
         : attack(player.id, monster.id);
     const monsterResult = attack(monster.id, player.id);
-    playerResult && encounter.playerAttacks.push(playerResult);
-    monsterResult && encounter.monsterAttacks.push(monsterResult);
-
+    playerResult &&
+      store.dispatch(addPlayerAttack({ encounter, result: playerResult }));
+    monsterResult &&
+      store.dispatch(addMonsterAttack({ encounter, result: monsterResult }));
     const updatedMonster = getCharacter(monster.id);
     const updatedPlayer = getCharacter(player.id);
     if (!updatedMonster || !updatedPlayer || !monsterResult) return;

@@ -1,6 +1,7 @@
 import { Encounter } from "../monster/Encounter";
-import { gameState } from "../gameState";
+import { getEncounterById } from "../store/selectors";
+import store from '../store'
 
 export function getEncounter(encounterId: string): Encounter | void {
-  return gameState.encounters.get(encounterId);
+  return getEncounterById(store.getState(), encounterId);
 }

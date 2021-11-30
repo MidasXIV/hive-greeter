@@ -1,5 +1,6 @@
-import { Character } from "./Character";
-import { hasCrown } from "../heavyCrown/hasCrown";
+import { Character } from "../character/Character";
+import { hasItemNameInInventory } from "../store/selectors";
+import store from '../store'
 
 export const decoratedName = (character: Character): string =>
-  (hasCrown(character) ? "👑 " : "") + character.name;
+  (hasItemNameInInventory(store.getState(), character, 'heavy crown') ? "👑 " : "") + character.name;

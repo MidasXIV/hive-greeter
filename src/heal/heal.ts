@@ -2,7 +2,7 @@ import { isCharacterOnCooldown } from "../character/isCharacterOnCooldown";
 import { getCharacter } from "../character/getCharacter";
 import { adjustHP } from "../character/adjustHP";
 import { setCharacterCooldown } from "../character/setCharacterCooldown";
-import { d6 } from "../gameState";
+import { d6 } from "../utils/dice";
 import { HealResult } from "./HealResult";
 import { getCharacterStatModified } from "../character/getCharacterStatModified";
 import { clamp } from "remeda";
