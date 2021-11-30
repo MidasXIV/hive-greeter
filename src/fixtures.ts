@@ -1,6 +1,6 @@
 import { MessageAttachment } from "discord.js";
 
-export const DB_FILE = "./db.redux.json";
+export const DB_FILE = "./db.json";
 
 export const defaultProfile = "attachment://profile.png";
 export const defaultProfileAttachment = new MessageAttachment(

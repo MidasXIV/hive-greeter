@@ -1,8 +1,8 @@
 import { SlashCommandBuilder } from "@discordjs/builders";
 import { CommandInteraction, MessageAttachment, Permissions } from "discord.js";
-import { DB_FILE, saveDB } from "../gameState";
+import { saveDB } from "../db";
+import { DB_FILE } from "../fixtures";
 import { CommandHandler } from "../utils";
-
 
 export const command = new SlashCommandBuilder()
   .setName("db")

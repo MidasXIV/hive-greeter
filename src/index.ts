@@ -8,7 +8,7 @@ import Discord, { Intents } from "discord.js";
 import { exit } from "process";
 import { Routes } from "discord-api-types/v9";
 import commands from "./commands";
-import { saveDB } from "./gameState";
+import { saveDB } from "./db";
 
 if (!process.env.token) exit(1);
 
