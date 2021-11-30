@@ -44,7 +44,7 @@ export const execute = async (
     name: `Inspect ${character.name}`,
   });
   const webhooks = await channel.fetchWebhooks();
-  const hook = webhooks.first();
+  const hook = webhooks.first() ?? (await channel.createWebhook("Inspect"));
   if (!hook) return;
 
   const equipmentEmbeds = values(character.equipment)
