@@ -1,6 +1,6 @@
 import { CommandInteraction, Message, MessageEmbed } from "discord.js";
 import { CommandHandler, sleep } from "../../utils";
-import { weightedRandom } from "../weightedRandom";
+import { weightedRandom } from "../../utils/weightedRandom";
 import { barFight } from "./barFight";
 import { chattyTavernkeepers } from "./chattyTavernkeepers";
 import { restfulNight } from "./restfulNight";

@@ -1,26 +1,32 @@
-import { CommandInteraction, MessageEmbed } from "discord.js";
-import { StatusEffect } from "../../statusEffects/StatusEffect";
-import { shrine } from "./shrine";
+import { randomUUID } from "crypto";
+import { CommandInteraction } from "discord.js";
+import { Shrine } from "../../shrines/Shrine";
+import { shrineEmbeds } from "./shrineEmbeds";
+import { applyShrine } from "./applyShrine";
 
 export const armorShrine = async (
   interaction: CommandInteraction
 ): Promise<void> => {
-  const effect: StatusEffect = {
-    name: "Shrine of Protection",
-    modifiers: {
-      ac: 2,
+  const shrine: Shrine = {
+    id: randomUUID(),
+    color: "YELLOW",
+    description: `This shrine will protect you during your journies.`,
+    image: "https://i.imgur.com/mfDAYcQ.png",
+    effect: {
+      name: "Shrine of Protection",
+      modifiers: {
+        ac: 2,
+      },
+      duration: 30 * 60000,
+      buff: true,
+      debuff: false,
+      started: new Date().toString(),
     },
-    duration: 30 * 60000,
-    buff: true,
-    debuff: false,
-    started: new Date().toString(),
+    name: "Shrine of Protection",
   };
-  shrine(
-    interaction,
-    effect,
-    new MessageEmbed()
-      .setColor("GREEN")
-      .setDescription(`The shrine grants you +${effect.modifiers.ac} ac!`)
-      .setImage("https://i.imgur.com/mfDAYcQ.png")
-  );
+  applyShrine({ shrine, interaction });
+
+  interaction.reply({
+    embeds: shrineEmbeds({ shrine, interaction }),
+  });
 };

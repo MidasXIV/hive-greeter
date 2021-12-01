@@ -4,21 +4,21 @@ import { Shrine } from "../../shrines/Shrine";
 import { shrineEmbeds } from "./shrineEmbeds";
 import { applyShrine } from "./applyShrine";
 
-export const attackShrine = async (
+export const slayerShrine = async (
   interaction: CommandInteraction
 ): Promise<void> => {
   const shrine: Shrine = {
     id: randomUUID(),
-    name: "Shrine of Agression",
-    description: `This shrine fills you with a rage!`,
+    name: "Slayer's Shrine",
+    description: `This shrine fills you with an instinct for blood!`,
     image: "https://i.imgur.com/7qVghXO.png",
     color: "RED",
     effect: {
-      name: "Shrine of Agression",
+      name: "Slayer's Shrine",
       buff: true,
       debuff: false,
       modifiers: {
-        attackBonus: 2,
+        monsterDamageMax: 3,
       },
       duration: 30 * 60000,
       started: new Date().toString(),
