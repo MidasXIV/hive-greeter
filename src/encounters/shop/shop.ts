@@ -33,10 +33,7 @@ export const shop = async (interaction: CommandInteraction): Promise<void> => {
   const hasStuffToSell =
     character.inventory.filter((i) => i.sellable).length > 0;
 
-  const message = await interaction.reply({
-    ...shopMain(),
-    fetchReply: true,
-  });
+  const message = await interaction.editReply(shopMain());
   if (!(message instanceof Message)) return;
   let hasLeft = false;
   while (!hasLeft) {

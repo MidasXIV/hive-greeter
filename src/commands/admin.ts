@@ -42,10 +42,10 @@ export const execute = async (
   switch (interaction.options.getSubcommand()) {
     case "apply_item_defaults":
       applyItemDefaults();
-      return interaction.reply("Item defaults applied.");
+      return interaction.editReply("Item defaults applied.");
     case "unequip_all":
       unequipAll();
-      return interaction.reply("All equipment removed.");
+      return interaction.editReply("All equipment removed.");
     case "armor_shrine":
       return armorShrine(interaction);
     case "vigor_shrine":

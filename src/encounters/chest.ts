@@ -268,7 +268,8 @@ const chestResponses = (chest: Chest): string[] => {
 function triggerTrap(interaction: CommandInteraction, chest: Chest) {
   chest.trapTriggered = true;
   const attack = trapAttack(interaction.user.id, 1);
-  if (!attack) return interaction.reply("No attack. This should not happen.");
+  if (!attack)
+    return interaction.editReply("No attack. This should not happen.");
 
   if (attack.outcome === "hit") {
     const roll = Math.random();

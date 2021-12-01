@@ -25,12 +25,12 @@ export const execute = async (
   const character = getUserCharacter(interaction.user);
 
   if (!isHealer(character)) {
-    interaction.reply("You must seek the boon of the divine to use this.");
+    interaction.editReply("You must seek the boon of the divine to use this.");
     return;
   }
 
   if (isCharacterOnCooldown(interaction.user.id, "renew")) {
-    interaction.reply(
+    interaction.editReply(
       `You can use this again ${cooldownRemainingText(
         interaction.user.id,
         "renew"
@@ -40,7 +40,7 @@ export const execute = async (
   }
   const target = interaction.options.data[0].user;
   if (!target) {
-    await interaction.reply(`You must specify a target @player`);
+    await interaction.editReply(`You must specify a target @player`);
     return;
   }
   setCharacterCooldown(character.id, "renew");
@@ -62,7 +62,7 @@ export const execute = async (
       timestamp: new Date(),
     })
   );
-  const message = await interaction.reply({
+  const message = await interaction.editReply({
     fetchReply: true,
     embeds,
   });

@@ -4,7 +4,7 @@ dotenv.config({ path: ".env" });
 
 import { REST } from "@discordjs/rest";
 import express, { Request, Response } from "express";
-import Discord, { Intents } from "discord.js";
+import Discord, { Intents, Message } from "discord.js";
 import { exit } from "process";
 import { Routes } from "discord-api-types/v9";
 import commands from "./commands";
@@ -62,7 +62,13 @@ async function main() {
     console.log("interactionCreate");
     console.time(interaction.commandName);
     try {
-      await commands.get(interaction.commandName).execute(interaction);
+      await interaction.reply(`Gazing into the cyrstal ball...`);
+      const command = commands.get(interaction.commandName);
+      if (!command) {
+        interaction.editReply(`Command not found ${command}`);
+        return;
+      }
+      await command.execute(interaction);
     } catch (e) {
       await interaction.reply(
         `Command \`${interaction.command}\` failed with error: \`${e}\``

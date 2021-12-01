@@ -5,7 +5,7 @@ import { limitedCharacterEmbed } from "../../character/limitedCharacterEmbed";
 
 export function listCharacters(interaction: CommandInteraction): void {
   getUserCharacter(interaction.user); // ensure Character existence to prevent an empty list
-  interaction.reply({
+  interaction.editReply({
     embeds: getUserCharacters()
       .sort((a, b) => b.xp - a.xp)
       .slice(0, 10)

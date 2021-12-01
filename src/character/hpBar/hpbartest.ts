@@ -26,7 +26,7 @@ export const execute = async (
     maxHP: 10,
   });
 
-  interaction.reply({
+  interaction.editReply({
     embeds: [
       new MessageEmbed({
         title: "Heal",

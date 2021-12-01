@@ -18,7 +18,7 @@ export const fairyWell = async (
   updateUserQuestProgess(interaction.user, "healer", healAmount);
 
   const character = getUserCharacter(interaction.user);
-  await interaction.reply({
+  await interaction.editReply({
     embeds: [
       new MessageEmbed({
         title: "Fairy Well",

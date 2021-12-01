@@ -29,9 +29,8 @@ export const monster = async (
   console.log("monster encounter", monster, player);
   const encounter = createEncounter({ monster, player });
   let timeout = false;
-  const message = await interaction.reply({
+  const message = await interaction.editReply({
     embeds: [encounterInProgressEmbed(encounter)],
-    fetchReply: true,
   });
   if (!(message instanceof Message)) return;
 
