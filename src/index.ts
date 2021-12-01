@@ -8,7 +8,6 @@ import Discord, { Intents } from "discord.js";
 import { exit } from "process";
 import { Routes } from "discord-api-types/v9";
 import commands from "./commands";
-import { saveDB } from "./db";
 
 if (!process.env.token) exit(1);
 
@@ -76,13 +75,6 @@ async function main() {
 
   discordClient.login(process.env.token);
   app.listen(PORT, () => console.log(`Server started on port ${PORT}!`));
-
-  const autoSaveDbFile = "./db.autosave.json";
-
-  setInterval(() => {
-    console.error(`Auto saving to ${autoSaveDbFile}.`);
-    saveDB(autoSaveDbFile);
-  }, 5 * 60000);
 }
 
 main();

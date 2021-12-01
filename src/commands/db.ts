@@ -1,6 +1,5 @@
 import { SlashCommandBuilder } from "@discordjs/builders";
 import { CommandInteraction, MessageAttachment, Permissions } from "discord.js";
-import { saveDB } from "../db";
 import { DB_FILE } from "../fixtures";
 import { CommandHandler } from "../utils";
 
@@ -15,18 +14,6 @@ export const command = new SlashCommandBuilder()
   );
 
 const subcommands = new Map<string, CommandHandler>();
-
-subcommands.set("save", async (interaction: CommandInteraction) => {
-  if (!interaction.memberPermissions?.has(Permissions.FLAGS.ADMINISTRATOR)) {
-    return await interaction.reply("Admin required.");
-  }
-  try {
-    saveDB();
-    await interaction.reply("Database saved successfully.");
-  } catch (e) {
-    await interaction.reply("Database save FAILED.");
-  }
-});
 
 subcommands.set("dump", async (interaction: CommandInteraction) => {
   if (!interaction.memberPermissions?.has(Permissions.FLAGS.ADMINISTRATOR)) {
