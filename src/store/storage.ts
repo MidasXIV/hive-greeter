@@ -5,33 +5,32 @@ import path from "path";
 import mkdirp from "mkdirp";
 
 const dbFolder = path.join(__dirname, "..", "..", "db");
-const dbFile = (key: string) =>
-  path.join(dbFolder, `${key.replace(":", ".")}.json`);
+const dbFile = path.join(dbFolder, `db.json`);
 
-const ensureDB = async (key: string) => {
+const ensureDB = async () => {
   mkdirp(dbFolder);
   const exists = await fs
-    .access(dbFile(key), constants.F_OK)
+    .access(dbFile, constants.F_OK)
     .then(() => true)
     .catch(() => false);
-  if (!exists) return fsSync.writeFileSync(dbFile(key), "{}");
+  if (!exists) return fsSync.writeFileSync(dbFile, "{}");
 };
 
 export const disk = {
-  getItem: async (key: string): Promise<string> => {
-    await ensureDB(key);
+  getItem: async (): Promise<string> => {
+    await ensureDB();
     try {
-      return fs.readFile(dbFile(key)).then((d) => d.toString("utf-8"));
+      return fs.readFile(dbFile).then((d) => d.toString("utf-8"));
     } catch (e) {
       return Promise.resolve("{}");
     }
   },
-  setItem: async (key: string, item: string): Promise<void> => {
-    await ensureDB(key);
-    return fs.writeFile(dbFile(key), JSON.stringify(JSON.parse(item), null, 2));
+  setItem: async (_: string, item: string): Promise<void> => {
+    await ensureDB();
+    return fs.writeFile(dbFile, JSON.stringify(JSON.parse(item), null, 2));
   },
-  removeItem: async (key: string): Promise<void> => {
-    await ensureDB(key);
-    return fs.writeFile(dbFile(key), "{}");
+  removeItem: async (): Promise<void> => {
+    await ensureDB();
+    return fs.writeFile(dbFile, "{}");
   },
 };
