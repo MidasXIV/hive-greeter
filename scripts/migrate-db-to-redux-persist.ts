@@ -1,9 +1,13 @@
 import fs from 'fs'
 import path from 'path'
+import mkdirp from 'mkdirp';
 
 const migrate = async () => {
   const reduxDBPath = path.join(__dirname, '..', 'db.redux.json')
-  const persistedReduxDBPath = path.join(__dirname, '..', 'db', 'persist:root.json')
+  const dbDir = path.join(__dirname, '..', 'db')
+  const persistedReduxDBPath = path.join(dbDir, 'persist:root.json')
+  
+  await mkdirp(dbDir)
 
   if (fs.existsSync(reduxDBPath)) {
     const reduxDBData = JSON.parse(fs.readFileSync(reduxDBPath).toString('utf-8'))
