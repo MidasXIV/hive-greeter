@@ -1,5 +1,5 @@
 import { configureStore } from "@reduxjs/toolkit";
-import { persistStore, persistReducer } from 'redux-persist'
+import { persistStore, persistReducer, PERSIST, REHYDRATE } from 'redux-persist'
 import remoteReduxEnhancer from "@redux-devtools/remote";
 import rootReducer from "./reducers";
 import { disk } from './storage'
@@ -15,7 +15,7 @@ if (process.env.REDUX_DEVTOOLS_ENABLED === "true") {
     })
     );
   }
-
+  
 const persistedReducer = persistReducer({
   key: 'root',
   storage: disk,
@@ -28,7 +28,7 @@ const store = configureStore({
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({
       serializableCheck: {
-        ignoredActions: ['persist/PERSIST', 'persist/REHYDRATE'],
+        ignoredActions: [PERSIST, REHYDRATE],
       },
     }),
 });
