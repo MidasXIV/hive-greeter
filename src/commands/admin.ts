@@ -5,6 +5,8 @@ import { getUserCharacters } from "../character/getUserCharacters";
 import { updateCharacter } from "../character/updateCharacter";
 import { armorShrine } from "../encounters/shrine/armor";
 import { attackShrine } from "../encounters/shrine/attack";
+import { randomShrine } from "../encounters/shrine/randomShrine";
+import { slayerShrine } from "../encounters/shrine/slayer";
 import { vigorShrine } from "../encounters/shrine/vigor";
 
 export const command = new SlashCommandBuilder()
@@ -17,6 +19,9 @@ export const command = new SlashCommandBuilder()
   )
   .addSubcommand((option) =>
     option.setName("unequip_all").setDescription("Globally unequip all items.")
+  )
+  .addSubcommand((option) =>
+    option.setName("random_shrine").setDescription("Summon a random shrine.")
   )
   .addSubcommand((option) =>
     option.setName("armor_shrine").setDescription("Summon an armor shrine.")
@@ -47,6 +52,10 @@ export const execute = async (
       return vigorShrine(interaction);
     case "attack_shrine":
       return attackShrine(interaction);
+    case "slayer_shrine":
+      return slayerShrine(interaction);
+    case "random_shrine":
+      return randomShrine()(interaction);
   }
 };
 
