@@ -1,4 +1,5 @@
 import { CommandInteraction, EmbedFieldData, MessageEmbed } from "discord.js";
+import moment from "moment";
 import { stats, statTitles } from "../character/Stats";
 import { Emoji } from "../Emoji";
 import { StatusEffect } from "./StatusEffect";
@@ -20,7 +21,12 @@ export function statusEffectEmbed(
 
   return new MessageEmbed({
     title: effect.name,
-    fields,
-    timestamp: new Date(new Date(effect.started).valueOf() + effect.duration),
+    fields: [
+      ...fields,
+      {
+        name: "Expires",
+        value: moment(new Date(effect.started)).calendar(),
+      },
+    ],
   });
 }
