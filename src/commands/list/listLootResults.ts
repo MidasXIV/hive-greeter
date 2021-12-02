@@ -5,7 +5,7 @@ import { getLoots } from "../../encounter/getLoots";
 export function listLootResults(interaction: CommandInteraction): void {
   const loots = getLoots();
   console.log("listLootResults", loots);
-  interaction.reply({
+  interaction.editReply({
     embeds:
       loots.length > 0
         ? loots

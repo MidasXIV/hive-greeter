@@ -6,7 +6,7 @@ export const travel = async (
   interaction: CommandInteraction
 ): Promise<void> => {
   awardXP(interaction.user.id, 1);
-  await interaction.reply({
+  await interaction.editReply({
     embeds: [
       new MessageEmbed({
         title: "Travel",

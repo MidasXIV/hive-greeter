@@ -20,7 +20,7 @@ export const execute = async (
   const monster = await getRandomMonster();
   const character = getUserCharacter(interaction.user);
   const result = loot({ looterId: character.id, targetId: monster.id });
-  interaction.reply({
+  interaction.editReply({
     embeds: [
       monsterEmbed(getMonsterUpdate(monster)),
       characterEmbed({

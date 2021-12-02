@@ -15,7 +15,7 @@ export const execute = async (
 ): Promise<void> => {
   const player = getUserCharacter(interaction.user);
   if (player.hp === 0) {
-    await interaction.reply({
+    await interaction.editReply({
       embeds: [
         new MessageEmbed()
           .setDescription(`You're too weak to press on.`)
@@ -25,7 +25,7 @@ export const execute = async (
     return;
   }
   if (isCharacterOnCooldown(player.id, "adventure")) {
-    await interaction.reply({
+    await interaction.editReply({
       embeds: [
         new MessageEmbed().setDescription(
           `You can adventure again ${cooldownRemainingText(
@@ -38,7 +38,9 @@ export const execute = async (
     return;
   }
   setCharacterCooldown(player.id, "adventure");
-  await randomEncounter()(interaction);
+  const encounter = randomEncounter();
+  console.log(encounter);
+  await encounter(interaction);
 };
 
 export default { command, execute };

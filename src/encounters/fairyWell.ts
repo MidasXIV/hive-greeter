@@ -18,7 +18,7 @@ export const fairyWell = async (
   updateUserQuestProgess(interaction.user, "healer", healAmount);
 
   const character = getUserCharacter(interaction.user);
-  await interaction.reply({
+  await interaction.editReply({
     embeds: [
       new MessageEmbed({
         title: "Fairy Well",
@@ -36,5 +36,5 @@ export const fairyWell = async (
     ],
   });
   if (isUserQuestComplete(interaction.user, "healer"))
-    await quests.execute(interaction, "followUp");
+    await quests.execute(interaction);
 };

@@ -5,7 +5,7 @@ import { monsterEmbed } from "../../encounters/monsterEmbed";
 
 export function listMonsters(interaction: CommandInteraction): void {
   const monsters = getRoamingMonsters();
-  interaction.reply({
+  interaction.editReply({
     embeds: [
       new MessageEmbed({ title: "Monsters at large" }),
       ...(monsters.length > 0

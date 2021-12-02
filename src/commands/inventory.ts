@@ -18,16 +18,15 @@ export const command = new SlashCommandBuilder()
   .setDescription("View your inventory.");
 
 export const execute = async (
-  interaction: CommandInteraction,
-  responseType: "followUp" | "reply" = "reply"
+  interaction: CommandInteraction
 ): Promise<void> => {
   const character = getUserCharacter(interaction.user);
   console.log(`${character.name}'s inventory`, character.inventory);
   if (!character.inventory.length) {
-    await interaction[responseType]("Your inventory is empty.");
+    await interaction.followUp("Your inventory is empty.");
     return;
   }
-  const message = await interaction[responseType]({
+  const message = await interaction.followUp({
     ...inventoryMain(interaction),
     fetchReply: true,
   });

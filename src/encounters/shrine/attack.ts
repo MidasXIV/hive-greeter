@@ -27,7 +27,7 @@ export const attackShrine = async (
 
   applyShrine({ shrine, interaction });
 
-  interaction.reply({
+  interaction.editReply({
     embeds: shrineEmbeds({ shrine, interaction }),
   });
 };

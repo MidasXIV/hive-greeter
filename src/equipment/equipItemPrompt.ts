@@ -61,5 +61,5 @@ export const equipItemPrompt = async (
     components: [],
   });
   message.reply(`You equip the ${item.name}.`);
-  await inspect.execute(interaction, "followUp");
+  await inspect.execute(interaction);
 };

@@ -29,9 +29,8 @@ export const monster = async (
   console.log("monster encounter", monster, player);
   const encounter = createEncounter({ monster, player });
   let timeout = false;
-  const message = await interaction.reply({
+  const message = await interaction.editReply({
     embeds: [encounterInProgressEmbed(encounter)],
-    fetchReply: true,
   });
   if (!(message instanceof Message)) return;
 
@@ -144,10 +143,10 @@ export const monster = async (
   });
 
   if (encounter.outcome === "player victory" && Math.random() <= 0.3)
-    await chest(interaction, true);
+    await chest(interaction);
   if (
     isUserQuestComplete(interaction.user, "slayer") ||
     isUserQuestComplete(interaction.user, "survivor")
   )
-    await quests.execute(interaction, "followUp");
+    await quests.execute(interaction);
 };

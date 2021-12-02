@@ -21,13 +21,12 @@ export const command = new SlashCommandBuilder()
   .setDescription("Check your quest progress.");
 
 export const execute = async (
-  interaction: CommandInteraction,
-  responseType: "reply" | "followUp" = "reply"
+  interaction: CommandInteraction
 ): Promise<void> => {
   const character = getUserCharacter(interaction.user);
   const completedQuests = getCompletedQuests(character);
   if (Object.values(character.quests).length === 0) {
-    await interaction[responseType](
+    await interaction.followUp(
       `You do not have any active quests. \`/adventure\` to find some!`
     );
     return;
@@ -43,7 +42,7 @@ export const execute = async (
       )} ${quest.progress}/${quest.totalRequired}`
     );
   });
-  const message = await interaction[responseType]({
+  const message = await interaction.followUp({
     embeds: [embed],
     components: getComponents(completedQuests),
     fetchReply: true,

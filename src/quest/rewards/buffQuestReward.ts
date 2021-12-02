@@ -30,5 +30,5 @@ export async function buffQuestReward(
     embeds,
   });
 
-  await inspect.execute(interaction, "followUp");
+  await inspect.execute(interaction);
 }

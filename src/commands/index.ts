@@ -23,8 +23,16 @@ import chest from "./chest";
 import lootmonster from "./lootmonster";
 import barFight from "./barFight";
 import lootchest from "./lootchest";
+import { CommandHandler } from "../utils";
+import { RESTPostAPIApplicationCommandsJSONBody } from "discord-api-types";
 
-const commands = new Map();
+const commands = new Map<
+  string,
+  {
+    command: { toJSON(): RESTPostAPIApplicationCommandsJSONBody };
+    execute: CommandHandler;
+  }
+>();
 commands.set("adventure", adventure);
 commands.set("attack", attack);
 commands.set("cooldowns", cooldowns);

@@ -18,21 +18,23 @@ const subcommands = new Map<string, CommandHandler>();
 
 subcommands.set("save", async (interaction: CommandInteraction) => {
   if (!interaction.memberPermissions?.has(Permissions.FLAGS.ADMINISTRATOR)) {
-    return await interaction.reply("Admin required.");
+    await interaction.editReply("Admin required.");
+    return;
   }
   try {
     saveDB();
-    await interaction.reply("Database saved successfully.");
+    await interaction.editReply("Database saved successfully.");
   } catch (e) {
-    await interaction.reply("Database save FAILED.");
+    await interaction.editReply("Database save FAILED.");
   }
 });
 
 subcommands.set("dump", async (interaction: CommandInteraction) => {
   if (!interaction.memberPermissions?.has(Permissions.FLAGS.ADMINISTRATOR)) {
-    return await interaction.reply("Admin required.");
+    await interaction.editReply("Admin required.");
+    return;
   }
-  await interaction.reply({
+  await interaction.editReply({
     files: [new MessageAttachment(DB_FILE)],
   });
 });
@@ -41,7 +43,10 @@ export const execute = async (
   interaction: CommandInteraction
 ): Promise<void> => {
   const command = subcommands.get(interaction.options.getSubcommand(true));
-  if (!command) return await interaction.reply(`Unknown command ${command}`);
+  if (!command) {
+    await interaction.editReply(`Unknown command ${command}`);
+    return;
+  }
   await command(interaction);
 };
 
