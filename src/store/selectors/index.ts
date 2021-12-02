@@ -9,7 +9,10 @@ export const getCharacterById = createSelector(
 
 export const getAllCharacters = createSelector(
   (state: ReduxState) => state.characters.charactersById,
-  (charactersById) => Object.values(charactersById)
+  (charactersById) =>
+    Object.values(charactersById).filter(
+      (character) => character.isMonster !== true
+    )
 );
 
 export const getMonsterById = createSelector(
