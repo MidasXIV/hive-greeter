@@ -36,5 +36,5 @@ export const healerQuestReward = async (
   await interaction.followUp({
     embeds,
   });
-  await inspect.execute(interaction, "followUp");
+  await inspect.execute(interaction);
 };

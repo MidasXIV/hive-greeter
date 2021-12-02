@@ -14,7 +14,7 @@ const randomEncounter = (): CommandHandler =>
 export const tavern = async (
   interaction: CommandInteraction
 ): Promise<void> => {
-  const message = await interaction.reply({
+  const message = await interaction.editReply({
     embeds: [
       new MessageEmbed()
         .setTitle("Tavern")
@@ -24,7 +24,6 @@ export const tavern = async (
         )
         .setImage("https://i.imgur.com/AbNnc7S.png"),
     ],
-    fetchReply: true,
   });
   if (!(message instanceof Message)) return;
   await sleep(2000);

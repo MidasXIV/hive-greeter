@@ -5,12 +5,10 @@ import { encounterEmbed } from "../../encounters/encounterEmbed";
 // TODO: shows incorrect HP current/total
 export function listEncounters(interaction: CommandInteraction): void {
   const encounters = getEncounters();
-  interaction.reply({
+  interaction.editReply({
     embeds:
       encounters.length > 0
-        ? encounters
-            .map((encounter) => encounterEmbed(encounter))
-            .slice(0, 10)
+        ? encounters.map((encounter) => encounterEmbed(encounter)).slice(0, 10)
         : [
             new MessageEmbed({
               description: "No encounters yet. `/adventure` to find some!",

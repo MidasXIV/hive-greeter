@@ -11,7 +11,7 @@ export const execute = async (
   interaction: CommandInteraction
 ): Promise<void> => {
   const character = getUserCharacter(interaction.user);
-  await interaction.reply({
+  await interaction.editReply({
     embeds: [actionEmbed({ character, interaction })],
   });
 };

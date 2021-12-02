@@ -9,7 +9,7 @@ export const command = new SlashCommandBuilder()
 export const execute = async (
   interaction: CommandInteraction
 ): Promise<void> => {
-  await chest(interaction, false, {
+  await chest(interaction, {
     hasLock: false,
     hasTrap: false,
     isLocked: false,

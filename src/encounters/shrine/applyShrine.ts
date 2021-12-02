@@ -23,5 +23,5 @@ export async function applyShrine({
   updateStatusEffect(interaction.user.id, effect);
   updateUserQuestProgess(interaction.user, "blessed", 1);
   if (isUserQuestComplete(interaction.user, "blessed"))
-    await quests.execute(interaction, "followUp");
+    await quests.execute(interaction);
 }

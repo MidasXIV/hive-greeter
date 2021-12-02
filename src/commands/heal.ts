@@ -23,16 +23,19 @@ export const execute = async (
   const target = interaction.options.data[0].user;
   const healer = interaction.user;
   if (!target) {
-    await interaction.reply(`You must specify a target @player`);
+    await interaction.editReply(`You must specify a target @player`);
     return;
   }
 
   // TODO: a better way?
   getUserCharacter(target); // ensure character exists for proper interactions
   const result = heal(healer.id, target.id);
-  if (!result) return interaction.reply("No result. This should not happen.");
+  if (!result) {
+    interaction.editReply("No result. This should not happen.");
+    return;
+  }
   if (result.outcome === "cooldown") {
-    await interaction.reply(
+    await interaction.editReply(
       `You can heal again in ${cooldownRemainingText(healer.id, "heal")}.`
     );
     // TODO: setTimeout to edit this when cooldown is available
@@ -40,7 +43,7 @@ export const execute = async (
   }
   const character = updateUserQuestProgess(healer, "healer", result.amount);
 
-  await interaction.reply({
+  await interaction.editReply({
     embeds: [
       new MessageEmbed({
         title: "Heal",
@@ -55,8 +58,7 @@ export const execute = async (
       }).setImage("https://i.imgur.com/S32LDbM.png"),
     ].concat(),
   });
-  if (isUserQuestComplete(healer, "healer"))
-    await quests.execute(interaction, "followUp");
+  if (isUserQuestComplete(healer, "healer")) await quests.execute(interaction);
 };
 
 export default { command, execute };

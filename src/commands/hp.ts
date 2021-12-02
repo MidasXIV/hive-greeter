@@ -10,7 +10,7 @@ export const command = new SlashCommandBuilder()
 export const execute = async (
   interaction: CommandInteraction
 ): Promise<void> => {
-  interaction.reply({
+  interaction.editReply({
     embeds: [
       new MessageEmbed({
         fields: [hpBarField(getUserCharacter(interaction.user))],
