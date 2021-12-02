@@ -1,14 +1,23 @@
 import { Character } from "../../character/Character";
 import { StatusEffect } from "../../statusEffects/StatusEffect";
-import { createSlice, PayloadAction } from "@reduxjs/toolkit";
+import {
+  createAction,
+  createReducer,
+  createSlice,
+  PayloadAction,
+} from "@reduxjs/toolkit";
 import { QuestId } from "../../quest/quests";
 import { getCharacterStatModified } from "../../character/getCharacterStatModified";
 import { Item } from "equipment/Item";
+import { LootResult } from "../../character/loot/loot";
+import { defaultCharacter } from "../../character/defaultCharacter";
 
 export const isStatusEffectExpired = (effect: StatusEffect): boolean =>
   Date.now() > new Date(effect.started).valueOf() + effect.duration;
 
 const charactersById: Record<string, Character> = {};
+
+const charaterLooted = createAction<LootResult>("character/looted");
 
 const characterSlice = createSlice({
   name: "characters",
@@ -19,9 +28,18 @@ const characterSlice = createSlice({
   reducers: {
     updateCharacter(state, action: PayloadAction<Character>) {
       const character = action.payload;
-      state.charactersById[character.id] = {
-        ...character,
-      };
+      state.charactersById[character.id] = character;
+    },
+
+    characterLooted(state, action: PayloadAction<LootResult>) {
+      const { targetId, looterId, itemsTaken, goldTaken } = action.payload;
+      const looter = state.charactersById[looterId];
+      looter.gold += goldTaken;
+      looter.inventory = [...looter.inventory, ...itemsTaken];
+      const target = state.charactersById[targetId];
+      target.inventory = target.inventory.filter((item) =>
+        itemsTaken.find((taken) => item.id !== taken.id)
+      );
     },
 
     updateCharacterCooldowns(
@@ -97,18 +115,26 @@ const characterSlice = createSlice({
       delete state.charactersById[characterId].quests[questId];
     },
 
+    goldGained(
+      state,
+      action: PayloadAction<{
+        characterId: string;
+        amount: number;
+      }>
+    ) {
+      const { characterId, amount } = action.payload;
+      state.charactersById[characterId].gold += amount;
+    },
+
     updateGold(
       state,
       action: PayloadAction<{
-        character: Character;
+        characterId: string;
         gold: number;
       }>
     ) {
-      const { character, gold } = action.payload;
-      state.charactersById[character.id] = {
-        ...character,
-        gold,
-      };
+      const { characterId, gold } = action.payload;
+      state.charactersById[characterId].gold = gold;
     },
 
     grantDivineBlessing(state, action: PayloadAction<Character>) {
@@ -169,6 +195,8 @@ export const {
   adjustCharacterHP,
   addItemToInventory,
   questCompleted,
+  goldGained,
+  characterLooted,
 } = characterSlice.actions;
 
 export default characterSlice.reducer;

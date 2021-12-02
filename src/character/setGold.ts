@@ -9,7 +9,7 @@ export const setGold = (
   const character = getCharacter(characterId);
   if (!character) return;
   updateGold({
-    character,
+    characterId,
     gold: amount,
   });
   return getCharacter(characterId);
