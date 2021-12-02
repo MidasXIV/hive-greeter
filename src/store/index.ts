@@ -1,14 +1,10 @@
-import { configureStore, Dispatch } from "@reduxjs/toolkit";
+import { configureStore } from "@reduxjs/toolkit";
+import { persistStore, persistReducer, PERSIST, REHYDRATE } from 'redux-persist'
 import remoteReduxEnhancer from "@redux-devtools/remote";
-import fs from "fs";
-import rootReducer from "../store/reducers";
-import { DB_FILE } from "../fixtures";
+import rootReducer from "./reducers";
+import { disk } from './storage'
 
 const enhancers = [];
-
-const preloadedState = fs.existsSync(DB_FILE)
-  ? JSON.parse(fs.readFileSync(DB_FILE).toString("utf-8"))
-  : undefined;
 
 if (process.env.REDUX_DEVTOOLS_ENABLED === "true") {
   enhancers.push(
@@ -17,17 +13,28 @@ if (process.env.REDUX_DEVTOOLS_ENABLED === "true") {
       hostname: "localhost",
       port: 5010,
     })
-  );
-}
+    );
+  }
+  
+const persistedReducer = persistReducer({
+  key: 'root',
+  storage: disk,
+}, rootReducer)
+
 const store = configureStore({
-  reducer: rootReducer,
+  reducer: persistedReducer,
   devTools: true,
   enhancers,
-  preloadedState,
+  middleware: (getDefaultMiddleware) =>
+    getDefaultMiddleware({
+      serializableCheck: {
+        ignoredActions: [PERSIST, REHYDRATE],
+      },
+    }),
 });
+
+export const persistor = persistStore(store)
 
 export default store;
 
 export type ReduxState = ReturnType<typeof store.getState>;
-export type AppDispatch = typeof store.dispatch;
-export type { Dispatch };
