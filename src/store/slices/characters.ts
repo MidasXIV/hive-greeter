@@ -86,6 +86,17 @@ const characterSlice = createSlice({
       }
     },
 
+    questCompleted(
+      state,
+      action: PayloadAction<{
+        questId: QuestId;
+        characterId: string;
+      }>
+    ) {
+      const { questId, characterId } = action.payload;
+      delete state.charactersById[characterId].quests[questId];
+    },
+
     updateGold(
       state,
       action: PayloadAction<{
@@ -157,6 +168,7 @@ export const {
   grantDivineBlessing,
   adjustCharacterHP,
   addItemToInventory,
+  questCompleted,
 } = characterSlice.actions;
 
 export default characterSlice.reducer;

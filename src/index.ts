@@ -64,8 +64,9 @@ async function main() {
     try {
       await commands.get(interaction.commandName).execute(interaction);
     } catch (e) {
-      await interaction.reply(
-        `Command \`${interaction.command}\` failed with error: \`${e}\``
+      console.error(e);
+      await interaction.followUp(
+        `Command \`${interaction.commandName}\` failed with error: \`${e}\``
       );
     }
     console.timeEnd(interaction.commandName);
