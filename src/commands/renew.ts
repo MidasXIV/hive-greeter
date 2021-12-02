@@ -63,7 +63,6 @@ export const execute = async (
     })
   );
   const message = await interaction.editReply({
-    fetchReply: true,
     embeds,
   });
   if (!(message instanceof Message)) return;

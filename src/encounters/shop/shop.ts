@@ -33,12 +33,11 @@ export const shop = async (interaction: CommandInteraction): Promise<void> => {
   const hasStuffToSell =
     character.inventory.filter((i) => i.sellable).length > 0;
 
-  const message = await interaction.editReply(shopMain());
+  const message = await interaction.followUp(shopMain());
   if (!(message instanceof Message)) return;
   let hasLeft = false;
   while (!hasLeft) {
     await message.edit(shopMain());
-    console.log("updating the shop");
     const response = await message
       .awaitMessageComponent({
         filter: (i) => {
@@ -64,6 +63,7 @@ export const shop = async (interaction: CommandInteraction): Promise<void> => {
 
   function shopMain() {
     const shopEmbed = new MessageEmbed({
+      title: `${character.name} Visits the Shop`,
       fields: [
         {
           name: "Your Gold",

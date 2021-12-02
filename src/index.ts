@@ -4,7 +4,7 @@ dotenv.config({ path: ".env" });
 
 import { REST } from "@discordjs/rest";
 import express, { Request, Response } from "express";
-import Discord, { Intents, Message } from "discord.js";
+import Discord, { Intents, MessageEmbed } from "discord.js";
 import { exit } from "process";
 import { Routes } from "discord-api-types/v9";
 import commands from "./commands";
@@ -62,7 +62,7 @@ async function main() {
     console.log("interactionCreate");
     console.time(interaction.commandName);
     try {
-      await interaction.reply(`Gazing into the cyrstal ball...`);
+      await interaction.deferReply();
       const command = commands.get(interaction.commandName);
       if (!command) {
         interaction.editReply(`Command not found ${command}`);

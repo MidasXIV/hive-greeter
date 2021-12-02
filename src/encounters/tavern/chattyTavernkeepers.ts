@@ -76,5 +76,5 @@ export const chattyTavernkeepers = async (
   await interaction.followUp(
     `You have been charged with the ${quests[questId].title} quest.`
   );
-  await questsCommand.execute(interaction, "followUp");
+  await questsCommand.execute(interaction);
 };

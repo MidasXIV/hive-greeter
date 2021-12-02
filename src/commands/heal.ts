@@ -30,8 +30,10 @@ export const execute = async (
   // TODO: a better way?
   getUserCharacter(target); // ensure character exists for proper interactions
   const result = heal(healer.id, target.id);
-  if (!result)
-    return interaction.editReply("No result. This should not happen.");
+  if (!result) {
+    interaction.editReply("No result. This should not happen.");
+    return;
+  }
   if (result.outcome === "cooldown") {
     await interaction.editReply(
       `You can heal again in ${cooldownRemainingText(healer.id, "heal")}.`
@@ -56,8 +58,7 @@ export const execute = async (
       }).setImage("https://i.imgur.com/S32LDbM.png"),
     ].concat(),
   });
-  if (isUserQuestComplete(healer, "healer"))
-    await quests.execute(interaction, "followUp");
+  if (isUserQuestComplete(healer, "healer")) await quests.execute(interaction);
 };
 
 export default { command, execute };

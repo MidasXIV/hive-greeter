@@ -43,7 +43,6 @@ type Chest = {
 
 export async function chest(
   interaction: CommandInteraction,
-  followUp = false,
   chestConfig?: Partial<Chest>
 ): Promise<void> {
   let fled = false;
@@ -68,7 +67,7 @@ export async function chest(
     ...chestConfig,
   };
 
-  const message = await interaction[followUp ? "followUp" : "reply"]({
+  const message = await interaction.followUp({
     files: [chestImage],
     embeds: [chestEmbed(chest)],
     fetchReply: true,

@@ -19,8 +19,7 @@ export const command = new SlashCommandBuilder()
 
 // TODO: inspect hp|stats|inventory|cooldowns
 export const execute = async (
-  interaction: CommandInteraction,
-  responseType: "followUp" | "reply" = "reply"
+  interaction: CommandInteraction
 ): Promise<void> => {
   const user =
     (interaction.options.data[0] && interaction.options.data[0].user) ||
@@ -28,7 +27,7 @@ export const execute = async (
   const character = getUserCharacter(user);
   console.log(`inspect ${character.name}`, character);
 
-  await interaction[responseType]({
+  await interaction.followUp({
     attachments:
       character.profile === defaultProfile ? [defaultProfileAttachment] : [],
     embeds: [

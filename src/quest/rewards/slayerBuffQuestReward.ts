@@ -28,5 +28,5 @@ export const slayerBuffQuestReward = async (
   await interaction.followUp({
     embeds,
   });
-  await inspect.execute(interaction, "followUp");
+  await inspect.execute(interaction);
 };
