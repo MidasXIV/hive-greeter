@@ -4,7 +4,8 @@ import { getUserCharacter } from "../../character/getUserCharacter";
 import { updateStatusEffect } from "../../statusEffects/grantStatusEffect";
 import { StatusEffect } from "../../statusEffects/StatusEffect";
 import { Quest } from "../Quest";
-import { removeQuest } from "./removeQuest";
+import { questCompleted } from "../../store/slices/characters";
+import store from "../../store";
 
 export async function buffQuestReward(
   interaction: CommandInteraction,
@@ -20,13 +21,14 @@ export async function buffQuestReward(
   ];
 
   updateStatusEffect(character.id, effect);
-
-  removeQuest({ user: interaction.user, questId: quest.id });
+  store.dispatch(
+    questCompleted({ questId: quest.id, characterId: interaction.user.id })
+  );
 
   await interaction.followUp({
     fetchReply: true,
     embeds,
   });
 
-  await inspect.execute(interaction, "followUp");
+  await inspect.execute(interaction);
 }

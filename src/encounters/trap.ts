@@ -8,7 +8,7 @@ import { trapRollText } from "../trap/trapRollText";
 import { xpGainField } from "../character/xpGainField";
 
 export const trap = async (interaction: CommandInteraction): Promise<void> => {
-  const message = await interaction.reply({
+  const message = await interaction.editReply({
     embeds: [
       new MessageEmbed({
         title: "Trap!",
@@ -16,12 +16,13 @@ export const trap = async (interaction: CommandInteraction): Promise<void> => {
         description: `It's a trap!`,
       }).setImage("https://imgur.com/TDMLxyE.png"),
     ],
-    fetchReply: true,
   });
   if (!(message instanceof Message)) return;
   const result = trapAttack(interaction.user.id);
-  if (!result)
-    return await interaction.reply("No result. This should not happen."); // TODO: then why have this?
+  if (!result) {
+    await interaction.editReply("No result. This should not happen.");
+    return;
+  }
   await sleep(2000);
   const character = getUserCharacter(interaction.user);
   switch (result.outcome) {

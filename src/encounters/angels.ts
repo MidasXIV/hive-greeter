@@ -5,15 +5,14 @@ import { questEmbed } from "../commands/questEmbed";
 import { grantQuest } from "../quest/grantQuest";
 
 export const angels = async (
-  interaction: CommandInteraction,
-  isFollowUp = false
+  interaction: CommandInteraction
 ): Promise<void> => {
   const character = updateCharacter(
     grantQuest(getUserCharacter(interaction.user), "healer")
   );
   if (!character) return;
 
-  interaction[isFollowUp ? "followUp" : "reply"]({
+  interaction.followUp({
     embeds: [
       new MessageEmbed({
         title: "Angels",

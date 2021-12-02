@@ -1,32 +1,25 @@
-import { CommandInteraction, MessageEmbed } from "discord.js";
-import inspect from "../../commands/inspect/inspect";
-import { updateStatusEffect } from "../../statusEffects/grantStatusEffect";
-import { removeQuest } from "./removeQuest";
+import { CommandInteraction } from "discord.js";
+import { getUserCharacter } from "../../character/getUserCharacter";
+import { buffQuestReward } from "./buffQuestReward";
 
 export const slayerBuffQuestReward = async (
   interaction: CommandInteraction
 ): Promise<void> => {
-  const embeds = [
-    new MessageEmbed({
-      title: `Slayer Quest Complete!`,
-      description: "Your prowess is unmatched!",
-    }),
-  ];
-  updateStatusEffect(interaction.user.id, {
-    name: "Slayer",
-    buff: true,
-    debuff: false,
-    duration: 4 * 60 * 60000,
-    modifiers: {
-      monsterDamageMax: 6,
+  const character = getUserCharacter(interaction.user);
+  const quest = character.quests.blessed;
+  if (!quest) return;
+  buffQuestReward(
+    interaction,
+    {
+      name: "Slayer",
+      buff: true,
+      debuff: false,
+      duration: 4 * 60 * 60000,
+      modifiers: {
+        monsterDamageMax: 6,
+      },
+      started: new Date().toString(),
     },
-    started: new Date().toString(),
-  });
-
-  removeQuest({ user: interaction.user, questId: "slayer" });
-
-  await interaction.followUp({
-    embeds,
-  });
-  await inspect.execute(interaction, "followUp");
+    quest
+  );
 };

@@ -5,7 +5,7 @@ export const divineBlessing = async (
   interaction: CommandInteraction
 ): Promise<void> => {
   grantDivineBlessing(interaction.user.id);
-  await interaction.reply({
+  await interaction.editReply({
     embeds: [
       new MessageEmbed()
         .setTitle("Divine Blessing")

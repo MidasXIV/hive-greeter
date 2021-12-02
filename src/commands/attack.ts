@@ -28,7 +28,7 @@ export const execute = async (
   const target = interaction.options.data[0].user;
   const initiator = interaction.user;
   if (!target) {
-    await interaction.reply(`You must specify a target @player`);
+    await interaction.editReply(`You must specify a target @player`);
     return;
   }
 
@@ -36,7 +36,7 @@ export const execute = async (
   const defender = getUserCharacter(target);
   let lootResult;
   if (attacker.hp === 0) {
-    await interaction.reply({
+    await interaction.editReply({
       embeds: [
         new MessageEmbed()
           .setDescription(`You're too weak to press on.`)
@@ -46,16 +46,20 @@ export const execute = async (
     return;
   }
   const result = playerAttack(attacker.id, defender.id);
-  if (!result)
-    return await interaction.reply(`No attack result. This should not happen.`);
+  if (!result) {
+    await interaction.editReply(`No attack result. This should not happen.`);
+    return;
+  }
 
-  if (result.outcome === "cooldown")
-    return await interaction.reply(
+  if (result.outcome === "cooldown") {
+    await interaction.editReply(
       `You can attack again ${cooldownRemainingText(
         interaction.user.id,
         "attack"
       )}.`
     );
+    return;
+  }
   const embeds = [];
   embeds.push(
     attackResultEmbed({ result, interaction }).setTitle(
@@ -66,18 +70,20 @@ export const execute = async (
     lootResult = loot({ looterId: attacker.id, targetId: defender.id });
     if (lootResult) embeds.push(lootResultEmbed(lootResult));
   }
-  await interaction.reply({
+  await interaction.editReply({
     embeds,
   });
   await sleep(2000);
   const retaliationEmbeds: MessageEmbed[] = [];
   if (result.defender.hp > 0) {
     const result = attack(defender.id, attacker.id);
-    if (!result || result.outcome === "cooldown")
+    if (!result || result.outcome === "cooldown") {
       // TODO: cooldown shouldn't be a possible outcome here
-      return await interaction.reply(
-        `No attack result or retaliation outcome is cooldown. This should not happen.`
-      );
+      await interaction.editReply({
+        content: `No attack result or retaliation outcome is cooldown. This should not happen.`,
+      });
+      return;
+    }
     retaliationEmbeds.push(
       attackResultEmbed({ result, interaction }).setTitle(
         `${defender.name} retaliates against ${attacker.name}!`

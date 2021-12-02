@@ -28,7 +28,7 @@ export const vigorShrine = async (
 
   applyShrine({ shrine, interaction });
 
-  interaction.reply({
+  interaction.editReply({
     embeds: shrineEmbeds({ shrine, interaction }),
   });
 };

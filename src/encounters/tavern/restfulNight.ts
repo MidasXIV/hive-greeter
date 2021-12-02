@@ -62,5 +62,5 @@ export async function restfulNight(
   });
 
   if (isUserQuestComplete(interaction.user, "healer"))
-    await quests.execute(interaction, "followUp");
+    await quests.execute(interaction);
 }
