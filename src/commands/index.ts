@@ -25,6 +25,7 @@ import barFight from "./barFight";
 import lootchest from "./lootchest";
 import { CommandHandler } from "../utils";
 import { RESTPostAPIApplicationCommandsJSONBody } from "discord-api-types";
+import cleanse from "./cleanse";
 
 const commands = new Map<
   string,
@@ -44,23 +45,24 @@ commands.set("inspect", inspect);
 commands.set("inventory", inventory);
 commands.set("list", list);
 commands.set("quests", quests);
-commands.set("set", set);
 commands.set("renew", renew);
+commands.set("set", set);
 
 if (process.env.DEV_COMMANDS === "true") {
   console.warn("⚠ DEV COMMANDS LOADED ⚠");
   commands.set("admin", admin);
-  commands.set("quest", quest);
+  commands.set("angels", angels);
+  commands.set("bar_fight", barFight);
   commands.set("chest", chest);
-  commands.set("hpbartest", hpbartest);
-  commands.set("monster", monster);
+  commands.set("cleanse", cleanse);
   commands.set("crown", crown);
-  commands.set("shop", shop);
+  commands.set("hpbartest", hpbartest);
+  commands.set("lootchest", lootchest);
   commands.set("lootme", lootme);
   commands.set("lootmonster", lootmonster);
-  commands.set("lootchest", lootchest);
-  commands.set("bar_fight", barFight);
-  commands.set("angels", angels);
+  commands.set("monster", monster);
+  commands.set("quest", quest);
+  commands.set("shop", shop);
 }
 
 export default commands;

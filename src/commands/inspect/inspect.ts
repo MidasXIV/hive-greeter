@@ -1,5 +1,11 @@
 import { SlashCommandBuilder } from "@discordjs/builders";
-import { CommandInteraction, TextChannel } from "discord.js";
+import {
+  ChannelWebhookCreateOptions,
+  Collection,
+  CommandInteraction,
+  TextChannel,
+  Webhook,
+} from "discord.js";
 import { defaultProfile, defaultProfileAttachment } from "../../fixtures";
 import { getUserCharacter } from "../../character/getUserCharacter";
 import { characterEmbed } from "../../character/characterEmbed";
@@ -9,6 +15,7 @@ import { actionEmbed } from "./actionEmbed";
 import { values } from "remeda";
 import { statsEmbed } from "../../character/statsEmbed";
 import { itemEmbed } from "../../equipment/itemEmbed";
+import { Character } from "../../character/Character";
 
 export const command = new SlashCommandBuilder()
   .setName("inspect")
@@ -37,53 +44,96 @@ export const execute = async (
     ],
   });
 
+  if (
+    values(character.equipment).length ||
+    (character.statusEffects?.length ?? 0) ||
+    values(character.quests).length
+  )
+    inspectThread({ interaction, character });
+};
+
+type HookName = "Equipment" | "Status Effects" | "Quests";
+
+async function getHook({
+  name,
+  interaction,
+  webhooks,
+}: {
+  name: HookName;
+  interaction: CommandInteraction;
+  webhooks: Collection<string, Webhook>;
+}) {
+  const channel = interaction.channel;
+  if (!(channel instanceof TextChannel)) return;
+  const existingHook = webhooks.find((hook) => hook.name === name);
+  if (existingHook) return existingHook;
+  return await channel.createWebhook(name, hookOptions(name));
+}
+
+function hookOptions(name: HookName): ChannelWebhookCreateOptions {
+  return {
+    avatar:
+      "https://www.wallpaperup.com/uploads/wallpapers/2013/02/22/43066/33ee1c3920aa37d0b18a0de6cd9796b9.jpg",
+    reason: name,
+  };
+}
+
+async function inspectThread({
+  interaction,
+  character,
+}: {
+  interaction: CommandInteraction;
+  character: Character;
+}): Promise<void> {
   const channel = interaction.channel;
   if (!(channel instanceof TextChannel)) return;
   const thread = await channel.threads.create({
     name: `Inspect ${character.name}`,
   });
   const webhooks = await channel.fetchWebhooks();
-  const hook = webhooks.first() ?? (await channel.createWebhook("Inspect"));
-  if (!hook) return;
-
   const equipmentEmbeds = values(character.equipment)
     .map((item) => itemEmbed({ item, interaction }))
     .slice(0, 9);
-  if (equipmentEmbeds.length) {
-    await hook.edit({
+  if (equipmentEmbeds.length)
+    await getHook({
       name: "Equipment",
-      avatar:
-        "https://www.wallpaperup.com/uploads/wallpapers/2013/02/22/43066/33ee1c3920aa37d0b18a0de6cd9796b9.jpg",
+      webhooks,
+      interaction,
+    }).then((hook) => {
+      hook?.send({
+        embeds: equipmentEmbeds,
+        threadId: thread.id,
+      });
     });
-    await hook.send({
-      embeds: equipmentEmbeds,
-      threadId: thread.id,
-    });
-  }
 
   if ((character.statusEffects?.length ?? 0) > 0) {
-    await hook.edit({
+    await getHook({
       name: "Status Effects",
-      avatar:
-        "https://www.wallpaperup.com/uploads/wallpapers/2013/02/22/43066/33ee1c3920aa37d0b18a0de6cd9796b9.jpg",
-    });
-    await hook.send({
-      embeds: character.statusEffects?.map((effect) =>
-        statusEffectEmbed(effect, interaction)
-      ),
-      threadId: thread.id,
-    });
+      webhooks,
+      interaction,
+    }).then((hook) =>
+      hook?.send({
+        embeds: character.statusEffects?.map((effect) =>
+          statusEffectEmbed(effect, interaction)
+        ),
+        threadId: thread.id,
+      })
+    );
   }
   const embed = questEmbed(character);
   if (embed) {
-    await hook.edit({
+    await getHook({
       name: "Quests",
-      avatar:
-        "https://www.wallpaperup.com/uploads/wallpapers/2013/02/22/43066/33ee1c3920aa37d0b18a0de6cd9796b9.jpg",
-    });
-    await hook.send({ embeds: [embed], threadId: thread.id });
+      webhooks,
+      interaction,
+    }).then((hook) =>
+      hook?.send({
+        embeds: [embed],
+        threadId: thread.id,
+      })
+    );
   }
   thread.setArchived(true);
-};
+}
 
 export default { command, execute };
