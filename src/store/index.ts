@@ -9,7 +9,7 @@ import remoteReduxEnhancer from "@redux-devtools/remote";
 import rootReducer from "./reducers";
 import { disk } from "./storage";
 import createMigrate from "redux-persist/es/createMigrate";
-import { migrations } from "./migrations";
+import { persistVersion, persistMigrate } from "./migrations";
 
 const enhancers = [];
 
@@ -27,8 +27,8 @@ const persistedReducer = persistReducer(
   {
     key: "root",
     storage: disk,
-    version: 1,
-    migrate: createMigrate(migrations),
+    version: persistVersion,
+    migrate: persistMigrate,
   },
   rootReducer
 );
@@ -50,3 +50,4 @@ export const persistor = persistStore(store);
 export default store;
 
 export type ReduxState = ReturnType<typeof store.getState>;
+export type RootReducerState = ReturnType<typeof rootReducer>;
