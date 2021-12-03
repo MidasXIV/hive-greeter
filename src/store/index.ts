@@ -16,7 +16,7 @@ if (process.env.REDUX_DEVTOOLS_ENABLED === "true") {
     remoteReduxEnhancer({
       realtime: true,
       hostname: "localhost",
-      port: 5020,
+      port: 5010,
     })
   );
 }

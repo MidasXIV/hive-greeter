@@ -12,7 +12,7 @@
     "build": "tsc",
     "prestart": "npm run build",
     "start": "node .build/index.js",
-    "redux-devtools": "redux-devtools --hostname=localhost --port=5020"
+    "redux-devtools": "redux-devtools --hostname=localhost --port=5010"
   },
   "repository": {
     "type": "git",
