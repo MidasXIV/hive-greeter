@@ -1,10 +1,9 @@
 import { Monster } from "./Monster";
-import { updateMonster as doUpdateMonster } from "../store/slices/monsters";
 import store from "../store";
 import { getMonsterById } from "../store/selectors";
+import { updateCharacter } from "../character/updateCharacter";
 
 export const updateMonster = (monster: Monster): Monster => {
-  console.log("update monster", monster);
-  store.dispatch(doUpdateMonster(monster));
+  updateCharacter(monster);
   return getMonsterById(store.getState(), monster.id) ?? monster;
 };

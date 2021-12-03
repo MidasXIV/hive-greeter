@@ -1,7 +1,8 @@
 import { randomUUID } from "crypto";
 import { defaultCharacter } from "../character/defaultCharacter";
-import { updateMonster } from "./updateMonster";
 import { Monster } from "./Monster";
+import store from "../store";
+import { monsterCreated } from "../store/slices/characters";
 
 export const createMonster = (
   monster: Partial<Monster> & { name: string }
@@ -12,7 +13,7 @@ export const createMonster = (
     ...monster,
     isMonster: true,
   };
-  updateMonster(newMonster);
+  store.dispatch(monsterCreated(newMonster));
   console.log(`created monster ${newMonster.id}`);
   return newMonster;
 };

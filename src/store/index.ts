@@ -1,8 +1,13 @@
 import { configureStore } from "@reduxjs/toolkit";
-import { persistStore, persistReducer, PERSIST, REHYDRATE } from 'redux-persist'
+import {
+  persistStore,
+  persistReducer,
+  PERSIST,
+  REHYDRATE,
+} from "redux-persist";
 import remoteReduxEnhancer from "@redux-devtools/remote";
 import rootReducer from "./reducers";
-import { disk } from './storage'
+import { disk } from "./storage";
 
 const enhancers = [];
 
@@ -11,15 +16,18 @@ if (process.env.REDUX_DEVTOOLS_ENABLED === "true") {
     remoteReduxEnhancer({
       realtime: true,
       hostname: "localhost",
-      port: 5010,
+      port: 5020,
     })
-    );
-  }
-  
-const persistedReducer = persistReducer({
-  key: 'root',
-  storage: disk,
-}, rootReducer)
+  );
+}
+
+const persistedReducer = persistReducer(
+  {
+    key: "root",
+    storage: disk,
+  },
+  rootReducer
+);
 
 const store = configureStore({
   reducer: persistedReducer,
@@ -33,7 +41,7 @@ const store = configureStore({
     }),
 });
 
-export const persistor = persistStore(store)
+export const persistor = persistStore(store);
 
 export default store;
 

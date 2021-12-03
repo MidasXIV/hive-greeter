@@ -8,7 +8,8 @@ import { loot } from "../character/loot/loot";
 import { lootResultEmbed } from "../character/loot/lootResultEmbed";
 import { getRandomMonster } from "../monster/getRandomMonster";
 import { monsterEmbed } from "../encounters/monsterEmbed";
-import { getMonsterUpdate } from "../monster/getMonsterUpdate";
+import { getMonsterById } from "../store/selectors";
+import store from "../store";
 
 export const command = new SlashCommandBuilder()
   .setName("lootmonster")
@@ -20,9 +21,16 @@ export const execute = async (
   const monster = await getRandomMonster();
   const character = getUserCharacter(interaction.user);
   const result = loot({ looterId: character.id, targetId: monster.id });
+
+  const updatedMonster = getMonsterById(store.getState(), monster.id);
+
+  if (!updatedMonster) {
+    interaction.editReply(`Monster not found ${monster.id}`);
+    return;
+  }
   interaction.editReply({
     embeds: [
-      monsterEmbed(getMonsterUpdate(monster)),
+      monsterEmbed(updatedMonster),
       characterEmbed({
         character: getCharacterUpdate(character),
         interaction,

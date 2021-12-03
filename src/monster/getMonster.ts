@@ -5,6 +5,5 @@ import { getMonsterById } from "../store/selectors";
 
 export const getMonster = (id: string): Monster | void => {
   purgeExpiredStatuses(id);
-  const state = store.getState();
-  return getMonsterById(state, id);
+  return getMonsterById(store.getState(), id);
 };

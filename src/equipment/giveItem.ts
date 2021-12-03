@@ -19,10 +19,12 @@ export function giveItem({
     return false;
   }
   if (sender.id === recipient.id) return true;
+  const character = removeItemIdFromCharacter({
+    character: sender,
+    itemId: item.id,
+  });
   // take from sender
-  updateCharacter(
-    removeItemIdFromCharacter({ character: sender, itemId: item.id })
-  );
+  if (character) updateCharacter(character);
   // give to recipient
   updateCharacter(grantCharacterItem(recipient, item));
   return true;

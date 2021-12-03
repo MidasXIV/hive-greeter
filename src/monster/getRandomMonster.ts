@@ -1,15 +1,15 @@
 import { createMonster } from "./createMonster";
-import { getRandomItem } from "./getRandomItem";
+import { getRandomArrayElement } from "../utils/getRandomArrayElement";
 import { getRandomMonsterName } from "./names/getRandomMonsterName";
 import { getRoamingMonsters } from "./getRoamingMonsters";
-import { Monster } from "./Monster";
+import { isMonster, Monster } from "./Monster";
 
 export const getRandomMonster = async (): Promise<Monster> => {
   const roamingMonsters = getRoamingMonsters();
   if (roamingMonsters.length && Math.random() <= roamingMonsters.length / 10) {
     console.log("returning existing monster");
-    const monster = getRandomItem(roamingMonsters);
-    if (monster) return monster;
+    const monster = getRandomArrayElement(roamingMonsters);
+    if (monster && isMonster(monster)) return monster;
   }
   const rand = Math.random();
   console.log("spawning new monster");

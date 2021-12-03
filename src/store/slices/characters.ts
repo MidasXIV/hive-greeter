@@ -1,34 +1,35 @@
 import { Character } from "../../character/Character";
 import { StatusEffect } from "../../statusEffects/StatusEffect";
-import {
-  createAction,
-  createReducer,
-  createSlice,
-  PayloadAction,
-} from "@reduxjs/toolkit";
+import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { QuestId } from "../../quest/quests";
 import { getCharacterStatModified } from "../../character/getCharacterStatModified";
 import { Item } from "equipment/Item";
 import { LootResult } from "../../character/loot/loot";
-import { defaultCharacter } from "../../character/defaultCharacter";
+import { Monster } from "../../monster/Monster";
 
 export const isStatusEffectExpired = (effect: StatusEffect): boolean =>
   Date.now() > new Date(effect.started).valueOf() + effect.duration;
 
 const charactersById: Record<string, Character> = {};
-
-const charaterLooted = createAction<LootResult>("character/looted");
+const roamingMonsters: string[] = [];
 
 const characterSlice = createSlice({
   name: "characters",
   initialState: {
     charactersById,
+    roamingMonsters,
     isHeavyCrownInPlay: false,
   },
   reducers: {
     updateCharacter(state, action: PayloadAction<Character>) {
       const character = action.payload;
       state.charactersById[character.id] = character;
+    },
+
+    monsterCreated(state, action: PayloadAction<Monster>) {
+      const monster = action.payload;
+      state.charactersById[monster.id] = monster;
+      state.roamingMonsters.push(monster.id);
     },
 
     characterLooted(state, action: PayloadAction<LootResult>) {
@@ -197,6 +198,7 @@ export const {
   questCompleted,
   goldGained,
   characterLooted,
+  monsterCreated,
 } = characterSlice.actions;
 
 export default characterSlice.reducer;
