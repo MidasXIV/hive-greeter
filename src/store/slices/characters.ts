@@ -4,7 +4,7 @@ import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { QuestId } from "../../quest/quests";
 import { getCharacterStatModified } from "../../character/getCharacterStatModified";
 import { Item } from "equipment/Item";
-import { LootResult } from "../../character/loot/loot";
+import { equipmentFilter, LootResult } from "../../character/loot/loot";
 import { Monster } from "../../monster/Monster";
 
 export const isStatusEffectExpired = (effect: StatusEffect): boolean =>
@@ -37,9 +37,14 @@ const characterSlice = createSlice({
       const looter = state.charactersById[looterId];
       looter.gold += goldTaken;
       looter.inventory = [...looter.inventory, ...itemsTaken];
+
       const target = state.charactersById[targetId];
-      target.inventory = target.inventory.filter((item) =>
-        itemsTaken.find((taken) => item.id !== taken.id)
+      const isTakenItem = (item: Item) =>
+        itemsTaken.find((i) => i.id === item.id);
+      target.inventory = target.inventory.filter((item) => !isTakenItem(item));
+      target.equipment = equipmentFilter(
+        target.equipment,
+        (item) => !isTakenItem(item)
       );
     },
 
