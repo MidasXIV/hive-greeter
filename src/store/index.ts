@@ -8,6 +8,8 @@ import {
 import remoteReduxEnhancer from "@redux-devtools/remote";
 import rootReducer from "./reducers";
 import { disk } from "./storage";
+import createMigrate from "redux-persist/es/createMigrate";
+import { migrations } from "./migrations";
 
 const enhancers = [];
 
@@ -25,6 +27,8 @@ const persistedReducer = persistReducer(
   {
     key: "root",
     storage: disk,
+    version: 1,
+    migrate: createMigrate(migrations),
   },
   rootReducer
 );
