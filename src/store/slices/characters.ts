@@ -42,6 +42,7 @@ const characterSlice = createSlice({
       const isTakenItem = (item: Item) =>
         itemsTaken.find((i) => i.id === item.id);
       target.inventory = target.inventory.filter((item) => !isTakenItem(item));
+      target.gold = 0;
       target.equipment = equipmentFilter(
         target.equipment,
         (item) => !isTakenItem(item)
