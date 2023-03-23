@@ -1,14 +1,18 @@
+import { ChatInputCommandInteraction, SlashCommandBuilder } from "discord.js";
+import BotConfig from "../config/botConfig";
 import Command from "./commandInterface";
-import { Message } from "discord.js";
 
 export class GreetCommand implements Command {
-  commandNames = ["greet", "hello"];
+  data = new SlashCommandBuilder()
+    .setName("greet")
+    .setDescription(`Use ${BotConfig.prefix}greet to greet the user.`);
 
-  help(commandPrefix: string): string {
-    return `Use ${commandPrefix}greet to get a greeting.`;
-  }
+  cooldown = 10;
 
-  async run(message: Message): Promise<void> {
-    await message.reply("hello, User!");
+  async execute(interaction: ChatInputCommandInteraction): Promise<void> {
+    const user = interaction.user;
+    const message = `Hello, ${user}!`;
+
+    await interaction.reply(message).catch(console.error);
   }
 }

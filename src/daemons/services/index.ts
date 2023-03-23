@@ -1,1 +1,1 @@
-export * from "./newCoinListingService";
+export * from './newCoinListingService';

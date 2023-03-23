@@ -1,15 +1,18 @@
+import { ChatInputCommandInteraction, SlashCommandBuilder } from "discord.js";
+import BotConfig from "../config/botConfig";
 import Command from "./commandInterface";
-import { Message } from "discord.js";
 
 export class TimeCommand implements Command {
-  commandNames = ["time"];
+  data = new SlashCommandBuilder()
+    .setName("time")
+    .setDescription(`Use ${BotConfig.prefix}time to current time.`);
 
-  help(commandPrefix: string): string {
-    return `Use ${commandPrefix}time to current time.`;
-  }
+  cooldown = 10;
 
-  async run(message: Message): Promise<void> {
+  async execute(interaction: ChatInputCommandInteraction): Promise<void> {
     const now = new Date();
-    await message.reply(`${now.getHours()} : ${now.getMinutes()}`);
+    interaction
+      .reply(`${now.getHours()} : ${now.getMinutes()}`)
+      .catch(console.error);
   }
 }

@@ -30,18 +30,19 @@ export default interface Service {
 export const TIME_INTERVAL = {
   SECONDS_30: 30 * 1000,
   SECONDS_60: 60 * 1000,
-}
+};
 
 export abstract class AbstractService {
-
   private client: Discord.Client;
 
   constructor(client: Discord.Client) {
     this.client = client;
   }
 
-  async log(message: string | unknown): Promise<void> {
-    const notificationChannel = await this.client.channels.fetch(config['bot-health-channel']) as TextChannel;
+  async log(message: string): Promise<void> {
+    const notificationChannel = (await this.client.channels.fetch(
+      config["bot-health-channel"]
+    )) as TextChannel;
     await notificationChannel?.send(message);
   }
 }

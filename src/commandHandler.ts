@@ -1,54 +1,62 @@
-import { Message } from "discord.js";
 import { GreetCommand, TimeCommand, BinanceAllCoins } from "./commands";
 import Command from "./commands/commandInterface";
-import { CommandParser } from "./models/commandParser";
+
+import {
+  ChatInputCommandInteraction,
+  Collection,
+  Interaction
+} from "discord.js";
 
 export default class CommandHandler {
-
-  private commands: Command[];
+  private commands = new Collection<string, Command>();
 
   private readonly prefix: string;
 
   constructor(prefix: string) {
+    const commandClasses = [GreetCommand, TimeCommand, BinanceAllCoins];
 
-    const commandClasses = [
-      GreetCommand,
-      TimeCommand,
-      BinanceAllCoins
-    ];
-
-    this.commands = commandClasses.map(commandClass => new commandClass());
+    for (const commandClass of commandClasses) {
+      const command = new commandClass();
+      if ("data" in command && "execute" in command) {
+        this.commands.set(command.data.name, command);
+      } else {
+        console.log(
+          `[WARNING] The command ${commandClass} is missing a required "data" or "execute" property.`
+        );
+      }
+    }
     this.prefix = prefix;
   }
 
   /** Executes user commands contained in a message if appropriate. */
-  async handleMessage(message: Message): Promise<void> {
-    if (message.author.bot || !this.isCommand(message)) {
+  async handleMessage(interaction: Interaction): Promise<void> {
+    if (!interaction.isChatInputCommand()) return;
+
+    const command = this.commands.get(interaction.commandName);
+
+    if (!command) {
+      await interaction.reply(
+        `No command matching ${interaction.commandName} was found.`
+      );
       return;
     }
 
-    message.reply(`Hive Greeter recieved '${this.echoMessage(message)}' from ${message.author.tag}`);
-
-    const commandParser = new CommandParser(message, this.prefix);
-
-    const matchedCommand = this.commands.find(command => command.commandNames.includes(commandParser.parsedCommandName));
-
-    if (!matchedCommand) {
-      await message.reply(`I don't recognize that command. Try !help.`);
-    } else {
-      await matchedCommand.run(message).catch(error => {
-        message.reply(`'${this.echoMessage(message)}' failed because of ${error}`);
-      });
+    try {
+      await command.execute(interaction as ChatInputCommandInteraction);
+    } catch (error) {
+      console.error(error);
+      if (interaction.replied || interaction.deferred) {
+        await interaction.followUp({
+          content: "There was an error while executing this command!",
+          ephemeral: true,
+        });
+      } else {
+        await interaction.reply({
+          content:
+            "There was an error while executing this command! failed because of ${error}",
+          ephemeral: true,
+        });
+      }
     }
-  }
-
-  /** Sends back the message content after removing the prefix. */
-  echoMessage(message: Message): string {
-    return message.content.replace(this.prefix, "").trim();
-  }
-
-  /** Determines whether or not a message is a user command. */
-  private isCommand(message: Message): boolean {
-    return message.content.startsWith(this.prefix);
   }
 }

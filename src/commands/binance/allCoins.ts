@@ -1,25 +1,28 @@
 import Command from "../commandInterface";
-import { Message } from "discord.js";
-import Binance from 'binance-api-node'
+import { ChatInputCommandInteraction, SlashCommandBuilder } from "discord.js";
+import Binance from "binance-api-node";
+import BotConfig from "../../config/botConfig";
 
 export class BinanceAllCoins implements Command {
-  commandNames = ["coins"];
+  data = new SlashCommandBuilder()
+    .setName("coins")
+    .setDescription(
+      `Use ${BotConfig.prefix}coins to get a list of all coins from binance.`
+    );
 
-  help(commandPrefix: string): string {
-    return `Use ${commandPrefix}coins to get a list of all coins from binance.`;
-  }
+  cooldown = 10;
 
-  async run(message: Message): Promise<void> {
+  async execute(interaction: ChatInputCommandInteraction): Promise<void> {
     const client = Binance();
     const pairs = await client.prices();
-    const pairingBase = "USDT"
+    const pairingBase = "USDT";
     const prices = Object.keys(pairs).reduce((acc, pair) => {
-      if(!pair.endsWith(pairingBase)) {
-        delete acc[pair]
+      if (!pair.endsWith(pairingBase)) {
+        delete acc[pair];
       }
       return acc;
     }, pairs);
     console.log(prices);
-    await message.reply(JSON.stringify(prices));
+    await interaction.reply(JSON.stringify(prices));
   }
 }

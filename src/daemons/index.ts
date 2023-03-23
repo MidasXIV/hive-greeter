@@ -4,13 +4,14 @@ import Service from "./services/serviceInterface";
 import config from "../config/botConfig";
 
 export default class DaemonHandler {
-
   private services: Service[];
   private client: Discord.Client;
 
   constructor(client: Discord.Client) {
     const serviceClasses = [newCoinListingService];
-    this.services = serviceClasses.map(serviceClass => new serviceClass(client));
+    this.services = serviceClasses.map(
+      (serviceClass) => new serviceClass(client)
+    );
 
     this.client = client;
   }
@@ -21,33 +22,34 @@ export default class DaemonHandler {
 
   /** Registers services */
   register(): void {
-    this.services.forEach(async service => {
+    this.services.forEach(async (service) => {
       await this.log(`Registering ${service.name}`);
 
-      try { await service?.preRegister?.(); }
-      catch (e) {
+      try {
+        await service?.preRegister?.();
+      } catch (e) {
         await this.log(`Error occured in pre-registering ${service.name}`);
-        await this.log(e);
+        // await this.log(e.toString());
       }
 
       try {
         setInterval(async () => {
           await service.register();
         }, service.executionInterval);
-      }
-      catch (e) {
+      } catch (e) {
         await this.log(`Error occured in registering ${service.name}`);
-        await this.log(e);
+        // await this.log(e.toString());
       }
 
-      try { await service?.postRegister?.(); }
-      catch (e) {
+      try {
+        await service?.postRegister?.();
+      } catch (e) {
         await this.log(`Error occured in post-registering ${service.name}`);
-        await this.log(e);
+        // await this.log(e.toString());
       }
 
       await this.log(`Succesfully registered ${service.name}`);
-    })
+    });
   }
 
   /** returns status of a service */
@@ -64,8 +66,10 @@ export default class DaemonHandler {
    *  Private Methods
    */
 
-  async log(message: string | unknown): Promise<void> {
-    const notificationChannel = await this.client.channels.fetch(config['bot-health-channel']) as TextChannel;
+  async log(message: string): Promise<void> {
+    const notificationChannel = (await this.client.channels.fetch(
+      config["bot-health-channel"]
+    )) as TextChannel;
     await notificationChannel?.send(message);
   }
 }
