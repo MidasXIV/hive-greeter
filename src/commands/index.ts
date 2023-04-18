@@ -14,3 +14,4 @@
 export * from './greetCommand';
 export * from './timeCommand';
 export * from './binance/allCoins';
+export * from './fetchEconomicEventsCommand';

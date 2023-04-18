@@ -1,10 +1,10 @@
 import { ApplicationCommandDataResolvable, REST, Routes } from "discord.js";
-import { GreetCommand, TimeCommand, BinanceAllCoins } from "../commands";
+import { GreetCommand, TimeCommand, BinanceAllCoins, FetchEconomicEventsCommand } from "../commands";
 import { DISCORD_TOKEN, GUILD_ID, CLIENT_ID } from "../config/secrets";
 
 const slashCommands = new Array<ApplicationCommandDataResolvable>();
 
-const commandClasses = [GreetCommand, TimeCommand, BinanceAllCoins];
+const commandClasses = [GreetCommand, TimeCommand, BinanceAllCoins, FetchEconomicEventsCommand];
 for (const commandClass of commandClasses) {
   const command = new commandClass();
   if ("data" in command && "execute" in command) {

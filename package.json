@@ -47,6 +47,7 @@
     "express": "^4.18.2",
     "lokijs": "^1.5.12",
     "rimraf": "^4.4.1",
-    "typescript": "^5.0.2"
+    "typescript": "^5.0.2",
+    "undici": "^5.21.0"
   }
 }

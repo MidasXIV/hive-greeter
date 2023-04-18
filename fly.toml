@@ -1,4 +1,4 @@
-# fly.toml file generated for hive-greeter on 2023-03-21T23:10:12+04:00
+# fly.toml file generated for hive-greeter on 2023-03-26T02:04:44+04:00
 
 app = "hive-greeter"
 kill_signal = "SIGINT"
@@ -7,7 +7,6 @@ primary_region = "hkg"
 processes = []
 
 [env]
-  PORT = "8080"
 
 [experimental]
   auto_rollback = true

@@ -1,4 +1,4 @@
-import { GreetCommand, TimeCommand, BinanceAllCoins } from "./commands";
+import { GreetCommand, TimeCommand, BinanceAllCoins, FetchEconomicEventsCommand } from "./commands";
 import Command from "./commands/commandInterface";
 
 import {
@@ -13,7 +13,7 @@ export default class CommandHandler {
   private readonly prefix: string;
 
   constructor(prefix: string) {
-    const commandClasses = [GreetCommand, TimeCommand, BinanceAllCoins];
+    const commandClasses = [GreetCommand, TimeCommand, BinanceAllCoins, FetchEconomicEventsCommand];
 
     for (const commandClass of commandClasses) {
       const command = new commandClass();
